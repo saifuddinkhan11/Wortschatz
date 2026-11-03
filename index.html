@@ -1,0 +1,949 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#fbf3ea">
+  <title>Wortschatz — English to German</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Fraunces:opsz,wght@9..144,500;9..144,600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --ink: #211a17;
+      --muted: #77685f;
+      --cream: #fbf3ea;
+      --peach: #f3d9c6;
+      --accent: #b86e50;
+      --accent-dark: #92513a;
+      --line: rgba(75, 48, 34, .13);
+      --shadow: 0 24px 55px rgba(94, 59, 39, .16), 0 5px 14px rgba(94, 59, 39, .08);
+      --sans: "DM Sans", ui-sans-serif, system-ui, sans-serif;
+      --serif: "Fraunces", Georgia, serif;
+    }
+    * { box-sizing: border-box; }
+    html { min-height: 100%; background: var(--cream); }
+    body {
+      margin: 0; min-height: 100vh; color: var(--ink); font-family: var(--sans);
+      background:
+        radial-gradient(ellipse at 9% 12%, rgba(243, 217, 198, .65), transparent 34%),
+        radial-gradient(ellipse at 92% 78%, rgba(220, 228, 202, .52), transparent 32%),
+        linear-gradient(135deg, #fbf3ea 0%, #f9eee5 48%, #f7e9df 100%);
+      overflow-x: hidden;
+    }
+    button, input { font: inherit; }
+    button { cursor: pointer; }
+    button:focus-visible, input:focus-visible {
+      outline: 3px solid rgba(157, 92, 63, .55); outline-offset: 3px;
+    }
+    .art {
+      position: fixed; inset: 0; width: 100%; height: 100%; pointer-events: none;
+      z-index: 0; opacity: .56;
+    }
+    .app { position: relative; z-index: 1; min-height: 100vh; display: flex; flex-direction: column; }
+    header {
+      width: min(1160px, calc(100% - 48px)); margin: 0 auto; padding: 27px 0 18px;
+      display: flex; align-items: center; justify-content: space-between; gap: 18px;
+    }
+    .brand { display: flex; align-items: center; gap: 12px; }
+    .brand-mark {
+      width: 39px; height: 39px; display: grid; place-items: center; border-radius: 13px;
+      background: #e9c5ae; color: #4d3023; font-family: var(--serif); font-size: 23px;
+      box-shadow: 0 5px 12px rgba(104, 65, 44, .12);
+    }
+    .brand-name { font-family: var(--serif); font-size: 23px; letter-spacing: -.5px; }
+    .brand-sub { color: var(--muted); font-size: 11px; letter-spacing: 1.7px; text-transform: uppercase; margin-top: 1px; }
+    .header-actions { display: flex; gap: 10px; align-items: center; }
+    .btn {
+      border: 0; border-radius: 999px; padding: 11px 18px; min-height: 43px;
+      font-weight: 700; font-size: 13px; letter-spacing: .1px;
+      transition: transform .2s ease, box-shadow .2s ease, background .2s ease, opacity .2s ease;
+    }
+    .btn:hover { transform: translateY(-2px); }
+    .btn:active { transform: translateY(0) scale(.97); }
+    .btn-primary { color: #fffaf6; background: #9c5d43; box-shadow: 0 7px 17px rgba(126, 70, 47, .2); }
+    .btn-primary:hover { background: #874b35; box-shadow: 0 9px 21px rgba(126, 70, 47, .25); }
+    .btn-soft { color: #694533; background: rgba(235, 205, 185, .68); }
+    .btn-soft:hover { background: #e9c5ae; }
+    .btn-quiet { color: #6e5a4e; background: rgba(255,255,255,.45); border: 1px solid var(--line); }
+    main { flex: 1; display: flex; flex-direction: column; align-items: center; padding: 25px 20px 54px; }
+    .intro { text-align: center; margin: 5px 0 20px; }
+    .eyebrow { color: #9a6a51; text-transform: uppercase; letter-spacing: 2.6px; font-size: 10px; font-weight: 700; }
+    h1 { font: 500 clamp(30px, 4vw, 43px)/1.1 var(--serif); margin: 10px 0 7px; letter-spacing: -.8px; }
+    .intro p { margin: 0; color: var(--muted); font-size: 14px; }
+    .progress-wrap { width: min(440px, 90vw); margin: 23px 0 4px; }
+    .progress-meta { display: flex; justify-content: space-between; color: #88766b; font-size: 11px; font-weight: 600; margin-bottom: 8px; }
+    .progress-track { height: 5px; border-radius: 9px; background: rgba(129, 91, 69, .13); overflow: hidden; }
+    .progress-fill { height: 100%; width: 0; border-radius: inherit; background: #b77a5b; transition: width .35s ease; }
+    .stage { width: min(520px, 92vw); height: 345px; position: relative; margin: 7px auto 46px; perspective: 1200px; }
+    .stack-card {
+      position: absolute; inset: 12px 28px 0; border-radius: 27px; pointer-events: none;
+      box-shadow: 0 13px 28px rgba(94, 59, 39, .09);
+    }
+    .stack-one { transform: translate(10px, 9px) rotate(3.1deg); background: #e9d8c8; opacity: .78; }
+    .stack-two { transform: translate(-9px, 17px) rotate(-2.4deg); background: #e5dfc8; opacity: .72; }
+    .stack-three { transform: translate(3px, 24px) rotate(1deg); background: #d9e3d6; opacity: .65; }
+    /* Entrance motion lives on this outer wrapper; the inner card owns only the 3D flip. */
+    .card-motion { position: absolute; inset: 0; border-radius: 27px; }
+    .card-motion.entering { animation: cardEnter .48s cubic-bezier(.2,.8,.2,1) both; }
+    .card-motion.leaving { animation: cardExit .18s ease-in both; pointer-events: none; }
+    @keyframes cardEnter { from { transform: translateY(22px) scale(.94) rotate(-1.5deg); } to { transform: translateY(0) scale(1) rotate(0); } }
+    @keyframes cardExit { to { opacity: 0; transform: translateY(-10px) scale(.98); } }
+    .flashcard {
+      position: absolute; inset: 0; border-radius: 27px; cursor: pointer;
+      transform: rotateY(0deg); transform-style: preserve-3d;
+      transition: transform .6s ease; box-shadow: var(--shadow);
+    }
+    .flashcard.is-flipped { transform: rotateY(180deg); }
+    .face {
+      position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center;
+      justify-content: center; padding: 36px 35px; border-radius: 27px;
+      backface-visibility: hidden; -webkit-backface-visibility: hidden;
+      color: #171310; text-align: center;
+    }
+    .face::before {
+      content: ""; position: absolute; width: 260px; height: 260px; border-radius: 48% 52% 64% 36%;
+      border: 1px solid rgba(255,255,255,.38); transform: rotate(28deg); right: -112px; top: -128px;
+    }
+    .face::after {
+      content: ""; position: absolute; width: 170px; height: 170px; border-radius: 50%;
+      border: 1px solid rgba(255,255,255,.32); left: -85px; bottom: -94px;
+    }
+    .back { transform: rotateY(180deg); visibility: hidden; }
+    .flashcard.is-flipped .back { visibility: visible; }
+    .side-label { position: absolute; top: 27px; left: 30px; z-index: 1; font-size: 10px; text-transform: uppercase; letter-spacing: 2px; font-weight: 700; opacity: .62; }
+    .card-index { position: absolute; top: 26px; right: 29px; z-index: 1; font-size: 11px; opacity: .52; }
+    .word {
+      position: relative; z-index: 1; font: 500 clamp(37px, 7vw, 62px)/1.12 var(--serif);
+      letter-spacing: -1.6px; overflow-wrap: anywhere; max-width: 100%;
+    }
+    .word.long { font-size: clamp(29px, 5.5vw, 48px); }
+    .hint { position: relative; z-index: 1; margin-top: 18px; color: rgba(24,18,14,.58); font-size: 12px; }
+    .card-bottom { position: absolute; bottom: 25px; z-index: 1; font-size: 10px; letter-spacing: 1.3px; text-transform: uppercase; opacity: .48; }
+    .speak-btn {
+      position: absolute; right: 20px; bottom: 18px; z-index: 3;
+      width: 42px; height: 42px; display: grid; place-items: center; padding: 0;
+      border-radius: 50%; border: 1px solid var(--speak-border, rgba(23, 19, 16, .2));
+      background: var(--speak-bg, rgba(23, 19, 16, .12)); color: #171310;
+      box-shadow: 0 4px 12px rgba(60, 38, 26, .1);
+      transition: transform .2s ease, background .2s ease, box-shadow .2s ease;
+    }
+    .speak-btn[hidden] { display: none; }
+    .speak-btn:hover { background: var(--speak-bg-hover, rgba(23, 19, 16, .2)); transform: scale(1.07); }
+    .speak-btn:active { transform: scale(.95); }
+    .speak-btn.speaking { background: var(--speak-bg-hover, rgba(23, 19, 16, .2)); animation: speakPulse 1s ease-in-out infinite; }
+    .speak-btn.speaking .wave { animation: waveFade .9s ease-in-out infinite; }
+    .speak-btn.speaking .wave-2 { animation-delay: .25s; }
+    .flashcard.is-flipped .front .speak-btn { pointer-events: none; }
+    @keyframes speakPulse { 50% { box-shadow: 0 0 0 6px rgba(23, 19, 16, .08); } }
+    @keyframes waveFade { 0%, 100% { opacity: .25; } 50% { opacity: 1; } }
+    .controls { position: relative; display: flex; justify-content: center; align-items: center; gap: 12px; min-height: 52px; }
+    .prev-btn {
+      flex: 0 0 46px; width: 46px; height: 46px; padding: 0; display: grid; place-items: center;
+      border-radius: 50%; color: #694533; background: rgba(235, 205, 185, .82);
+      border: 1px solid rgba(125, 79, 53, .12); box-shadow: 0 5px 13px rgba(126, 70, 47, .08);
+      transition: transform .2s ease, background .2s ease, opacity .2s ease;
+    }
+    .prev-btn:hover:not(:disabled) { background: #e9c5ae; transform: translateY(-2px); }
+    .prev-btn:active:not(:disabled) { transform: scale(.95); }
+    .prev-btn:disabled { opacity: .38; cursor: default; }
+    @media (min-width: 601px) {
+      /* Sits just to the left of the two main buttons so Check Answer and Next stay centred. */
+      .prev-btn { position: absolute; right: calc(100% + 12px); top: 50%; margin-top: -23px; }
+    }
+    .action-btn { min-width: 164px; padding: 14px 26px; font-size: 14px; }
+    .btn-secondary { color: #694533; background: rgba(235, 205, 185, .82); border: 1px solid rgba(125, 79, 53, .12); box-shadow: 0 5px 13px rgba(126, 70, 47, .08); }
+    .btn-secondary:hover { background: #e9c5ae; }
+    .helper { color: #9a887d; font-size: 11px; margin-top: 17px; text-align: center; }
+    .empty-state { display: none; width: min(520px, 92vw); text-align: center; padding: 70px 25px; border: 1px dashed #c9a994; border-radius: 25px; color: var(--muted); background: rgba(255,255,255,.3); }
+    .empty-state strong { display: block; font: 500 28px var(--serif); color: var(--ink); margin-bottom: 8px; }
+    .view { width: min(900px, 100%); display: none; }
+    .view.active { display: block; }
+    .study-view.active { display: flex; flex-direction: column; align-items: center; }
+    .manage-head { display: flex; justify-content: space-between; align-items: center; gap: 16px; margin: 18px 0 20px; }
+    .manage-head h2 { font: 500 31px var(--serif); margin: 0; }
+    .manage-head p { margin: 5px 0 0; color: var(--muted); font-size: 13px; }
+    .card-list { display: grid; gap: 10px; }
+    .managed-card {
+      display: grid; grid-template-columns: minmax(0,1fr) auto; align-items: center; gap: 15px;
+      background: rgba(255,255,255,.52); border: 1px solid rgba(115,78,56,.12);
+      border-radius: 16px; padding: 15px 17px; box-shadow: 0 4px 14px rgba(91,60,43,.04);
+    }
+    .managed-words { min-width: 0; display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+    .managed-word { min-width: 0; }
+    .managed-word small { display: block; color: #9a7b69; font-size: 9px; text-transform: uppercase; letter-spacing: 1.4px; margin-bottom: 4px; }
+    .managed-word span { display: block; overflow-wrap: anywhere; font-size: 14px; font-weight: 600; }
+    .row-actions { display: flex; gap: 7px; }
+    .icon-btn { border: 1px solid var(--line); background: #fffaf6; color: #765440; border-radius: 10px; width: 36px; height: 36px; font-size: 15px; transition: .2s; }
+    .icon-btn:hover { background: #f0d9c8; transform: translateY(-1px); }
+    .icon-btn.delete:hover { background: #f4d4cd; color: #8d3328; }
+    .no-cards { padding: 35px; text-align: center; color: var(--muted); background: rgba(255,255,255,.4); border-radius: 16px; }
+    footer { text-align: center; padding: 18px 15px 25px; color: #a18c7e; font-size: 10px; letter-spacing: .4px; }
+    .modal-backdrop {
+      position: fixed; inset: 0; z-index: 10; background: rgba(48,32,23,.36); backdrop-filter: blur(5px);
+      display: none; align-items: center; justify-content: center; padding: 18px;
+    }
+    .modal-backdrop.open { display: flex; animation: fadeIn .18s ease; }
+    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+    .modal {
+      width: min(440px, 100%); background: #fff8f1; border: 1px solid rgba(255,255,255,.7);
+      border-radius: 24px; padding: 27px; box-shadow: 0 25px 70px rgba(47,30,20,.24);
+      animation: modalIn .25s cubic-bezier(.2,.8,.2,1);
+    }
+    @keyframes modalIn { from { opacity: 0; transform: translateY(12px) scale(.97); } to { opacity: 1; transform: translateY(0) scale(1); } }
+    .modal-top { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 20px; }
+    .modal h2 { margin: 0; font: 500 29px var(--serif); }
+    .modal p { margin: 5px 0 0; color: var(--muted); font-size: 12px; }
+    .close-btn { border: 0; background: transparent; color: #806858; font-size: 24px; line-height: 1; padding: 0 3px; }
+    .field { margin: 15px 0; }
+    .field label { display: block; color: #705848; font-size: 11px; font-weight: 700; margin-bottom: 7px; }
+    .field input { width: 100%; border: 1px solid #e5d2c4; background: #fffdf9; border-radius: 12px; padding: 13px 14px; color: var(--ink); font-size: 14px; }
+    .field input:focus { border-color: #b77a5b; outline: 3px solid rgba(183,122,91,.15); }
+    .field-entry { display: flex; align-items: stretch; gap: 8px; }
+    .field-entry input { min-width: 0; flex: 1; }
+    .mic-btn {
+      flex: 0 0 46px; width: 46px; min-height: 46px; border: 1px solid #e5d2c4; border-radius: 13px;
+      background: #f5e5d9; color: #79513d; font-size: 18px; display: grid; place-items: center;
+      transition: transform .2s ease, background .2s ease, box-shadow .2s ease;
+    }
+    .mic-btn:hover { transform: translateY(-2px); background: #efd6c5; box-shadow: 0 5px 12px rgba(126,70,47,.1); }
+    .mic-btn.listening { background: #f6d7d2; border-color: #d88d82; color: #a43d34; animation: micPulse 1s ease-in-out infinite; }
+    @keyframes micPulse { 50% { box-shadow: 0 0 0 5px rgba(190,83,70,.13); } }
+    .voice-status { min-height: 15px; margin: 5px 2px 0; color: #987766; font-size: 10px; }
+    .voice-status.listening { color: #a43d34; font-weight: 700; }
+    .voice-note { color: #987766; font-size: 10px; line-height: 1.45; margin: 5px 0 0; }
+    .error { min-height: 18px; color: #a33e31; font-size: 11px; margin: 3px 0 8px; }
+    .modal-actions { display: flex; justify-content: flex-end; gap: 9px; margin-top: 15px; }
+    .toast {
+      position: fixed; z-index: 20; bottom: 24px; left: 50%; transform: translate(-50%, 15px);
+      background: #33251e; color: #fff7ef; border-radius: 99px; padding: 11px 17px; font-size: 12px;
+      box-shadow: 0 8px 25px rgba(0,0,0,.15); opacity: 0; pointer-events: none; transition: .25s;
+    }
+    .toast.show { opacity: 1; transform: translate(-50%, 0); }
+    @media (max-width: 600px) {
+      header { width: calc(100% - 30px); padding-top: 18px; }
+      .brand-name { font-size: 20px; }
+      .brand-sub { font-size: 9px; }
+      .header-actions { gap: 6px; }
+      .header-actions .btn { padding: 10px 12px; min-height: 39px; font-size: 11px; }
+      main { padding: 26px 13px 38px; }
+      .intro { margin-bottom: 14px; }
+      .intro p { font-size: 12px; }
+      .stage { height: min(345px, 86vw); min-height: 280px; margin-top: 7px; }
+      .stack-card { inset: 11px 17px 0; }
+      .face { padding: 30px 22px; }
+      .side-label { left: 22px; top: 22px; }
+      .card-index { right: 22px; top: 21px; }
+      .speak-btn { width: 38px; height: 38px; right: 16px; bottom: 15px; }
+      .word { font-size: clamp(38px, 10vw, 54px); }
+      .word.long { font-size: clamp(27px, 7vw, 40px); }
+      .controls { width: min(100%, 420px); gap: 9px; }
+      .action-btn { flex: 1; min-width: 0; padding: 14px 12px; }
+      .manage-head { align-items: flex-start; }
+      .manage-head h2 { font-size: 27px; }
+      .managed-card { padding: 13px; gap: 8px; }
+      .managed-words { gap: 9px; }
+      .managed-word span { font-size: 12px; }
+      .row-actions { gap: 4px; }
+      .icon-btn { width: 32px; height: 32px; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { scroll-behavior: auto !important; animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; }
+    }
+  </style>
+</head>
+<body>
+  <svg class="art" viewBox="0 0 1440 900" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+    <defs>
+      <linearGradient id="blobA" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#efc7ad"/><stop offset="1" stop-color="#f7dfcc"/></linearGradient>
+      <linearGradient id="blobB" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#dce4cf"/><stop offset="1" stop-color="#f1e7cf"/></linearGradient>
+    </defs>
+    <path d="M-130 150C-70 20 100-45 230 10s170 190 82 285S80 390-35 320-190 280-130 150Z" fill="url(#blobA)"/>
+    <path d="M1120 650c80-130 245-190 365-105s135 250 30 350-265 110-360 25-115-140-35-270Z" fill="url(#blobB)"/>
+    <path d="M1110 5c90 30 155 110 130 180s-120 95-185 45-100-145-45-205 55-50 100-20Z" fill="#f0d7c4" opacity=".6"/>
+    <path d="M120 770c160-80 300-55 380 20s35 145-75 155-260-20-330-75-85-60 25-100Z" fill="#e7d7c6" opacity=".55"/>
+    <path d="M0 440c240-90 430-70 600 0s360 70 520 0 260-70 400-15" fill="none" stroke="#d7b8a2" stroke-width="1.2" opacity=".5"/>
+    <path d="M-30 470c240-90 430-70 600 0s360 70 520 0 260-70 400-15" fill="none" stroke="#d7b8a2" stroke-width="1.2" opacity=".35"/>
+  </svg>
+
+  <div class="app">
+    <header>
+      <div class="brand">
+        <div class="brand-mark" aria-hidden="true">W</div>
+        <div><div class="brand-name">Wortschatz</div><div class="brand-sub">English · Deutsch</div></div>
+      </div>
+      <div class="header-actions">
+        <button class="btn btn-quiet" id="manageBtn" type="button">Manage Cards</button>
+        <button class="btn btn-primary" id="addBtn" type="button">＋ Add Card</button>
+      </div>
+    </header>
+
+    <main>
+      <section class="view study-view active" id="studyView" aria-label="Vocabulary flashcards">
+        <div class="intro">
+          <div class="eyebrow">A little practice, every day</div>
+          <h1>Build your German vocabulary.</h1>
+          <p>Think of the translation, then turn the card to check.</p>
+        </div>
+        <div class="progress-wrap" id="progressWrap">
+          <div class="progress-meta"><span id="counter">Card 1 of 20</span><span id="remaining">20 to learn</span></div>
+          <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
+        </div>
+        <div class="stage" id="stage">
+          <div class="stack-card stack-three"></div>
+          <div class="stack-card stack-two"></div>
+          <div class="stack-card stack-one"></div>
+          <div class="card-motion" id="cardMotion">
+            <div class="flashcard" id="flashcard" role="button" tabindex="0" aria-label="Flashcard. Activate to reveal the German translation.">
+            <div class="face front" id="frontFace">
+              <span class="side-label">English</span><span class="card-index" id="frontIndex">01</span>
+              <div class="word" id="englishWord">happy</div>
+              <div class="hint">What is this in Deutsch?</div>
+              <div class="card-bottom">WORTSCHATZ · VOCABULARY</div>
+              <button class="speak-btn" id="speakEnglish" type="button" aria-label="Listen to the English word" title="Listen (English)"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 5 6 9H3v6h3l5 4V5z" fill="currentColor" stroke="none"/><path class="wave wave-1" d="M15.5 9a4.5 4.5 0 0 1 0 6"/><path class="wave wave-2" d="M18.5 6.5a8.5 8.5 0 0 1 0 11"/></svg></button>
+            </div>
+            <div class="face back" id="backFace">
+              <span class="side-label">Deutsch</span><span class="card-index" id="backIndex">01</span>
+              <div class="word" id="germanWord">glücklich</div>
+              <div class="hint">Deutsch translation revealed</div>
+              <div class="card-bottom">GUT GEMACHT · WELL DONE</div>
+              <button class="speak-btn" id="speakGerman" type="button" aria-label="Listen to the German word" title="Listen (Deutsch)"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 5 6 9H3v6h3l5 4V5z" fill="currentColor" stroke="none"/><path class="wave wave-1" d="M15.5 9a4.5 4.5 0 0 1 0 6"/><path class="wave wave-2" d="M18.5 6.5a8.5 8.5 0 0 1 0 11"/></svg></button>
+            </div>
+            </div>
+          </div>
+        </div>
+        <div class="empty-state" id="emptyState"><strong>Your deck is empty.</strong>Add a few cards to start learning.</div>
+        <div class="controls" id="controls">
+          <button class="prev-btn" id="prevBtn" type="button" aria-label="Previous card" title="Previous card (Left Arrow)"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5"/><path d="m11 6-6 6 6 6"/></svg></button>
+          <button class="btn btn-secondary action-btn" id="checkAnswerBtn" type="button">Check Answer</button>
+          <button class="btn btn-primary action-btn" id="nextBtn" type="button">Next</button>
+        </div>
+        <div class="helper" id="helper">Tip: Space flips · Left Arrow goes back · Right Arrow or Enter goes to the next card </div>
+      </section>
+
+      <section class="view" id="manageView" aria-label="Manage vocabulary cards">
+        <div class="manage-head">
+          <div><h2>Your vocabulary deck</h2><p id="manageCount">20 cards saved on this device</p></div>
+          <button class="btn btn-soft" id="backBtn" type="button">← Back to study</button>
+        </div>
+        <div class="card-list" id="cardList"></div>
+      </section>
+    </main>
+    <footer>Made for curious minds · Your can do it Saif</footer>
+  </div>
+
+  <div class="modal-backdrop" id="modalBackdrop" role="presentation">
+    <section class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+      <div class="modal-top">
+        <div><h2 id="modalTitle">Add a new card</h2><p>Give yourself one more word to remember.</p></div>
+        <button class="close-btn" id="closeModal" type="button" aria-label="Close dialog">×</button>
+      </div>
+      <form id="cardForm" novalidate>
+        <div class="field">
+          <label for="englishInput">ENGLISH</label>
+          <div class="field-entry"><input id="englishInput" name="english" type="text" maxlength="100" placeholder="e.g. beautiful" autocomplete="off" required><button class="mic-btn" id="englishMic" type="button" aria-label="Speak English word" title="Speak English word">🎙</button></div>
+          <div class="voice-status" id="englishVoiceStatus" aria-live="polite"></div>
+        </div>
+        <div class="field">
+          <label for="germanInput">GERMAN · DEUTSCH</label>
+          <div class="field-entry"><input id="germanInput" name="german" type="text" maxlength="100" placeholder="e.g. schön" autocomplete="off" required><button class="mic-btn" id="germanMic" type="button" aria-label="Speak German word" title="Speak German word">🎙</button></div>
+          <div class="voice-status" id="germanVoiceStatus" aria-live="polite"></div>
+        </div>
+        <p class="voice-note" id="voiceNote">Speak naturally. You can edit the recognised text before saving.</p>
+        <div class="error" id="formError" role="alert" aria-live="polite"></div>
+        <div class="modal-actions">
+          <button class="btn btn-quiet" id="cancelModal" type="button">Cancel</button>
+          <button class="btn btn-primary" type="submit" id="saveBtn">Save Card</button>
+        </div>
+      </form>
+    </section>
+  </div>
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+  <script>
+    (() => {
+      "use strict";
+
+      const STORAGE_KEY = "wortschatz-vocabulary-cards-v1";
+      const starterCards = [
+        ["happy", "glücklich"], ["thank you", "danke"], ["good morning", "Guten Morgen"],
+        ["water", "das Wasser"], ["house", "das Haus"], ["friend", "der Freund / die Freundin"],
+        ["book", "das Buch"], ["beautiful", "schön"], ["good evening", "Guten Abend"],
+        ["please / you're welcome", "bitte"], ["bread", "das Brot"], ["apple", "der Apfel"],
+        ["family", "die Familie"], ["school", "die Schule"], ["cat", "die Katze"],
+        ["dog", "der Hund"], ["to learn", "lernen"], ["to speak", "sprechen"],
+        ["goodbye", "Auf Wiedersehen"], ["how are you?", "Wie geht es dir?"]
+      ];
+      // Fifty distinct, high-lightness pastel colours. Text remains dark on every card.
+      const palette = [
+        "#F6D5C8", "#F4E3A1", "#CFE8D5", "#CFE5F4", "#DDD3F1", "#F2CED8", "#DCE7C5", "#F5D7A8", "#C7E7E5", "#F4C9B8",
+        "#E7D8C8", "#D6E0F2", "#EAD4EA", "#D4E8C9", "#F1E0C7", "#C8DDE2", "#EBCFC1", "#D9D4E8", "#E8E6B9", "#D2E8DC",
+        "#F6DCCB", "#C9DFF0", "#E6CFE0", "#D8E6D0", "#F0D5A6", "#C7E0D9", "#EAD8C9", "#D5DFF0", "#EFD0C8", "#D9E8E8",
+        "#E4D7B9", "#D7E2C8", "#F2D2E5", "#C9E2EF", "#EADBCF", "#D8D2C2", "#F5E0B5", "#D2E2D4", "#E3D2F0", "#F0D1B9",
+        "#C9E7DE", "#E7D3CB", "#D1DCEB", "#E8E1C9", "#F3D5D0", "#D5E9C7", "#D9D2E4", "#F4E0D0", "#CBE3DC", "#E9D1B7"
+      ];
+      const PALETTE_STORAGE_KEY = "wortschatz-palette-cycle-v1";
+
+      const $ = (id) => document.getElementById(id);
+      const els = {
+        studyView: $("studyView"), manageView: $("manageView"), stage: $("stage"),
+        flashcard: $("flashcard"), cardMotion: $("cardMotion"), frontFace: $("frontFace"), backFace: $("backFace"),
+        stackOne: document.querySelector(".stack-one"), stackTwo: document.querySelector(".stack-two"), stackThree: document.querySelector(".stack-three"),
+        english: $("englishWord"), german: $("germanWord"), frontIndex: $("frontIndex"), backIndex: $("backIndex"),
+        counter: $("counter"), remaining: $("remaining"), progress: $("progressFill"),
+        controls: $("controls"), checkAnswer: $("checkAnswerBtn"), next: $("nextBtn"), prev: $("prevBtn"), empty: $("emptyState"), helper: $("helper"),
+        modal: $("modalBackdrop"), form: $("cardForm"), englishInput: $("englishInput"),
+        germanInput: $("germanInput"), error: $("formError"), modalTitle: $("modalTitle"),
+        saveBtn: $("saveBtn"), cardList: $("cardList"), manageCount: $("manageCount"),
+        toast: $("toast"), englishMic: $("englishMic"), germanMic: $("germanMic"),
+        englishVoiceStatus: $("englishVoiceStatus"), germanVoiceStatus: $("germanVoiceStatus"), voiceNote: $("voiceNote")
+      };
+
+      let cards = loadCards();
+      let deckOrder = [];
+      let deckPosition = 0;
+      let currentCardId = null;
+      let isFlipped = false;
+      let editingId = null;
+      let toastTimer = null;
+      let isTransitioning = false;
+      let transitionFallback = null;
+
+      function shuffledPalette(excludeFirst = null) {
+        const order = [...palette];
+        for (let i = order.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [order[i], order[j]] = [order[j], order[i]];
+        }
+        if (excludeFirst && order[0] === excludeFirst) {
+          const swapIndex = order.findIndex((color, index) => index > 0 && color !== excludeFirst);
+          if (swapIndex > 0) [order[0], order[swapIndex]] = [order[swapIndex], order[0]];
+        }
+        return order;
+      }
+      function loadPaletteCycle() {
+        try {
+          const saved = JSON.parse(localStorage.getItem(PALETTE_STORAGE_KEY) || "null");
+          if (saved && Array.isArray(saved.order) && saved.order.length === palette.length &&
+              saved.order.every(color => palette.includes(color)) && Number.isInteger(saved.index) &&
+              saved.index >= 0 && saved.index <= palette.length) return saved;
+        } catch (error) { console.warn("Could not read the saved colour cycle:", error); }
+        return { order: shuffledPalette(), index: 0, lastColor: null };
+      }
+      let paletteCycle = loadPaletteCycle();
+      function nextPaletteColor() {
+        if (paletteCycle.index >= palette.length) {
+          paletteCycle.order = shuffledPalette(paletteCycle.lastColor);
+          paletteCycle.index = 0;
+        }
+        const color = paletteCycle.order[paletteCycle.index++];
+        paletteCycle.lastColor = color;
+        try { localStorage.setItem(PALETTE_STORAGE_KEY, JSON.stringify(paletteCycle)); }
+        catch (error) { console.warn("Could not save the colour cycle:", error); }
+        return color;
+      }
+
+      function makeId() {
+        return "card-" + Date.now().toString(36) + "-" + Math.random().toString(36).slice(2, 8);
+      }
+      function loadCards() {
+        try {
+          const saved = localStorage.getItem(STORAGE_KEY);
+          if (saved !== null) {
+            const parsed = JSON.parse(saved);
+            if (Array.isArray(parsed)) return parsed.filter(c => c && typeof c.english === "string" && typeof c.german === "string");
+          }
+        } catch (error) { console.warn("Could not read saved vocabulary cards:", error); }
+        return starterCards.map(([english, german]) => ({ id: makeId(), english, german, color: null }));
+      }
+      function saveCards() {
+        try { localStorage.setItem(STORAGE_KEY, JSON.stringify(cards)); }
+        catch (error) { showToast("Could not save. Browser storage may be full."); console.error(error); }
+      }
+      function shuffleDeck() {
+        deckOrder = cards.map(card => card.id);
+        for (let i = deckOrder.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [deckOrder[i], deckOrder[j]] = [deckOrder[j], deckOrder[i]];
+        }
+        deckPosition = 0;
+      }
+      function currentCard() {
+        return cards.find(card => card.id === deckOrder[deckPosition]) || null;
+      }
+      function shadeColor(hex, factor) {
+        const n = parseInt(hex.slice(1), 16);
+        const channel = shift => Math.round(((n >> shift) & 255) * factor).toString(16).padStart(2, "0");
+        return "#" + channel(16) + channel(8) + channel(0);
+      }
+      function updateCardColor(card) {
+        const color = card.color || palette[0];
+        els.frontFace.style.background = color;
+        els.backFace.style.background = color;
+        // The speaker button uses a darker shade of this card's own colour.
+        [els.frontFace, els.backFace].forEach(face => {
+          face.style.setProperty("--speak-bg", shadeColor(color, 0.85));
+          face.style.setProperty("--speak-bg-hover", shadeColor(color, 0.77));
+          face.style.setProperty("--speak-border", shadeColor(color, 0.66));
+        });
+        const colorIndex = Math.max(0, palette.indexOf(color));
+        els.stackOne.style.background = palette[(colorIndex + 1) % palette.length];
+        els.stackTwo.style.background = palette[(colorIndex + 2) % palette.length];
+        els.stackThree.style.background = palette[(colorIndex + 3) % palette.length];
+      }
+      function updateProgress() {
+        const total = cards.length;
+        const shown = total ? Math.min(deckPosition + 1, total) : 0;
+        els.counter.textContent = total ? `Card ${shown} of ${total}` : "No cards yet";
+        els.remaining.textContent = total ? `${total - deckPosition - 1} remaining` : "0 to learn";
+        els.progress.style.width = total ? `${(shown / total) * 100}%` : "0%";
+      }
+      function renderCard(animate = false, assignFreshColor = false) {
+        const card = currentCard();
+        if (!card) {
+          els.stage.style.display = "none";
+          els.progress.parentElement.parentElement.style.display = "none";
+          els.controls.style.display = "none";
+          els.empty.style.display = "block";
+          updateProgress();
+          return;
+        }
+        els.stage.style.display = "block";
+        els.progress.parentElement.parentElement.style.display = "block";
+        els.controls.style.display = "flex";
+        els.empty.style.display = "none";
+        currentCardId = card.id;
+        isFlipped = false;
+        els.flashcard.classList.remove("is-flipped");
+        if (assignFreshColor || !palette.includes(card.color)) {
+          card.color = nextPaletteColor();
+          saveCards();
+        }
+        updateCardColor(card);
+        els.english.textContent = card.english;
+        els.german.textContent = card.german;
+        els.frontIndex.textContent = String(deckPosition + 1).padStart(2, "0");
+        els.backIndex.textContent = String(deckPosition + 1).padStart(2, "0");
+        els.english.classList.toggle("long", card.english.length > 18);
+        els.german.classList.toggle("long", card.german.length > 18);
+        els.flashcard.setAttribute("aria-label", `English: ${card.english}. Activate to reveal the German translation.`);
+        syncSpeakButtons();
+        updatePrevButton();
+        updateProgress();
+        if (animate) {
+          els.cardMotion.classList.remove("leaving", "entering");
+          void els.cardMotion.offsetWidth;
+          els.cardMotion.classList.add("entering");
+        }
+      }
+      function flipCard() {
+        if (!currentCard() || isTransitioning) return;
+        stopSpeech();
+        isFlipped = !isFlipped;
+        syncSpeakButtons();
+        els.flashcard.classList.toggle("is-flipped", isFlipped);
+        if (isFlipped) {
+          els.flashcard.setAttribute("aria-label", `German: ${currentCard().german}. Activate to flip back to English.`);
+          els.helper.textContent = "German revealed. Press Check Answer again to flip back, or Next to continue.";
+        } else {
+          els.flashcard.setAttribute("aria-label", `English: ${currentCard().english}. Activate to reveal the German translation.`);
+          els.helper.textContent = "English side. Press Space to reveal · Right Arrow or Enter for the next card.";
+        }
+      }
+      function updatePrevButton() {
+        els.prev.disabled = isTransitioning || deckPosition <= 0;
+      }
+      function prevCard() {
+        if (!cards.length || isTransitioning || deckPosition <= 0) return;
+        nextCard(-1);
+      }
+      function nextCard(direction = 1) {
+        if (!cards.length || isTransitioning) return;
+        stopSpeech();
+        isTransitioning = true;
+        els.next.disabled = true;
+        els.checkAnswer.disabled = true;
+        els.prev.disabled = true;
+        els.cardMotion.classList.remove("entering", "leaving");
+        void els.cardMotion.offsetWidth;
+        els.cardMotion.classList.add("leaving");
+
+        let finished = false;
+        const swapAfterExit = () => {
+          if (finished) return;
+          finished = true;
+          if (transitionFallback) { clearTimeout(transitionFallback); transitionFallback = null; }
+          els.cardMotion.removeEventListener("animationend", onExitAnimationEnd);
+
+          if (direction < 0) {
+            deckPosition = Math.max(0, deckPosition - 1);
+          } else if (deckPosition >= deckOrder.length - 1) {
+            shuffleDeck();
+            showToast("Deck complete — reshuffled for another round!");
+          } else {
+            deckPosition++;
+          }
+
+          // The old card is fully invisible now. Reset the 3D transform without a transition
+          // before replacing either face, so the next German side cannot flash into view.
+          els.flashcard.style.transition = "none";
+          els.flashcard.classList.remove("is-flipped");
+          isFlipped = false;
+          renderCard(false, direction > 0); // going back keeps the colour that card already had
+          void els.flashcard.offsetWidth; // force the unflipped English-side layout to commit
+          els.flashcard.style.transition = "";
+          els.cardMotion.classList.remove("leaving", "entering");
+          void els.cardMotion.offsetWidth;
+          els.cardMotion.classList.add("entering");
+          els.helper.textContent = "Tip: Space flips · Left Arrow goes back · Right Arrow or Enter goes to the next card · Esc closes dialogs";
+
+          let entered = false;
+          const finishEntrance = (event) => {
+            if (entered || (event && event.animationName !== "cardEnter")) return;
+            entered = true;
+            els.cardMotion.removeEventListener("animationend", finishEntrance);
+            if (transitionFallback) { clearTimeout(transitionFallback); transitionFallback = null; }
+            els.cardMotion.classList.remove("entering");
+            isTransitioning = false;
+            els.next.disabled = false;
+            els.checkAnswer.disabled = false;
+            updatePrevButton();
+          };
+          els.cardMotion.addEventListener("animationend", finishEntrance);
+          transitionFallback = window.setTimeout(() => finishEntrance(), 650);
+        };
+        const onExitAnimationEnd = event => {
+          if (event.animationName === "cardExit") swapAfterExit();
+        };
+        els.cardMotion.addEventListener("animationend", onExitAnimationEnd);
+        transitionFallback = window.setTimeout(swapAfterExit, 260);
+      }
+      function showToast(message) {
+        els.toast.textContent = message;
+        els.toast.classList.add("show");
+        clearTimeout(toastTimer);
+        toastTimer = window.setTimeout(() => els.toast.classList.remove("show"), 2300);
+      }
+      // Text-to-speech: the speaker button reads the word on the side that is showing.
+      const synth = window.speechSynthesis;
+      const ttsSupported = !!synth && typeof window.SpeechSynthesisUtterance === "function";
+      const speakButtons = { english: $("speakEnglish"), german: $("speakGerman") };
+      let ttsVoices = [];
+      let speakTimer = null;
+      let currentUtterance = null;
+      let germanVoiceNoted = false;
+      function refreshVoices() { if (ttsSupported) ttsVoices = synth.getVoices() || []; }
+      function pickVoice(lang) {
+        const wanted = lang.toLowerCase();
+        const base = wanted.slice(0, 2);
+        const norm = voice => (voice.lang || "").toLowerCase().replace("_", "-");
+        const candidates = ttsVoices.filter(voice => norm(voice).startsWith(base));
+        if (!candidates.length) return null;
+        const score = voice => (norm(voice) === wanted ? 4 : 0) +
+          (/natural|neural|online/i.test(voice.name) ? 3 : 0) + (/google/i.test(voice.name) ? 2 : 0);
+        return candidates.sort((a, b) => score(b) - score(a))[0];
+      }
+      function stopSpeech() {
+        if (!ttsSupported) return;
+        clearTimeout(speakTimer);
+        currentUtterance = null;
+        synth.cancel();
+        Object.values(speakButtons).forEach(button => button.classList.remove("speaking"));
+      }
+      function syncSpeakButtons() {
+        // Keep keyboard focus on the button of the side that is actually showing.
+        speakButtons.english.tabIndex = isFlipped ? -1 : 0;
+        speakButtons.german.tabIndex = isFlipped ? 0 : -1;
+      }
+      function speakWord(key) {
+        const card = currentCard();
+        if (!ttsSupported || !card) return;
+        const isGerman = key === "german";
+        // "der Freund / die Freundin" is read with a pause instead of the word "slash".
+        const text = (isGerman ? card.german : card.english).replace(/\s*\/\s*/g, ", ").trim();
+        if (!text) return;
+        refreshVoices();
+        const wasBusy = synth.speaking || synth.pending;
+        stopSpeech();
+        const utterance = new SpeechSynthesisUtterance(text);
+        utterance.lang = isGerman ? "de-DE" : "en-US";
+        const voice = pickVoice(utterance.lang);
+        if (voice) utterance.voice = voice;
+        else if (isGerman && ttsVoices.length && !germanVoiceNoted) {
+          germanVoiceNoted = true;
+          showToast("No German voice found on this device. Install one in your system speech settings for the best pronunciation.");
+        }
+        utterance.rate = 0.9;
+        const button = speakButtons[key];
+        const finish = () => { if (currentUtterance === utterance) button.classList.remove("speaking"); };
+        utterance.onstart = () => { if (currentUtterance === utterance) button.classList.add("speaking"); };
+        utterance.onend = finish;
+        utterance.onerror = finish;
+        currentUtterance = utterance;
+        // Chrome can drop a speak() that comes straight after cancel(), so only delay when something was playing.
+        if (wasBusy) speakTimer = window.setTimeout(() => synth.speak(utterance), 60);
+        else synth.speak(utterance);
+      }
+      if (ttsSupported) {
+        refreshVoices();
+        if (synth.addEventListener) synth.addEventListener("voiceschanged", refreshVoices);
+        else synth.onvoiceschanged = refreshVoices;
+        Object.entries(speakButtons).forEach(([key, button]) => {
+          button.addEventListener("click", event => {
+            event.stopPropagation(); // never flip the card when the speaker is pressed
+            speakWord(key);
+          });
+        });
+      } else {
+        Object.values(speakButtons).forEach(button => { button.hidden = true; button.disabled = true; });
+      }
+      // Web Speech API: each field owns a separate, language-locked recognizer.
+      const SpeechRecognitionAPI = window.SpeechRecognition || window.webkitSpeechRecognition;
+      let activeRecognition = null;
+      const recognitionByLanguage = {};
+      const voiceFields = {
+        english: { input: els.englishInput, button: els.englishMic, status: els.englishVoiceStatus, lang: "en-US", label: "English" },
+        german: { input: els.germanInput, button: els.germanMic, status: els.germanVoiceStatus, lang: "de-DE", label: "German" }
+      };
+      function cleanSpeechText(value) {
+        return value.trim().replace(/\s+/g, " ").replace(/[.\s]+$/, "").trim();
+      }
+      function setVoiceStatus(field, message, listening = false) {
+        field.status.textContent = message;
+        field.status.classList.toggle("listening", listening);
+        field.button.classList.toggle("listening", listening);
+        field.button.setAttribute("aria-pressed", listening ? "true" : "false");
+      }
+      function stopActiveRecognition() {
+        if (!activeRecognition) return;
+        const old = activeRecognition;
+        activeRecognition = null;
+        try { old.stop(); } catch (_) { try { old.abort(); } catch (__) {} }
+      }
+      function startVoiceInput(fieldKey) {
+        const field = voiceFields[fieldKey];
+        if (!SpeechRecognitionAPI) return;
+        const recognition = recognitionByLanguage[fieldKey];
+        if (!recognition) return;
+        if (activeRecognition === recognition) {
+          stopActiveRecognition();
+          setVoiceStatus(field, "Voice input stopped.");
+          return;
+        }
+        if (activeRecognition) {
+          const previousKey = Object.keys(recognitionByLanguage).find(key => recognitionByLanguage[key] === activeRecognition);
+          stopActiveRecognition();
+          if (previousKey) setVoiceStatus(voiceFields[previousKey], "");
+        }
+
+        const baseText = field.input.value.trim();
+        recognition._baseText = baseText;
+        recognition._ownerKey = fieldKey;
+        setVoiceStatus(field, "Listening... Speak now.", true);
+        activeRecognition = recognition;
+        try { recognition.start(); }
+        catch (error) {
+          activeRecognition = null;
+          setVoiceStatus(field, "Could not start microphone. Please try again.");
+        }
+      }
+      if (SpeechRecognitionAPI) {
+        Object.entries(voiceFields).forEach(([key, field]) => {
+          const recognition = new SpeechRecognitionAPI();
+          recognition.lang = field.lang;
+          recognition.continuous = false;
+          recognition.interimResults = true;
+          recognition.maxAlternatives = 1;
+          recognitionByLanguage[key] = recognition;
+          recognition.onresult = event => {
+            if (activeRecognition !== recognition) return;
+            let finalText = "";
+            let interimText = "";
+            for (let i = 0; i < event.results.length; i++) {
+              const transcript = event.results[i][0].transcript;
+              if (event.results[i].isFinal) finalText += transcript + " ";
+              else interimText += transcript;
+            }
+            const combined = [recognition._baseText, finalText, interimText].filter(Boolean).join(" ");
+            field.input.value = cleanSpeechText(combined);
+          };
+          recognition.onerror = event => {
+            if (activeRecognition !== recognition) return;
+            activeRecognition = null;
+            if (event.error === "not-allowed" || event.error === "service-not-allowed") {
+              setVoiceStatus(field, "Microphone permission denied. Allow microphone access in your browser's site settings, then try again.");
+            } else if (event.error === "no-speech") {
+              setVoiceStatus(field, "No speech detected. Tap the microphone and try again.");
+            } else {
+              setVoiceStatus(field, "Voice input had a problem. Please try again.");
+            }
+          };
+          recognition.onend = () => {
+            if (activeRecognition === recognition) activeRecognition = null;
+            if (!field.status.textContent.startsWith("Microphone permission denied") &&
+                !field.status.textContent.startsWith("No speech detected") &&
+                !field.status.textContent.startsWith("Voice input had a problem")) {
+              setVoiceStatus(field, field.input.value.trim() ? "Dictation complete. You can edit the text." : "");
+            }
+            field.input.value = cleanSpeechText(field.input.value);
+          };
+          field.button.addEventListener("click", () => startVoiceInput(key));
+        });
+      } else {
+        [els.englishMic, els.germanMic].forEach(button => { button.hidden = true; button.disabled = true; });
+        els.voiceNote.textContent = "Voice input works in Chrome, Edge or Safari. You can still type your cards normally.";
+      }
+
+      function openModal(card = null) {
+        editingId = card ? card.id : null;
+        els.modalTitle.textContent = card ? "Edit your card" : "Add a new card";
+        els.saveBtn.textContent = card ? "Save Changes" : "Save Card";
+        els.englishInput.value = card ? card.english : "";
+        els.germanInput.value = card ? card.german : "";
+        els.error.textContent = "";
+        if (activeRecognition) stopActiveRecognition();
+        Object.values(voiceFields).forEach(field => setVoiceStatus(field, ""));
+        els.modal.classList.add("open");
+        window.setTimeout(() => els.englishInput.focus(), 40);
+      }
+      function closeModal() {
+        if (activeRecognition) stopActiveRecognition();
+        Object.values(voiceFields).forEach(field => setVoiceStatus(field, ""));
+        els.modal.classList.remove("open");
+        editingId = null;
+        els.form.reset();
+        els.error.textContent = "";
+      }
+      function renderManage() {
+        els.manageCount.textContent = `${cards.length} ${cards.length === 1 ? "card" : "cards"} saved on this device`;
+        els.cardList.innerHTML = "";
+        if (!cards.length) {
+          const empty = document.createElement("div");
+          empty.className = "no-cards";
+          empty.textContent = "No cards yet. Use “Add Card” to build your deck.";
+          els.cardList.append(empty);
+          return;
+        }
+        cards.forEach(card => {
+          const row = document.createElement("article");
+          row.className = "managed-card";
+          const words = document.createElement("div");
+          words.className = "managed-words";
+          [["English", card.english], ["Deutsch", card.german]].forEach(([label, value]) => {
+            const item = document.createElement("div");
+            item.className = "managed-word";
+            const small = document.createElement("small");
+            small.textContent = label;
+            const span = document.createElement("span");
+            span.textContent = value;
+            item.append(small, span);
+            words.append(item);
+          });
+          const actions = document.createElement("div");
+          actions.className = "row-actions";
+          const edit = document.createElement("button");
+          edit.type = "button"; edit.className = "icon-btn"; edit.textContent = "✎";
+          edit.setAttribute("aria-label", `Edit ${card.english}`);
+          edit.addEventListener("click", () => openModal(card));
+          const del = document.createElement("button");
+          del.type = "button"; del.className = "icon-btn delete"; del.textContent = "×";
+          del.setAttribute("aria-label", `Delete ${card.english}`);
+          del.addEventListener("click", () => deleteCard(card.id));
+          actions.append(edit, del);
+          row.append(words, actions);
+          els.cardList.append(row);
+        });
+      }
+      function deleteCard(id) {
+        const card = cards.find(c => c.id === id);
+        if (!card || !window.confirm(`Delete “${card.english}” from your vocabulary deck?`)) return;
+        cards = cards.filter(c => c.id !== id);
+        saveCards();
+        if (!cards.length) {
+          deckOrder = []; deckPosition = 0;
+        } else if (!deckOrder.includes(id)) {
+          // The current shuffled round remains intact.
+        } else {
+          const wasCurrent = deckOrder[deckPosition] === id;
+          deckOrder = deckOrder.filter(cardId => cardId !== id);
+          if (wasCurrent && deckPosition >= deckOrder.length) deckPosition = 0;
+          if (deckPosition < 0) deckPosition = 0;
+        }
+        renderManage();
+        showToast("Card deleted.");
+      }
+      function showView(view) {
+        const managing = view === "manage";
+        els.studyView.classList.toggle("active", !managing);
+        els.manageView.classList.toggle("active", managing);
+        if (managing) renderManage();
+        else {
+          // Rebuild the round so additions and edits are reflected cleanly.
+          shuffleDeck();
+          renderCard(false, true);
+        }
+      }
+
+      $("addBtn").addEventListener("click", () => openModal());
+      $("manageBtn").addEventListener("click", () => showView("manage"));
+      $("backBtn").addEventListener("click", () => showView("study"));
+      $("closeModal").addEventListener("click", closeModal);
+      $("cancelModal").addEventListener("click", closeModal);
+      els.modal.addEventListener("click", event => { if (event.target === els.modal) closeModal(); });
+      els.checkAnswer.addEventListener("click", flipCard);
+      els.next.addEventListener("click", () => nextCard(1));
+      els.prev.addEventListener("click", prevCard);
+      els.flashcard.addEventListener("click", flipCard);
+      els.form.addEventListener("submit", event => {
+        event.preventDefault();
+        const english = els.englishInput.value.trim();
+        const german = els.germanInput.value.trim();
+        if (!english || !german) {
+          els.error.textContent = "Please fill in both the English and German fields.";
+          (!english ? els.englishInput : els.germanInput).focus();
+          return;
+        }
+        if (editingId) {
+          const existing = cards.find(card => card.id === editingId);
+          if (existing) { existing.english = english; existing.german = german; }
+          showToast("Card updated.");
+        } else {
+          cards.push({ id: makeId(), english, german, color: null });
+          showToast("New card added to your deck.");
+        }
+        saveCards();
+        closeModal();
+        if (els.manageView.classList.contains("active")) renderManage();
+        else { shuffleDeck(); renderCard(true, true); }
+      });
+      document.addEventListener("keydown", event => {
+        if (event.key === "Escape" && els.modal.classList.contains("open")) {
+          closeModal(); return;
+        }
+        if (els.modal.classList.contains("open")) return;
+        if (!els.studyView.classList.contains("active")) return;
+        const target = event.target;
+        if (target && (target.tagName === "INPUT" || target.isContentEditable)) return;
+        // Space and Enter keep their normal press behaviour on a focused button; the arrows always work.
+        const onButton = !!target && target.tagName === "BUTTON";
+        if (event.code === "Space") {
+          if (onButton) return;
+          event.preventDefault();
+          flipCard();
+        } else if (event.key === "ArrowRight" || (event.key === "Enter" && !onButton)) {
+          event.preventDefault();
+          nextCard();
+        } else if (event.key === "ArrowLeft") {
+          event.preventDefault();
+          prevCard();
+        }
+      });
+
+      // A first visit receives the starter deck; subsequent visits use localStorage.
+      try { if (cards.length && !localStorage.getItem(STORAGE_KEY)) saveCards(); } catch (error) { console.warn("Storage unavailable:", error); }
+      shuffleDeck();
+      renderCard(false, true);
+    })();
+  </script>
+</body>
+</html>
