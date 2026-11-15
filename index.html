@@ -220,11 +220,49 @@
       box-shadow: 0 8px 25px rgba(0,0,0,.15); opacity: 0; pointer-events: none; transition: .25s;
     }
     .toast.show { opacity: 1; transform: translate(-50%, 0); }
+
+    /* ===== Added: deck picker, Again button, deck manager ===== */
+    .deck-picker { position: relative; z-index: 5; display: flex; justify-content: center; margin: 0 0 6px; }
+    .deck-btn { display: inline-flex; align-items: center; gap: 9px; max-width: min(320px, 86vw); }
+    .deck-btn #deckBtnName { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .deck-btn .chev { font-size: 11px; transition: transform .2s ease; }
+    .deck-btn[aria-expanded="true"] .chev { transform: rotate(180deg); }
+    .deck-menu {
+      position: absolute; top: calc(100% + 8px); left: 50%; transform: translateX(-50%);
+      width: min(300px, 88vw); max-height: 290px; overflow-y: auto; padding: 7px;
+      background: #fff8f1; border: 1px solid rgba(115,78,56,.14); border-radius: 18px;
+      box-shadow: 0 20px 50px rgba(47,30,20,.2); animation: modalIn .2s cubic-bezier(.2,.8,.2,1);
+    }
+    .deck-menu[hidden] { display: none; }
+    .deck-option {
+      width: 100%; display: flex; justify-content: space-between; align-items: center; gap: 12px;
+      border: 0; background: transparent; color: #4d3023; padding: 11px 13px; border-radius: 12px;
+      font-size: 13px; font-weight: 600; text-align: left; transition: background .2s ease;
+    }
+    .deck-option:hover { background: rgba(235, 205, 185, .55); }
+    .deck-option.active { background: rgba(235, 205, 185, .82); }
+    .deck-option span:first-child { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .deck-option small { color: #9a7b69; font-size: 11px; font-weight: 600; flex: none; }
+    .again-btn {
+      flex: 0 0 46px; width: 46px; height: 46px; padding: 0; display: grid; place-items: center;
+      border-radius: 50%; color: #694533; background: rgba(235, 205, 185, .82);
+      border: 1px solid rgba(125, 79, 53, .12); box-shadow: 0 5px 13px rgba(126, 70, 47, .08);
+      transition: transform .2s ease, background .2s ease, opacity .2s ease;
+    }
+    .again-btn:hover:not(:disabled) { background: #e9c5ae; transform: translateY(-2px); }
+    .again-btn:active:not(:disabled) { transform: scale(.95); }
+    .again-btn:disabled { opacity: .38; cursor: default; }
+    @media (min-width: 601px) {
+      /* Mirrors the back button: sits just to the right of Next so the main buttons stay centred. */
+      .again-btn { position: absolute; left: calc(100% + 12px); top: 50%; margin-top: -23px; }
+    }
+    .deck-tag { display: inline-block; margin-left: 8px; padding: 2px 8px; border-radius: 99px; background: rgba(235,205,185,.8); color: #694533; font-size: 9px; letter-spacing: 1px; text-transform: uppercase; font-weight: 700; vertical-align: middle; }
+
     @media (max-width: 600px) {
       header { width: calc(100% - 30px); padding-top: 18px; }
       .brand-name { font-size: 20px; }
       .brand-sub { font-size: 9px; }
-      .header-actions { gap: 6px; }
+      .header-actions { gap: 6px; flex-wrap: wrap; justify-content: flex-end; }
       .header-actions .btn { padding: 10px 12px; min-height: 39px; font-size: 11px; }
       main { padding: 26px 13px 38px; }
       .intro { margin-bottom: 14px; }
@@ -274,12 +312,19 @@
       </div>
       <div class="header-actions">
         <button class="btn btn-quiet" id="manageBtn" type="button">Manage Cards</button>
+        <button class="btn btn-quiet" id="manageDecksBtn" type="button">Manage Deck</button>
         <button class="btn btn-primary" id="addBtn" type="button">＋ Add Card</button>
       </div>
     </header>
 
     <main>
       <section class="view study-view active" id="studyView" aria-label="Vocabulary flashcards">
+        <div class="deck-picker" id="deckPicker">
+          <button class="btn btn-soft deck-btn" id="deckBtn" type="button" aria-haspopup="listbox" aria-expanded="false" title="Choose a deck">
+            <span aria-hidden="true">▤</span><span id="deckBtnName">Basics</span><span class="chev" aria-hidden="true">▾</span>
+          </button>
+          <div class="deck-menu" id="deckMenu" role="listbox" aria-label="Your decks" hidden></div>
+        </div>
         <div class="intro">
           <div class="eyebrow">A little practice, every day</div>
           <h1>Build your German vocabulary.</h1>
@@ -317,6 +362,7 @@
           <button class="prev-btn" id="prevBtn" type="button" aria-label="Previous card" title="Previous card (Left Arrow)"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5"/><path d="m11 6-6 6 6 6"/></svg></button>
           <button class="btn btn-secondary action-btn" id="checkAnswerBtn" type="button">Check Answer</button>
           <button class="btn btn-primary action-btn" id="nextBtn" type="button">Next</button>
+          <button class="again-btn" id="againBtn" type="button" aria-label="Again: add this word to the Revision deck" title="Again — add this word to Revision"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12a9 9 0 1 1-9-9c2.52 0 4.93 1 6.74 2.74L21 8"/><path d="M21 3v5h-5"/></svg></button>
         </div>
         <div class="helper" id="helper">Tip: Space flips · Left Arrow goes back · Right Arrow or Enter goes to the next card </div>
       </section>
@@ -328,8 +374,22 @@
         </div>
         <div class="card-list" id="cardList"></div>
       </section>
+
+      <section class="view" id="decksView" aria-label="Manage decks">
+        <div class="manage-head">
+          <div><h2>Your decks</h2><p id="decksCount">2 decks saved on this device</p></div>
+          <div class="header-actions">
+            <button class="btn btn-quiet" id="exportBtn" type="button">⬇ Export Backup</button>
+            <button class="btn btn-quiet" id="importBtn" type="button">⬆ Import Backup</button>
+            <input type="file" id="importFile" accept="application/json,.json" hidden>
+            <button class="btn btn-primary" id="newDeckBtn" type="button">＋ New Deck</button>
+            <button class="btn btn-soft" id="decksBackBtn" type="button">← Back to study</button>
+          </div>
+        </div>
+        <div class="card-list" id="deckList"></div>
+      </section>
     </main>
-    <footer>Made for curious minds · Your can do it Saif</footer>
+    <footer>Made for curious minds · You can do it Saif ·  I Believe in You</footer>
   </div>
 
   <div class="modal-backdrop" id="modalBackdrop" role="presentation">
@@ -358,6 +418,26 @@
       </form>
     </section>
   </div>
+
+  <div class="modal-backdrop" id="deckModalBackdrop" role="presentation">
+    <section class="modal" role="dialog" aria-modal="true" aria-labelledby="deckModalTitle">
+      <div class="modal-top">
+        <div><h2 id="deckModalTitle">New deck</h2><p>Group words by topic, like Food or Travel.</p></div>
+        <button class="close-btn" id="closeDeckModal" type="button" aria-label="Close dialog">×</button>
+      </div>
+      <form id="deckForm" novalidate>
+        <div class="field">
+          <label for="deckNameInput">DECK NAME</label>
+          <input id="deckNameInput" type="text" maxlength="40" placeholder="e.g. Food &amp; Drink" autocomplete="off" required>
+        </div>
+        <div class="error" id="deckFormError" role="alert" aria-live="polite"></div>
+        <div class="modal-actions">
+          <button class="btn btn-quiet" id="cancelDeckModal" type="button">Cancel</button>
+          <button class="btn btn-primary" type="submit" id="saveDeckBtn">Create Deck</button>
+        </div>
+      </form>
+    </section>
+  </div>
   <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
   <script>
@@ -365,6 +445,8 @@
       "use strict";
 
       const STORAGE_KEY = "wortschatz-vocabulary-cards-v1";
+      const DECKS_KEY = "wortschatz-decks-v2";
+      const REVISION_ID = "revision";
       const starterCards = [
         ["happy", "glücklich"], ["thank you", "danke"], ["good morning", "Guten Morgen"],
         ["water", "das Wasser"], ["house", "das Haus"], ["friend", "der Freund / die Freundin"],
@@ -386,29 +468,40 @@
 
       const $ = (id) => document.getElementById(id);
       const els = {
-        studyView: $("studyView"), manageView: $("manageView"), stage: $("stage"),
+        studyView: $("studyView"), manageView: $("manageView"), decksView: $("decksView"), stage: $("stage"),
         flashcard: $("flashcard"), cardMotion: $("cardMotion"), frontFace: $("frontFace"), backFace: $("backFace"),
         stackOne: document.querySelector(".stack-one"), stackTwo: document.querySelector(".stack-two"), stackThree: document.querySelector(".stack-three"),
         english: $("englishWord"), german: $("germanWord"), frontIndex: $("frontIndex"), backIndex: $("backIndex"),
         counter: $("counter"), remaining: $("remaining"), progress: $("progressFill"),
-        controls: $("controls"), checkAnswer: $("checkAnswerBtn"), next: $("nextBtn"), prev: $("prevBtn"), empty: $("emptyState"), helper: $("helper"),
+        controls: $("controls"), checkAnswer: $("checkAnswerBtn"), next: $("nextBtn"), prev: $("prevBtn"), again: $("againBtn"), empty: $("emptyState"), helper: $("helper"),
         modal: $("modalBackdrop"), form: $("cardForm"), englishInput: $("englishInput"),
         germanInput: $("germanInput"), error: $("formError"), modalTitle: $("modalTitle"),
         saveBtn: $("saveBtn"), cardList: $("cardList"), manageCount: $("manageCount"),
         toast: $("toast"), englishMic: $("englishMic"), germanMic: $("germanMic"),
-        englishVoiceStatus: $("englishVoiceStatus"), germanVoiceStatus: $("germanVoiceStatus"), voiceNote: $("voiceNote")
+        englishVoiceStatus: $("englishVoiceStatus"), germanVoiceStatus: $("germanVoiceStatus"), voiceNote: $("voiceNote"),
+        deckPicker: $("deckPicker"), deckBtn: $("deckBtn"), deckBtnName: $("deckBtnName"), deckMenu: $("deckMenu"),
+        deckList: $("deckList"), decksCount: $("decksCount"),
+        deckModal: $("deckModalBackdrop"), deckForm: $("deckForm"), deckNameInput: $("deckNameInput"),
+        deckError: $("deckFormError"), deckModalTitle: $("deckModalTitle"), saveDeckBtn: $("saveDeckBtn")
       };
 
-      let cards = loadCards();
+      let state = loadState();
+      let decks = state.decks;
+      let activeDeckId = state.active;
+      let cards = activeDeck().cards;
       let deckOrder = [];
       let deckPosition = 0;
       let currentCardId = null;
       let isFlipped = false;
       let editingId = null;
+      let editingDeckId = null;
       let toastTimer = null;
       let isTransitioning = false;
       let transitionFallback = null;
 
+      function activeDeck() {
+        return decks.find(deck => deck.id === activeDeckId) || decks[0];
+      }
       function shuffledPalette(excludeFirst = null) {
         const order = [...palette];
         for (let i = order.length - 1; i > 0; i--) {
@@ -446,18 +539,42 @@
       function makeId() {
         return "card-" + Date.now().toString(36) + "-" + Math.random().toString(36).slice(2, 8);
       }
-      function loadCards() {
+      function cleanCards(list) {
+        return Array.isArray(list) ? list.filter(c => c && typeof c.english === "string" && typeof c.german === "string") : [];
+      }
+      function loadState() {
+        // Current format: several decks plus the always-present Revision deck.
         try {
-          const saved = localStorage.getItem(STORAGE_KEY);
-          if (saved !== null) {
-            const parsed = JSON.parse(saved);
-            if (Array.isArray(parsed)) return parsed.filter(c => c && typeof c.english === "string" && typeof c.german === "string");
+          const saved = JSON.parse(localStorage.getItem(DECKS_KEY) || "null");
+          if (saved && Array.isArray(saved.decks) && saved.decks.length) {
+            const loaded = saved.decks
+              .filter(d => d && typeof d.id === "string" && typeof d.name === "string")
+              .map(d => ({ id: d.id, name: d.name, cards: cleanCards(d.cards) }));
+            if (!loaded.some(d => d.id === REVISION_ID)) loaded.push({ id: REVISION_ID, name: "Revision", cards: [] });
+            const active = loaded.some(d => d.id === saved.active) ? saved.active : loaded[0].id;
+            return { decks: loaded, active };
+          }
+        } catch (error) { console.warn("Could not read saved decks:", error); }
+        // Older single-deck data becomes the first deck so nothing is lost.
+        let firstCards = null;
+        try {
+          const legacy = localStorage.getItem(STORAGE_KEY);
+          if (legacy !== null) {
+            const parsed = JSON.parse(legacy);
+            if (Array.isArray(parsed)) firstCards = cleanCards(parsed);
           }
         } catch (error) { console.warn("Could not read saved vocabulary cards:", error); }
-        return starterCards.map(([english, german]) => ({ id: makeId(), english, german, color: null }));
+        if (!firstCards) firstCards = starterCards.map(([english, german]) => ({ id: makeId(), english, german, color: null }));
+        return {
+          decks: [
+            { id: "deck-basics", name: "Basics", cards: firstCards },
+            { id: REVISION_ID, name: "Revision", cards: [] }
+          ],
+          active: "deck-basics"
+        };
       }
       function saveCards() {
-        try { localStorage.setItem(STORAGE_KEY, JSON.stringify(cards)); }
+        try { localStorage.setItem(DECKS_KEY, JSON.stringify({ decks, active: activeDeckId })); }
         catch (error) { showToast("Could not save. Browser storage may be full."); console.error(error); }
       }
       function shuffleDeck() {
@@ -564,6 +681,7 @@
         els.next.disabled = true;
         els.checkAnswer.disabled = true;
         els.prev.disabled = true;
+        els.again.disabled = true;
         els.cardMotion.classList.remove("entering", "leaving");
         void els.cardMotion.offsetWidth;
         els.cardMotion.classList.add("leaving");
@@ -607,6 +725,7 @@
             isTransitioning = false;
             els.next.disabled = false;
             els.checkAnswer.disabled = false;
+            els.again.disabled = false;
             updatePrevButton();
           };
           els.cardMotion.addEventListener("animationend", finishEntrance);
@@ -644,9 +763,9 @@
         return candidates.sort((a, b) => score(b) - score(a))[0];
       }
       function stopSpeech() {
-        if (!ttsSupported) return;
-        clearTimeout(speakTimer);
+        if (speakTimer) { clearTimeout(speakTimer); speakTimer = null; }
         currentUtterance = null;
+        if (!ttsSupported) return;
         synth.cancel();
         Object.values(speakButtons).forEach(button => button.classList.remove("speaking"));
       }
@@ -815,7 +934,7 @@
         els.error.textContent = "";
       }
       function renderManage() {
-        els.manageCount.textContent = `${cards.length} ${cards.length === 1 ? "card" : "cards"} saved on this device`;
+        els.manageCount.textContent = `${cards.length} ${cards.length === 1 ? "card" : "cards"} in “${activeDeck().name}”`;
         els.cardList.innerHTML = "";
         if (!cards.length) {
           const empty = document.createElement("div");
@@ -858,6 +977,7 @@
         const card = cards.find(c => c.id === id);
         if (!card || !window.confirm(`Delete “${card.english}” from your vocabulary deck?`)) return;
         cards = cards.filter(c => c.id !== id);
+        activeDeck().cards = cards;
         saveCards();
         if (!cards.length) {
           deckOrder = []; deckPosition = 0;
@@ -872,24 +992,236 @@
         renderManage();
         showToast("Card deleted.");
       }
+
+      // ===== Added: decks, deck picker, revision deck =====
+      function updateDeckUI() {
+        els.deckBtnName.textContent = activeDeck().name;
+        // Words already in Revision don't need the Again button.
+        els.again.style.display = activeDeckId === REVISION_ID ? "none" : "";
+      }
+      function renderDeckMenu() {
+        els.deckMenu.innerHTML = "";
+        decks.forEach(deck => {
+          const option = document.createElement("button");
+          option.type = "button";
+          option.className = "deck-option" + (deck.id === activeDeckId ? " active" : "");
+          option.setAttribute("role", "option");
+          option.setAttribute("aria-selected", deck.id === activeDeckId ? "true" : "false");
+          const name = document.createElement("span");
+          name.textContent = deck.name;
+          const count = document.createElement("small");
+          count.textContent = `${deck.cards.length} ${deck.cards.length === 1 ? "card" : "cards"}`;
+          option.append(name, count);
+          option.addEventListener("click", () => selectDeck(deck.id));
+          els.deckMenu.append(option);
+        });
+      }
+      function toggleDeckMenu(open) {
+        const willOpen = typeof open === "boolean" ? open : els.deckMenu.hidden;
+        if (willOpen) renderDeckMenu();
+        els.deckMenu.hidden = !willOpen;
+        els.deckBtn.setAttribute("aria-expanded", willOpen ? "true" : "false");
+      }
+      function selectDeck(id) {
+        toggleDeckMenu(false);
+        if (id === activeDeckId || isTransitioning) return;
+        stopSpeech();
+        activeDeckId = id;
+        cards = activeDeck().cards;
+        saveCards();
+        updateDeckUI();
+        shuffleDeck();
+        renderCard(true, true);
+      }
+      function addToRevision() {
+        const card = currentCard();
+        if (!card || isTransitioning || activeDeckId === REVISION_ID) return;
+        const revision = decks.find(deck => deck.id === REVISION_ID);
+        const exists = revision.cards.some(c => c.english === card.english && c.german === card.german);
+        if (exists) { showToast("Already in your Revision deck."); return; }
+        revision.cards.push({ id: makeId(), english: card.english, german: card.german, color: null });
+        saveCards();
+        showToast(`“${card.english}” added to Revision.`);
+      }
+      function openDeckModal(deck = null) {
+        editingDeckId = deck ? deck.id : null;
+        els.deckModalTitle.textContent = deck ? "Rename deck" : "New deck";
+        els.saveDeckBtn.textContent = deck ? "Save Changes" : "Create Deck";
+        els.deckNameInput.value = deck ? deck.name : "";
+        els.deckError.textContent = "";
+        els.deckModal.classList.add("open");
+        window.setTimeout(() => els.deckNameInput.focus(), 40);
+      }
+      function closeDeckModal() {
+        els.deckModal.classList.remove("open");
+        editingDeckId = null;
+        els.deckForm.reset();
+        els.deckError.textContent = "";
+      }
+      function renderDecksManage() {
+        els.decksCount.textContent = `${decks.length} ${decks.length === 1 ? "deck" : "decks"} saved on this device`;
+        els.deckList.innerHTML = "";
+        decks.forEach(deck => {
+          const row = document.createElement("article");
+          row.className = "managed-card";
+          const words = document.createElement("div");
+          words.className = "managed-words";
+          const nameItem = document.createElement("div");
+          nameItem.className = "managed-word";
+          const nameSmall = document.createElement("small");
+          nameSmall.textContent = "Deck";
+          const nameSpan = document.createElement("span");
+          nameSpan.textContent = deck.name;
+          if (deck.id === REVISION_ID) {
+            const tag = document.createElement("em");
+            tag.className = "deck-tag"; tag.textContent = "Default";
+            nameSpan.append(tag);
+          }
+          nameItem.append(nameSmall, nameSpan);
+          const countItem = document.createElement("div");
+          countItem.className = "managed-word";
+          const countSmall = document.createElement("small");
+          countSmall.textContent = "Cards";
+          const countSpan = document.createElement("span");
+          countSpan.textContent = String(deck.cards.length);
+          countItem.append(countSmall, countSpan);
+          words.append(nameItem, countItem);
+          const actions = document.createElement("div");
+          actions.className = "row-actions";
+          if (deck.id !== REVISION_ID) {
+            const edit = document.createElement("button");
+            edit.type = "button"; edit.className = "icon-btn"; edit.textContent = "✎";
+            edit.setAttribute("aria-label", `Rename ${deck.name}`);
+            edit.addEventListener("click", () => openDeckModal(deck));
+            const del = document.createElement("button");
+            del.type = "button"; del.className = "icon-btn delete"; del.textContent = "×";
+            del.setAttribute("aria-label", `Delete ${deck.name}`);
+            del.addEventListener("click", () => deleteDeck(deck.id));
+            actions.append(edit, del);
+          }
+          row.append(words, actions);
+          els.deckList.append(row);
+        });
+      }
+      function deleteDeck(id) {
+        const deck = decks.find(d => d.id === id);
+        if (!deck || id === REVISION_ID) return;
+        if (!window.confirm(`Delete the deck “${deck.name}” and its ${deck.cards.length} cards?`)) return;
+        decks = decks.filter(d => d.id !== id);
+        if (activeDeckId === id) {
+          activeDeckId = decks[0].id;
+          cards = activeDeck().cards;
+        }
+        saveCards();
+        updateDeckUI();
+        renderDecksManage();
+        showToast("Deck deleted.");
+      }
+
       function showView(view) {
         const managing = view === "manage";
-        els.studyView.classList.toggle("active", !managing);
+        const managingDecks = view === "decks";
+        toggleDeckMenu(false);
+        els.studyView.classList.toggle("active", !managing && !managingDecks);
         els.manageView.classList.toggle("active", managing);
+        els.decksView.classList.toggle("active", managingDecks);
         if (managing) renderManage();
+        else if (managingDecks) renderDecksManage();
         else {
           // Rebuild the round so additions and edits are reflected cleanly.
+          updateDeckUI();
           shuffleDeck();
           renderCard(false, true);
         }
       }
 
+      // ===== Backup: export / import decks as a file =====
+      function exportBackup() {
+        const data = JSON.stringify({
+          app: "wortschatz", version: 2, exportedAt: new Date().toISOString(),
+          decks, active: activeDeckId
+        }, null, 2);
+        const url = URL.createObjectURL(new Blob([data], { type: "application/json" }));
+        const link = document.createElement("a");
+        link.href = url;
+        link.download = "wortschatz-backup-" + new Date().toISOString().slice(0, 10) + ".json";
+        document.body.appendChild(link);
+        link.click();
+        link.remove();
+        window.setTimeout(() => URL.revokeObjectURL(url), 1000);
+        showToast("Backup downloaded.");
+      }
+      function importBackup(file) {
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onload = () => {
+          try {
+            const parsed = JSON.parse(reader.result);
+            if (!parsed || !Array.isArray(parsed.decks)) throw new Error("Not a Wortschatz backup");
+            const loaded = parsed.decks
+              .filter(d => d && typeof d.id === "string" && typeof d.name === "string")
+              .map(d => ({ id: d.id, name: d.name, cards: cleanCards(d.cards) }));
+            if (!loaded.length) throw new Error("No decks found");
+            if (!loaded.some(d => d.id === REVISION_ID)) loaded.push({ id: REVISION_ID, name: "Revision", cards: [] });
+            const total = loaded.reduce((sum, d) => sum + d.cards.length, 0);
+            if (!window.confirm(`Replace your current decks with this backup (${loaded.length} decks, ${total} cards)?`)) return;
+            decks = loaded;
+            activeDeckId = loaded.some(d => d.id === parsed.active) ? parsed.active : loaded[0].id;
+            cards = activeDeck().cards;
+            saveCards();
+            updateDeckUI();
+            renderDecksManage();
+            showToast("Backup restored.");
+          } catch (error) {
+            console.error(error);
+            showToast("That file isn't a valid Wortschatz backup.");
+          }
+        };
+        reader.readAsText(file);
+      }
+      $("exportBtn").addEventListener("click", exportBackup);
+      $("importBtn").addEventListener("click", () => $("importFile").click());
+      $("importFile").addEventListener("change", event => {
+        importBackup(event.target.files[0]);
+        event.target.value = ""; // lets you pick the same file again later
+      });
+
       $("addBtn").addEventListener("click", () => openModal());
       $("manageBtn").addEventListener("click", () => showView("manage"));
+      $("manageDecksBtn").addEventListener("click", () => showView("decks"));
       $("backBtn").addEventListener("click", () => showView("study"));
+      $("decksBackBtn").addEventListener("click", () => showView("study"));
+      $("newDeckBtn").addEventListener("click", () => openDeckModal());
+      $("closeDeckModal").addEventListener("click", closeDeckModal);
+      $("cancelDeckModal").addEventListener("click", closeDeckModal);
+      els.deckModal.addEventListener("click", event => { if (event.target === els.deckModal) closeDeckModal(); });
+      els.deckBtn.addEventListener("click", () => toggleDeckMenu());
+      els.again.addEventListener("click", addToRevision);
+      document.addEventListener("click", event => {
+        if (!els.deckMenu.hidden && !els.deckPicker.contains(event.target)) toggleDeckMenu(false);
+      });
+      els.deckForm.addEventListener("submit", event => {
+        event.preventDefault();
+        const name = els.deckNameInput.value.trim().replace(/\s+/g, " ");
+        if (!name) { els.deckError.textContent = "Please give your deck a name."; els.deckNameInput.focus(); return; }
+        const clash = decks.some(d => d.id !== editingDeckId && d.name.toLowerCase() === name.toLowerCase());
+        if (clash) { els.deckError.textContent = "You already have a deck with that name."; els.deckNameInput.focus(); return; }
+        if (editingDeckId) {
+          const existing = decks.find(d => d.id === editingDeckId);
+          if (existing) existing.name = name;
+          showToast("Deck renamed.");
+        } else {
+          decks.push({ id: "deck-" + makeId().slice(5), name, cards: [] });
+          showToast(`Deck “${name}” created.`);
+        }
+        saveCards();
+        closeDeckModal();
+        updateDeckUI();
+        renderDecksManage();
+      });
+      els.modal.addEventListener("click", event => { if (event.target === els.modal) closeModal(); });
       $("closeModal").addEventListener("click", closeModal);
       $("cancelModal").addEventListener("click", closeModal);
-      els.modal.addEventListener("click", event => { if (event.target === els.modal) closeModal(); });
       els.checkAnswer.addEventListener("click", flipCard);
       els.next.addEventListener("click", () => nextCard(1));
       els.prev.addEventListener("click", prevCard);
@@ -914,13 +1246,20 @@
         saveCards();
         closeModal();
         if (els.manageView.classList.contains("active")) renderManage();
+        else if (els.decksView.classList.contains("active")) renderDecksManage();
         else { shuffleDeck(); renderCard(true, true); }
       });
       document.addEventListener("keydown", event => {
+        if (event.key === "Escape" && els.deckModal.classList.contains("open")) {
+          closeDeckModal(); return;
+        }
+        if (event.key === "Escape" && !els.deckMenu.hidden) {
+          toggleDeckMenu(false); return;
+        }
         if (event.key === "Escape" && els.modal.classList.contains("open")) {
           closeModal(); return;
         }
-        if (els.modal.classList.contains("open")) return;
+        if (els.modal.classList.contains("open") || els.deckModal.classList.contains("open")) return;
         if (!els.studyView.classList.contains("active")) return;
         const target = event.target;
         if (target && (target.tagName === "INPUT" || target.isContentEditable)) return;
@@ -940,7 +1279,9 @@
       });
 
       // A first visit receives the starter deck; subsequent visits use localStorage.
-      try { if (cards.length && !localStorage.getItem(STORAGE_KEY)) saveCards(); } catch (error) { console.warn("Storage unavailable:", error); }
+      try { if (cards.length && !localStorage.getItem(DECKS_KEY)) saveCards(); } catch (error) { console.warn("Storage unavailable:", error); }
+      try { if (navigator.storage && navigator.storage.persist) navigator.storage.persist(); } catch (_) {}
+      updateDeckUI();
       shuffleDeck();
       renderCard(false, true);
     })();
