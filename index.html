@@ -216,7 +216,12 @@
     .error { min-height: 18px; color: #a33e31; font-size: 11px; margin: 3px 0 8px; }
     .modal-actions { display: flex; justify-content: flex-end; gap: 9px; margin-top: 15px; }
     .auth-providers { display: grid; gap: 9px; margin: 2px 0 15px; }
-    .auth-provider { width: 100%; justify-content: center; }
+    .auth-provider { width: 100%; justify-content: center; display: flex; align-items: center; gap: 10px; }
+    .provider-logo { width: 20px; height: 20px; flex: 0 0 20px; display: block; }
+    #googleAuthBtn:hover, #facebookAuthBtn:hover {
+      color: #fffaf6; background: #4d3023; border-color: #4d3023;
+      box-shadow: 0 8px 18px rgba(55, 34, 24, .24);
+    }
     .auth-divider { display: flex; align-items: center; gap: 10px; margin: 15px 0; color: #987d6d; font-size: 10px; }
     .auth-divider::before, .auth-divider::after { content: ""; flex: 1; height: 1px; background: #ead8ca; }
     .password-hint { color: #806858; font-size: 11px; line-height: 1.5; margin: -7px 0 12px; }
@@ -416,8 +421,22 @@
       </div>
       <form id="authForm" novalidate>
         <div class="auth-providers">
-          <button class="btn btn-quiet auth-provider" id="googleAuthBtn" type="button">Continue with Google</button>
-          <button class="btn btn-quiet auth-provider" id="facebookAuthBtn" type="button">Continue with Facebook</button>
+          <button class="btn btn-quiet auth-provider" id="googleAuthBtn" type="button">
+            <svg class="provider-logo google-logo" viewBox="0 0 48 48" aria-hidden="true" focusable="false">
+              <path fill="#4285F4" d="M43.6 24.5c0-1.4-.1-2.8-.4-4.1H24v7.8h11a9.4 9.4 0 0 1-4.1 6.2v5.1h6.7c3.9-3.6 6-8.8 6-15z"/>
+              <path fill="#34A853" d="M24 44c5.5 0 10.1-1.8 13.5-4.8l-6.7-5.1c-1.8 1.2-4.1 2-6.8 2-5.2 0-9.6-3.5-11.2-8.2H5.9v5.2A20 20 0 0 0 24 44z"/>
+              <path fill="#FBBC05" d="M12.8 27.9a12 12 0 0 1 0-7.8v-5.2H5.9a20 20 0 0 0 0 18.2z"/>
+              <path fill="#EA4335" d="M24 12c3 0 5.7 1 7.8 3.1l5.8-5.8C34.1 6.1 29.5 4 24 4A20 20 0 0 0 5.9 14.9l6.9 5.2C14.4 15.5 18.8 12 24 12z"/>
+            </svg>
+            <span>Continue with Google</span>
+          </button>
+          <button class="btn btn-quiet auth-provider" id="facebookAuthBtn" type="button">
+            <svg class="provider-logo facebook-logo" viewBox="0 0 32 32" aria-hidden="true" focusable="false">
+              <rect width="32" height="32" rx="7" fill="#1877F2"/>
+              <path fill="#fff" d="M18.2 27V17.4h3.2l.5-3.8h-3.7v-2.4c0-1.1.3-1.9 1.9-1.9H22V5.9c-.3 0-1.5-.1-2.8-.1-2.8 0-4.7 1.7-4.7 4.9v2.9h-3.2v3.8h3.2V27z"/>
+            </svg>
+            <span>Continue with Facebook</span>
+          </button>
         </div>
         <div class="auth-divider"><span>or continue with email</span></div>
         <div class="field">
