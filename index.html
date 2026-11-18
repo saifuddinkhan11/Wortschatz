@@ -311,6 +311,8 @@
         <div><div class="brand-name">Wortschatz</div><div class="brand-sub">English · Deutsch</div></div>
       </div>
       <div class="header-actions">
+        <button class="btn btn-quiet" id="authBtn" type="button">Sign in</button>
+        <span id="authStatus" aria-live="polite" style="font-size:10px;color:#9a887d"></span>
         <button class="btn btn-quiet" id="manageBtn" type="button">Manage Cards</button>
         <button class="btn btn-quiet" id="manageDecksBtn" type="button">Manage Deck</button>
         <button class="btn btn-primary" id="addBtn" type="button">＋ Add Card</button>
@@ -392,6 +394,31 @@
     <footer>Made for curious minds · You can do it Saif ·  I Believe in You</footer>
   </div>
 
+  <div class="modal-backdrop" id="accountModal" role="presentation">
+    <section class="modal" role="dialog" aria-modal="true" aria-labelledby="accountTitle">
+      <div class="modal-top">
+        <div><h2 id="accountTitle">Sign in to sync</h2><p>Your local decks stay on this device.</p></div>
+        <button class="close-btn" id="closeAccountModal" type="button" aria-label="Close dialog">×</button>
+      </div>
+      <form id="authForm" novalidate>
+        <div class="field">
+          <label for="authEmail">EMAIL</label>
+          <input id="authEmail" type="email" autocomplete="email" required>
+        </div>
+        <div class="field">
+          <label for="authPassword">PASSWORD</label>
+          <input id="authPassword" type="password" autocomplete="current-password" minlength="6" required>
+        </div>
+        <p class="error" id="authError" role="alert" aria-live="polite"></p>
+        <div class="modal-actions">
+          <button class="btn btn-quiet" id="authModeToggle" type="button">Create account</button>
+          <button class="btn btn-quiet" id="cancelAccountModal" type="button">Cancel</button>
+          <button class="btn btn-primary" id="authSubmit" type="submit">Sign in</button>
+        </div>
+      </form>
+    </section>
+  </div>
+
   <div class="modal-backdrop" id="modalBackdrop" role="presentation">
     <section class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
       <div class="modal-top">
@@ -440,9 +467,17 @@
   </div>
   <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.119.0"></script>
   <script>
     (() => {
       "use strict";
+
+      const SUPABASE_URL = "https://xpfkwbcmlqsjvnrlrovv.supabase.co";
+      const SUPABASE_PUBLISHABLE_KEY = "sb_publishable_kzaADVQyQkcVvAlAmH0_WQ_fiobnoTr";
+      const supabaseClient = window.supabase && window.supabase.createClient
+        ? window.supabase.createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY)
+        : null;
+      const REMOTE_DECK_ID = "supabase-a1-food-drinks";
 
       const STORAGE_KEY = "wortschatz-vocabulary-cards-v1";
       const DECKS_KEY = "wortschatz-decks-v2";
@@ -482,7 +517,11 @@
         deckPicker: $("deckPicker"), deckBtn: $("deckBtn"), deckBtnName: $("deckBtnName"), deckMenu: $("deckMenu"),
         deckList: $("deckList"), decksCount: $("decksCount"),
         deckModal: $("deckModalBackdrop"), deckForm: $("deckForm"), deckNameInput: $("deckNameInput"),
-        deckError: $("deckFormError"), deckModalTitle: $("deckModalTitle"), saveDeckBtn: $("saveDeckBtn")
+        deckError: $("deckFormError"), deckModalTitle: $("deckModalTitle"), saveDeckBtn: $("saveDeckBtn"),
+        authButton: $("authBtn"), authStatus: $("authStatus"), accountModal: $("accountModal"),
+        authForm: $("authForm"), authEmail: $("authEmail"), authPassword: $("authPassword"),
+        authError: $("authError"), authTitle: $("accountTitle"), authSubmit: $("authSubmit"),
+        authModeToggle: $("authModeToggle")
       };
 
       let state = loadState();
@@ -498,6 +537,9 @@
       let toastTimer = null;
       let isTransitioning = false;
       let transitionFallback = null;
+      let authUser = null;
+      let isSignUpMode = false;
+      const reviewedThisSession = new Set();
 
       function activeDeck() {
         return decks.find(deck => deck.id === activeDeckId) || decks[0];
@@ -574,8 +616,13 @@
         };
       }
       function saveCards() {
-        try { localStorage.setItem(DECKS_KEY, JSON.stringify({ decks, active: activeDeckId })); }
-        catch (error) { showToast("Could not save. Browser storage may be full."); console.error(error); }
+        try {
+          const localDecks = decks.filter(deck => !deck.remote);
+          const savedActive = activeDeck().remote
+            ? (localDecks.find(deck => deck.id !== REVISION_ID) || localDecks[0]).id
+            : activeDeckId;
+          localStorage.setItem(DECKS_KEY, JSON.stringify({ decks: localDecks, active: savedActive }));
+        } catch (error) { showToast("Could not save. Browser storage may be full."); console.error(error); }
       }
       function shuffleDeck() {
         deckOrder = cards.map(card => card.id);
@@ -622,6 +669,9 @@
           els.progress.parentElement.parentElement.style.display = "none";
           els.controls.style.display = "none";
           els.empty.style.display = "block";
+          els.empty.innerHTML = activeDeck().remote
+            ? "<strong>Pilot deck is getting ready.</strong>Published A1 Food and Drinks words will appear here."
+            : "<strong>Your deck is empty.</strong>Add a few cards to start learning.";
           updateProgress();
           return;
         }
@@ -662,6 +712,7 @@
         if (isFlipped) {
           els.flashcard.setAttribute("aria-label", `German: ${currentCard().german}. Activate to flip back to English.`);
           els.helper.textContent = "German revealed. Press Check Answer again to flip back, or Next to continue.";
+          void recordPilotReview(currentCard());
         } else {
           els.flashcard.setAttribute("aria-label", `English: ${currentCard().english}. Activate to reveal the German translation.`);
           els.helper.textContent = "English side. Press Space to reveal · Right Arrow or Enter for the next card.";
@@ -913,6 +964,155 @@
         els.voiceNote.textContent = "Voice input works in Chrome, Edge or Safari. You can still type your cards normally.";
       }
 
+      function setAuthMode(signUp) {
+        isSignUpMode = signUp;
+        els.authTitle.textContent = signUp ? "Create your account" : "Sign in to sync";
+        els.authSubmit.textContent = signUp ? "Create account" : "Sign in";
+        els.authModeToggle.textContent = signUp ? "I already have an account" : "Create account";
+        els.authPassword.autocomplete = signUp ? "new-password" : "current-password";
+        els.authError.textContent = "";
+      }
+      function renderAuthUI() {
+        const signedIn = !!authUser;
+        els.authButton.textContent = signedIn ? "Sign out" : "Sign in";
+        els.authButton.title = signedIn ? `Signed in as ${authUser.email || "your account"}` : "Sign in to sync study progress";
+        if (!signedIn) els.authStatus.textContent = "Sync progress across devices";
+      }
+      function openAccountModal() {
+        setAuthMode(false);
+        els.authEmail.value = "";
+        els.authPassword.value = "";
+        els.accountModal.classList.add("open");
+        window.setTimeout(() => els.authEmail.focus(), 40);
+      }
+      function closeAccountModal() {
+        els.accountModal.classList.remove("open");
+        els.authError.textContent = "";
+        els.authForm.reset();
+      }
+      async function refreshCloudProgress() {
+        if (!supabaseClient || !authUser) return;
+        const { count, error } = await supabaseClient
+          .from("user_progress")
+          .select("id", { count: "exact", head: true })
+          .eq("user_id", authUser.id);
+        if (error) {
+          els.authStatus.textContent = "Signed in · progress sync unavailable";
+          console.warn("Could not load study progress:", error.message);
+          return;
+        }
+        els.authStatus.textContent = `Signed in · ${count || 0} words tracked`;
+      }
+      async function recordPilotReview(card) {
+        if (!card || !card.vocabularyId || !supabaseClient) return;
+        if (!authUser) {
+          showToast("Sign in to save your pilot progress.");
+          return;
+        }
+        const reviewKey = `${authUser.id}:${card.vocabularyId}`;
+        if (reviewedThisSession.has(reviewKey)) return;
+        reviewedThisSession.add(reviewKey);
+        const now = new Date().toISOString();
+        const { data: existing, error: lookupError } = await supabaseClient
+          .from("user_progress")
+          .select("id,reps")
+          .eq("user_id", authUser.id)
+          .eq("vocabulary_id", card.vocabularyId)
+          .maybeSingle();
+        if (lookupError) {
+          reviewedThisSession.delete(reviewKey);
+          showToast("Could not load your saved progress.");
+          console.warn("Could not find saved pilot progress:", lookupError.message);
+          return;
+        }
+        const write = existing
+          ? await supabaseClient.from("user_progress")
+              .update({ reps: (existing.reps || 0) + 1, last_review_at: now, updated_at: now })
+              .eq("id", existing.id).eq("user_id", authUser.id)
+          : await supabaseClient.from("user_progress")
+              .insert({ user_id: authUser.id, vocabulary_id: card.vocabularyId, reps: 1, last_review_at: now });
+        if (write.error) {
+          reviewedThisSession.delete(reviewKey);
+          showToast("Could not save your study progress.");
+          console.warn("Could not save pilot progress:", write.error.message);
+          return;
+        }
+        await refreshCloudProgress();
+      }
+      async function loadPilotDeck() {
+        if (!supabaseClient) {
+          showToast("The database client could not load. Check your connection and refresh.");
+          return;
+        }
+        const { data: deck, error: deckError } = await supabaseClient
+          .from("decks")
+          .select("id,name,status")
+          .eq("code", "A1-T04")
+          .maybeSingle();
+        if (deckError) {
+          console.warn("Could not load the A1 pilot deck:", deckError.message);
+          showToast("Could not connect to the A1 pilot deck.");
+          return;
+        }
+        if (!deck) return;
+        const { data: links, error: linkError } = await supabaseClient
+          .from("deck_vocabulary")
+          .select("sort_order,vocabulary(id,lemma,article,english_translation,review_status)")
+          .eq("deck_id", deck.id)
+          .order("sort_order");
+        if (linkError) {
+          console.warn("Could not load A1 pilot words:", linkError.message);
+          showToast("Could not load the A1 pilot vocabulary.");
+          return;
+        }
+        const pilotCards = (links || [])
+          .filter(link => link.vocabulary && deck.status === "published" && link.vocabulary.review_status === "published")
+          .map(link => {
+            const word = link.vocabulary;
+            return {
+              id: `db-${word.id}`,
+              vocabularyId: word.id,
+              english: word.english_translation || word.lemma,
+              german: [word.article, word.lemma].filter(Boolean).join(" "),
+              color: null
+            };
+          })
+          .filter(card => card.english && card.german);
+        let pilotDeck = decks.find(item => item.id === REMOTE_DECK_ID);
+        if (!pilotDeck) {
+          pilotDeck = { id: REMOTE_DECK_ID, name: deck.name, cards: pilotCards, remote: true };
+          decks.push(pilotDeck);
+        } else {
+          pilotDeck.name = deck.name;
+          pilotDeck.cards = pilotCards;
+        }
+        if (activeDeckId === REMOTE_DECK_ID) {
+          cards = pilotDeck.cards;
+          shuffleDeck();
+          renderCard(false, true);
+        }
+        updateDeckUI();
+        if (!pilotCards.length) {
+          showToast("Connected to Supabase. The A1 Food and Drinks deck has no published words yet.");
+        }
+      }
+      async function initializeSupabase() {
+        if (!supabaseClient) return;
+        supabaseClient.auth.onAuthStateChange((_event, session) => {
+          authUser = session ? session.user : null;
+          renderAuthUI();
+          if (authUser) void refreshCloudProgress();
+          else els.authStatus.textContent = "Sync progress across devices";
+        });
+        const { data, error } = await supabaseClient.auth.getSession();
+        if (error) {
+          console.warn("Could not restore Supabase session:", error.message);
+          return;
+        }
+        authUser = data.session ? data.session.user : null;
+        renderAuthUI();
+        if (authUser) void refreshCloudProgress();
+      }
       function openModal(card = null) {
         editingId = card ? card.id : null;
         els.modalTitle.textContent = card ? "Edit your card" : "Add a new card";
@@ -935,6 +1135,10 @@
       }
       function renderManage() {
         els.manageCount.textContent = `${cards.length} ${cards.length === 1 ? "card" : "cards"} in “${activeDeck().name}”`;
+        if (activeDeck().remote && !cards.length) {
+          els.cardList.innerHTML = '<div class="no-cards">The pilot deck has no published words yet.</div>';
+          return;
+        }
         els.cardList.innerHTML = "";
         if (!cards.length) {
           const empty = document.createElement("div");
@@ -968,7 +1172,7 @@
           del.type = "button"; del.className = "icon-btn delete"; del.textContent = "×";
           del.setAttribute("aria-label", `Delete ${card.english}`);
           del.addEventListener("click", () => deleteCard(card.id));
-          actions.append(edit, del);
+          if (!activeDeck().remote) actions.append(edit, del);
           row.append(words, actions);
           els.cardList.append(row);
         });
@@ -998,6 +1202,7 @@
         els.deckBtnName.textContent = activeDeck().name;
         // Words already in Revision don't need the Again button.
         els.again.style.display = activeDeckId === REVISION_ID ? "none" : "";
+        $("addBtn").style.display = activeDeck().remote ? "none" : "";
       }
       function renderDeckMenu() {
         els.deckMenu.innerHTML = "";
@@ -1088,7 +1293,7 @@
           words.append(nameItem, countItem);
           const actions = document.createElement("div");
           actions.className = "row-actions";
-          if (deck.id !== REVISION_ID) {
+          if (deck.id !== REVISION_ID && !deck.remote) {
             const edit = document.createElement("button");
             edit.type = "button"; edit.className = "icon-btn"; edit.textContent = "✎";
             edit.setAttribute("aria-label", `Rename ${deck.name}`);
@@ -1186,6 +1391,44 @@
         event.target.value = ""; // lets you pick the same file again later
       });
 
+      els.authButton.addEventListener("click", async () => {
+        if (!supabaseClient) { showToast("Supabase is unavailable. Refresh and try again."); return; }
+        if (!authUser) { openAccountModal(); return; }
+        const { error } = await supabaseClient.auth.signOut();
+        if (error) showToast("Could not sign out. Please try again.");
+        else showToast("You have signed out.");
+      });
+      els.authModeToggle.addEventListener("click", () => setAuthMode(!isSignUpMode));
+      $("closeAccountModal").addEventListener("click", closeAccountModal);
+      $("cancelAccountModal").addEventListener("click", closeAccountModal);
+      els.accountModal.addEventListener("click", event => { if (event.target === els.accountModal) closeAccountModal(); });
+      els.authForm.addEventListener("submit", async event => {
+        event.preventDefault();
+        if (!supabaseClient) { els.authError.textContent = "The database client did not load. Refresh and try again."; return; }
+        const email = els.authEmail.value.trim();
+        const password = els.authPassword.value;
+        els.authError.textContent = "";
+        els.authSubmit.disabled = true;
+        try {
+          if (isSignUpMode) {
+            const { data, error } = await supabaseClient.auth.signUp({
+              email, password,
+              options: { emailRedirectTo: window.location.href.split("#")[0] }
+            });
+            if (error) throw error;
+            if (data.session) closeAccountModal();
+            else els.authError.textContent = "Check your email to confirm the account. If the confirmation link is rejected, allow this website URL in Supabase Auth redirect settings.";
+          } else {
+            const { error } = await supabaseClient.auth.signInWithPassword({ email, password });
+            if (error) throw error;
+            closeAccountModal();
+          }
+        } catch (error) {
+          els.authError.textContent = error.message || "Sign-in failed. Please try again.";
+        } finally {
+          els.authSubmit.disabled = false;
+        }
+      });
       $("addBtn").addEventListener("click", () => openModal());
       $("manageBtn").addEventListener("click", () => showView("manage"));
       $("manageDecksBtn").addEventListener("click", () => showView("decks"));
@@ -1250,6 +1493,9 @@
         else { shuffleDeck(); renderCard(true, true); }
       });
       document.addEventListener("keydown", event => {
+        if (event.key === "Escape" && els.accountModal.classList.contains("open")) {
+          closeAccountModal(); return;
+        }
         if (event.key === "Escape" && els.deckModal.classList.contains("open")) {
           closeDeckModal(); return;
         }
@@ -1259,7 +1505,7 @@
         if (event.key === "Escape" && els.modal.classList.contains("open")) {
           closeModal(); return;
         }
-        if (els.modal.classList.contains("open") || els.deckModal.classList.contains("open")) return;
+        if (els.modal.classList.contains("open") || els.deckModal.classList.contains("open") || els.accountModal.classList.contains("open")) return;
         if (!els.studyView.classList.contains("active")) return;
         const target = event.target;
         if (target && (target.tagName === "INPUT" || target.isContentEditable)) return;
@@ -1284,6 +1530,8 @@
       updateDeckUI();
       shuffleDeck();
       renderCard(false, true);
+      void initializeSupabase();
+      void loadPilotDeck();
     })();
   </script>
 </body>
