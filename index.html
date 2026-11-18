@@ -1092,8 +1092,8 @@
           renderCard(false, true);
         }
         updateDeckUI();
-        if (!pilotCards.length) {
-          showToast("Connected to Supabase. The A1 Food and Drinks deck has no published words yet.");
+        if (!pilotCards.length && !authUser) {
+          els.authStatus.textContent = "Supabase connected · A1 pilot has no published words";
         }
       }
       async function initializeSupabase() {
