@@ -218,13 +218,13 @@
     .auth-providers { display: grid; gap: 9px; margin: 2px 0 15px; }
     .auth-provider {
       width: 100%; min-height: 46px; display: grid;
-      grid-template-columns: 24px minmax(0, 1fr) 24px;
+      grid-template-columns: 20px auto;
       align-items: center; justify-content: center; gap: 8px;
     }
-    .auth-provider > .provider-logo { grid-column: 1; justify-self: center; }
-    .auth-provider > span { grid-column: 2; justify-self: stretch; text-align: center; }
+     .auth-provider > .provider-logo { grid-column: 1; justify-self: end; }
+     .auth-provider > span { grid-column: 2; justify-self: start; text-align: left; }
     .provider-logo { width: 20px; height: 20px; flex: 0 0 20px; display: block; }
-    #googleAuthBtn:hover, #facebookAuthBtn:hover {
+    #googleAuthBtn:hover {
       color: #fffaf6; background: #4d3023; border-color: #4d3023;
       box-shadow: 0 8px 18px rgba(55, 34, 24, .24);
     }
@@ -422,7 +422,7 @@
   <div class="modal-backdrop" id="accountModal" role="presentation">
     <section class="modal" role="dialog" aria-modal="true" aria-labelledby="accountTitle">
       <div class="modal-top">
-        <div><h2 id="accountTitle">Sign in to sync</h2></div>
+        <div><h2 id="accountTitle">Welcome back</h2></div>
         <button class="close-btn" id="closeAccountModal" type="button" aria-label="Close dialog">×</button>
       </div>
       <form id="authForm" novalidate>
@@ -433,36 +433,24 @@
               <path fill="#34A853" d="M24 44c5.5 0 10.1-1.8 13.5-4.8l-6.7-5.1c-1.8 1.2-4.1 2-6.8 2-5.2 0-9.6-3.5-11.2-8.2H5.9v5.2A20 20 0 0 0 24 44z"/>
               <path fill="#FBBC05" d="M12.8 27.9a12 12 0 0 1 0-7.8v-5.2H5.9a20 20 0 0 0 0 18.2z"/>
               <path fill="#EA4335" d="M24 12c3 0 5.7 1 7.8 3.1l5.8-5.8C34.1 6.1 29.5 4 24 4A20 20 0 0 0 5.9 14.9l6.9 5.2C14.4 15.5 18.8 12 24 12z"/>
-            </svg>
-            <span>Continue with Google</span>
-          </button>
-          <button class="btn btn-quiet auth-provider" id="facebookAuthBtn" type="button">
-            <svg class="provider-logo facebook-logo" viewBox="0 0 32 32" aria-hidden="true" focusable="false">
-              <rect width="32" height="32" rx="7" fill="#1877F2"/>
-              <path fill="#fff" d="M18.2 27V17.4h3.2l.5-3.8h-3.7v-2.4c0-1.1.3-1.9 1.9-1.9H22V5.9c-.3 0-1.5-.1-2.8-.1-2.8 0-4.7 1.7-4.7 4.9v2.9h-3.2v3.8h3.2V27z"/>
-            </svg>
-            <span>Continue with Facebook</span>
+            </svg><span>Continue with Google</span>
           </button>
         </div>
         <div class="auth-divider"><span>or continue with email</span></div>
         <div class="field">
-          <label for="authEmail">EMAIL</label>
-          <input id="authEmail" type="email" autocomplete="email" required>
+          <label for="authEmail">EMAIL ADDRESS</label>
+          <input id="authEmail" type="email" autocomplete="email" placeholder="name@example.com" required>
         </div>
-        <div class="field">
-          <label for="authPassword">PASSWORD</label>
-          <input id="authPassword" type="password" autocomplete="current-password" required>
+        <div class="field" id="authOtpWrap" hidden>
+          <label for="authOtp">6-DIGIT CODE</label>
+          <input id="authOtp" type="text" inputmode="numeric" autocomplete="one-time-code" pattern="[0-9]{6}" maxlength="6" placeholder="Enter the code" aria-describedby="authCountdown">
+          <p id="authCountdown" class="password-hint" aria-live="polite"></p>
         </div>
-        <div class="field" id="authConfirmWrap" hidden>
-          <label for="authPasswordConfirm">CONFIRM PASSWORD</label>
-          <input id="authPasswordConfirm" type="password" autocomplete="new-password">
-        </div>
-        <p class="password-hint" id="passwordHint" hidden>Use at least 10 characters, including a letter, a number, and a symbol such as , . $ or #.</p>
         <p class="error" id="authError" role="alert" aria-live="polite"></p>
         <div class="modal-actions">
-          <button class="btn btn-quiet" id="authModeToggle" type="button">Create account</button>
-          <button class="btn btn-quiet" id="cancelAccountModal" type="button">Cancel</button>
-          <button class="btn btn-primary" id="authSubmit" type="submit">Sign in</button>
+          <button class="btn btn-quiet" id="authBackToEmail" type="button" hidden>Use a different email</button>
+          <button class="btn btn-quiet" id="authResend" type="button" hidden>Send a new code</button>
+          <button class="btn btn-primary" id="authSubmit" type="submit">Continue</button>
         </div>
       </form>
     </section>
@@ -568,11 +556,11 @@
         deckModal: $("deckModalBackdrop"), deckForm: $("deckForm"), deckNameInput: $("deckNameInput"),
         deckError: $("deckFormError"), deckModalTitle: $("deckModalTitle"), saveDeckBtn: $("saveDeckBtn"),
         authButton: $("authBtn"), authStatus: $("authStatus"), accountModal: $("accountModal"),
-        authForm: $("authForm"), authEmail: $("authEmail"), authPassword: $("authPassword"),
-        authPasswordConfirm: $("authPasswordConfirm"), authConfirmWrap: $("authConfirmWrap"),
-        passwordHint: $("passwordHint"), googleAuthButton: $("googleAuthBtn"),
-        facebookAuthButton: $("facebookAuthBtn"), authError: $("authError"),
-        authTitle: $("accountTitle"), authSubmit: $("authSubmit"), authModeToggle: $("authModeToggle")
+        authForm: $("authForm"), authEmail: $("authEmail"), authOtp: $("authOtp"),
+        authOtpWrap: $("authOtpWrap"), authCountdown: $("authCountdown"),
+        authBackToEmail: $("authBackToEmail"), authResend: $("authResend"),
+        googleAuthButton: $("googleAuthBtn"), authError: $("authError"),
+        authTitle: $("accountTitle"), authSubmit: $("authSubmit")
       };
 
       let state = loadState();
@@ -589,7 +577,9 @@
       let isTransitioning = false;
       let transitionFallback = null;
       let authUser = null;
-      let isSignUpMode = false;
+      let authStep = "email";
+      let otpExpiresAt = 0;
+      let otpTimer = null;
       const reviewedThisSession = new Set();
 
       function activeDeck() {
@@ -1015,17 +1005,49 @@
         els.voiceNote.textContent = "Voice input works in Chrome, Edge or Safari. You can still type your cards normally.";
       }
 
-      function setAuthMode(signUp) {
-        isSignUpMode = signUp;
-        els.authTitle.textContent = signUp ? "Create your account" : "Sign in to sync";
-        els.authSubmit.textContent = signUp ? "Create account" : "Sign in";
-        els.authModeToggle.textContent = signUp ? "I already have an account" : "Create account";
-        els.authPassword.autocomplete = signUp ? "new-password" : "current-password";
-        els.authConfirmWrap.hidden = !signUp;
-        els.authPasswordConfirm.required = signUp;
-        els.passwordHint.hidden = !signUp;
-        els.authPasswordConfirm.value = "";
+      function clearOtpTimer() {
+        if (otpTimer) window.clearInterval(otpTimer);
+        otpTimer = null;
+      }
+      function setEmailStep() {
+        clearOtpTimer();
+        authStep = "email";
+        els.authOtpWrap.hidden = true;
+        els.authOtp.required = false;
+        els.authBackToEmail.hidden = true;
+        els.authResend.hidden = true;
+        els.authEmail.readOnly = false;
+        els.authSubmit.textContent = "Continue";
+        els.authSubmit.disabled = false;
         els.authError.textContent = "";
+      }
+      function setOtpStep(email) {
+        authStep = "otp";
+        els.authEmail.value = email;
+        els.authEmail.readOnly = true;
+        els.authOtpWrap.hidden = false;
+        els.authOtp.required = true;
+        els.authBackToEmail.hidden = false;
+        els.authResend.hidden = true;
+        els.authSubmit.textContent = "Verify code";
+        els.authSubmit.disabled = false;
+        els.authOtp.value = "";
+        otpExpiresAt = Date.now() + 180000;
+        clearOtpTimer();
+        const tick = () => {
+          const seconds = Math.max(0, Math.ceil((otpExpiresAt - Date.now()) / 1000));
+          const minutes = Math.floor(seconds / 60);
+          const remaining = String(seconds % 60).padStart(2, "0");
+          els.authCountdown.textContent = seconds
+            ? `Code expires in ${minutes}:${remaining}`
+            : "This code has expired. Request a new one.";
+          els.authSubmit.disabled = seconds === 0;
+          els.authResend.hidden = seconds > 0;
+          if (!seconds) clearOtpTimer();
+        };
+        tick();
+        otpTimer = window.setInterval(tick, 250);
+        els.authOtp.focus();
       }
       function renderAuthUI() {
         const signedIn = !!authUser;
@@ -1034,17 +1056,19 @@
         if (!signedIn) els.authStatus.textContent = "Sync progress across devices";
       }
       function openAccountModal() {
-        setAuthMode(false);
+        setEmailStep();
+        els.authForm.reset();
+        setEmailStep();
         els.authEmail.value = "";
-        els.authPassword.value = "";
-        els.authPasswordConfirm.value = "";
         els.accountModal.classList.add("open");
         window.setTimeout(() => els.authEmail.focus(), 40);
       }
       function closeAccountModal() {
+        clearOtpTimer();
         els.accountModal.classList.remove("open");
         els.authError.textContent = "";
         els.authForm.reset();
+        setEmailStep();
       }
       async function refreshCloudProgress() {
         if (!supabaseClient || !authUser) return;
@@ -1454,7 +1478,6 @@
         if (error) showToast("Could not sign out. Please try again.");
         else showToast("You have signed out.");
       });
-      els.authModeToggle.addEventListener("click", () => setAuthMode(!isSignUpMode));
       async function signInWithProvider(provider) {
         if (!supabaseClient) {
           els.authError.textContent = "The sign-in service did not load. Refresh the page and try again.";
@@ -1476,50 +1499,68 @@
         }
       }
       els.googleAuthButton.addEventListener("click", () => void signInWithProvider("google"));
-      els.facebookAuthButton.addEventListener("click", () => void signInWithProvider("facebook"));
       $("closeAccountModal").addEventListener("click", closeAccountModal);
       $("cancelAccountModal").addEventListener("click", closeAccountModal);
       els.accountModal.addEventListener("click", event => { if (event.target === els.accountModal) closeAccountModal(); });
+      async function requestEmailCode(email) {
+        if (!supabaseClient) throw new Error("The sign-in service did not load. Refresh and try again.");
+        const { error } = await supabaseClient.auth.signInWithOtp({
+          email, options: { shouldCreateUser: true }
+        });
+        if (error) throw error;
+      }
+      els.authBackToEmail.addEventListener("click", () => setEmailStep());
+      els.authResend.addEventListener("click", async () => {
+        const email = els.authEmail.value.trim();
+        els.authResend.disabled = true;
+        els.authError.textContent = "";
+        try {
+          await requestEmailCode(email);
+          setOtpStep(email);
+          els.authError.textContent = "A new code was sent to your email.";
+        } catch (error) {
+          els.authError.textContent = error.message || "Could not send a new code.";
+          els.authResend.disabled = false;
+        }
+      });
       els.authForm.addEventListener("submit", async event => {
         event.preventDefault();
-        if (!supabaseClient) { els.authError.textContent = "The database client did not load. Refresh and try again."; return; }
-        const email = els.authEmail.value.trim();
-        const password = els.authPassword.value;
+        if (!supabaseClient) { els.authError.textContent = "The sign-in service did not load. Refresh and try again."; return; }
         els.authError.textContent = "";
-        if (isSignUpMode) {
-          const characterCount = [...password].length;
-          const hasLetter = /\p{L}/u.test(password);
-          const hasNumber = /\p{N}/u.test(password);
-          const hasSymbol = /[^\p{L}\p{N}\s]/u.test(password);
-          if (characterCount < 10 || !hasLetter || !hasNumber || !hasSymbol) {
-            els.authError.textContent = "Use at least 10 characters, including a letter, a number, and a symbol.";
-            els.authPassword.focus();
+        if (authStep === "otp") {
+          const token = els.authOtp.value.trim();
+          if (Date.now() >= otpExpiresAt) {
+            els.authError.textContent = "This code has expired. Request a new one.";
             return;
           }
-          if (password !== els.authPasswordConfirm.value) {
-            els.authError.textContent = "The passwords do not match. Check both fields and try again.";
-            els.authPasswordConfirm.focus();
+          if (!/^[0-9]{6}$/.test(token)) {
+            els.authError.textContent = "Enter the six-digit code from your email.";
+            els.authOtp.focus();
             return;
           }
-        }
-        els.authSubmit.disabled = true;
-        try {
-          if (isSignUpMode) {
-            const { data, error } = await supabaseClient.auth.signUp({
-              email, password,
-              options: { emailRedirectTo: window.location.href.split("#")[0] }
+          els.authSubmit.disabled = true;
+          try {
+            const { error } = await supabaseClient.auth.verifyOtp({
+              email: els.authEmail.value.trim(), token, type: "email"
             });
             if (error) throw error;
-            if (data.session) closeAccountModal();
-            else els.authError.textContent = "Check your email to confirm the account. If the confirmation link is rejected, allow this website URL in Supabase Auth redirect settings.";
-          } else {
-            const { error } = await supabaseClient.auth.signInWithPassword({ email, password });
-            if (error) throw error;
             closeAccountModal();
+          } catch (error) {
+            els.authError.textContent = error.message || "That code could not be verified.";
+          } finally {
+            if (authStep === "otp" && Date.now() < otpExpiresAt) els.authSubmit.disabled = false;
           }
+          return;
+        }
+        const email = els.authEmail.value.trim();
+        if (!email) { els.authError.textContent = "Enter your email address."; els.authEmail.focus(); return; }
+        els.authSubmit.disabled = true;
+        try {
+          await requestEmailCode(email);
+          setOtpStep(email);
+          els.authError.textContent = "Check your inbox for your six-digit code.";
         } catch (error) {
-          els.authError.textContent = error.message || "Sign-in failed. Please try again.";
-        } finally {
+          els.authError.textContent = error.message || "Could not send a sign-in code.";
           els.authSubmit.disabled = false;
         }
       });
