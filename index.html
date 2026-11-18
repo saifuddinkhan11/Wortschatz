@@ -214,6 +214,15 @@
     .voice-note { color: #987766; font-size: 10px; line-height: 1.45; margin: 5px 0 0; }
     .error { min-height: 18px; color: #a33e31; font-size: 11px; margin: 3px 0 8px; }
     .modal-actions { display: flex; justify-content: flex-end; gap: 9px; margin-top: 15px; }
+    .auth-providers { display: grid; gap: 9px; margin: 2px 0 15px; }
+    .auth-provider { width: 100%; justify-content: center; }
+    .auth-divider { display: flex; align-items: center; gap: 10px; margin: 15px 0; color: #987d6d; font-size: 10px; }
+    .auth-divider::before, .auth-divider::after { content: ""; flex: 1; height: 1px; background: #ead8ca; }
+    .password-hint { color: #806858; font-size: 11px; line-height: 1.5; margin: -7px 0 12px; }
+    .btn.btn-primary:hover, .btn.btn-soft:hover, .btn.btn-quiet:hover {
+      color: #fffaf6; background: #4d3023; border-color: #4d3023;
+      box-shadow: 0 8px 18px rgba(55, 34, 24, .24);
+    }
     .toast {
       position: fixed; z-index: 20; bottom: 24px; left: 50%; transform: translate(-50%, 15px);
       background: #33251e; color: #fff7ef; border-radius: 99px; padding: 11px 17px; font-size: 12px;
@@ -401,14 +410,24 @@
         <button class="close-btn" id="closeAccountModal" type="button" aria-label="Close dialog">×</button>
       </div>
       <form id="authForm" novalidate>
+        <div class="auth-providers">
+          <button class="btn btn-quiet auth-provider" id="googleAuthBtn" type="button">Continue with Google</button>
+          <button class="btn btn-quiet auth-provider" id="facebookAuthBtn" type="button">Continue with Facebook</button>
+        </div>
+        <div class="auth-divider"><span>or continue with email</span></div>
         <div class="field">
           <label for="authEmail">EMAIL</label>
           <input id="authEmail" type="email" autocomplete="email" required>
         </div>
         <div class="field">
           <label for="authPassword">PASSWORD</label>
-          <input id="authPassword" type="password" autocomplete="current-password" minlength="6" required>
+          <input id="authPassword" type="password" autocomplete="current-password" required>
         </div>
+        <div class="field" id="authConfirmWrap" hidden>
+          <label for="authPasswordConfirm">CONFIRM PASSWORD</label>
+          <input id="authPasswordConfirm" type="password" autocomplete="new-password">
+        </div>
+        <p class="password-hint" id="passwordHint" hidden>Use at least 10 characters, including a letter, a number, and a symbol such as , . $ or #.</p>
         <p class="error" id="authError" role="alert" aria-live="polite"></p>
         <div class="modal-actions">
           <button class="btn btn-quiet" id="authModeToggle" type="button">Create account</button>
@@ -520,8 +539,10 @@
         deckError: $("deckFormError"), deckModalTitle: $("deckModalTitle"), saveDeckBtn: $("saveDeckBtn"),
         authButton: $("authBtn"), authStatus: $("authStatus"), accountModal: $("accountModal"),
         authForm: $("authForm"), authEmail: $("authEmail"), authPassword: $("authPassword"),
-        authError: $("authError"), authTitle: $("accountTitle"), authSubmit: $("authSubmit"),
-        authModeToggle: $("authModeToggle")
+        authPasswordConfirm: $("authPasswordConfirm"), authConfirmWrap: $("authConfirmWrap"),
+        passwordHint: $("passwordHint"), googleAuthButton: $("googleAuthBtn"),
+        facebookAuthButton: $("facebookAuthBtn"), authError: $("authError"),
+        authTitle: $("accountTitle"), authSubmit: $("authSubmit"), authModeToggle: $("authModeToggle")
       };
 
       let state = loadState();
@@ -970,6 +991,10 @@
         els.authSubmit.textContent = signUp ? "Create account" : "Sign in";
         els.authModeToggle.textContent = signUp ? "I already have an account" : "Create account";
         els.authPassword.autocomplete = signUp ? "new-password" : "current-password";
+        els.authConfirmWrap.hidden = !signUp;
+        els.authPasswordConfirm.required = signUp;
+        els.passwordHint.hidden = !signUp;
+        els.authPasswordConfirm.value = "";
         els.authError.textContent = "";
       }
       function renderAuthUI() {
@@ -982,6 +1007,7 @@
         setAuthMode(false);
         els.authEmail.value = "";
         els.authPassword.value = "";
+        els.authPasswordConfirm.value = "";
         els.accountModal.classList.add("open");
         window.setTimeout(() => els.authEmail.focus(), 40);
       }
@@ -1202,7 +1228,7 @@
         els.deckBtnName.textContent = activeDeck().name;
         // Words already in Revision don't need the Again button.
         els.again.style.display = activeDeckId === REVISION_ID ? "none" : "";
-        $("addBtn").style.display = activeDeck().remote ? "none" : "";
+        $("addBtn").style.display = "";
       }
       function renderDeckMenu() {
         els.deckMenu.innerHTML = "";
@@ -1399,6 +1425,28 @@
         else showToast("You have signed out.");
       });
       els.authModeToggle.addEventListener("click", () => setAuthMode(!isSignUpMode));
+      async function signInWithProvider(provider) {
+        if (!supabaseClient) {
+          els.authError.textContent = "The sign-in service did not load. Refresh the page and try again.";
+          return;
+        }
+        els.authError.textContent = "";
+        try {
+          const { error } = await supabaseClient.auth.signInWithOAuth({
+            provider,
+            options: { redirectTo: window.location.href.split("#")[0] }
+          });
+          if (error) throw error;
+        } catch (error) {
+          const providerName = provider === "google" ? "Google" : "Facebook";
+          const message = error.message || "Please try again.";
+          els.authError.textContent = /provider.*(not enabled|unsupported)/i.test(message)
+            ? `${providerName} sign-in needs to be enabled in the Supabase project first.`
+            : message;
+        }
+      }
+      els.googleAuthButton.addEventListener("click", () => void signInWithProvider("google"));
+      els.facebookAuthButton.addEventListener("click", () => void signInWithProvider("facebook"));
       $("closeAccountModal").addEventListener("click", closeAccountModal);
       $("cancelAccountModal").addEventListener("click", closeAccountModal);
       els.accountModal.addEventListener("click", event => { if (event.target === els.accountModal) closeAccountModal(); });
@@ -1408,6 +1456,22 @@
         const email = els.authEmail.value.trim();
         const password = els.authPassword.value;
         els.authError.textContent = "";
+        if (isSignUpMode) {
+          const characterCount = [...password].length;
+          const hasLetter = /\p{L}/u.test(password);
+          const hasNumber = /\p{N}/u.test(password);
+          const hasSymbol = /[^\p{L}\p{N}\s]/u.test(password);
+          if (characterCount < 10 || !hasLetter || !hasNumber || !hasSymbol) {
+            els.authError.textContent = "Use at least 10 characters, including a letter, a number, and a symbol.";
+            els.authPassword.focus();
+            return;
+          }
+          if (password !== els.authPasswordConfirm.value) {
+            els.authError.textContent = "The passwords do not match. Check both fields and try again.";
+            els.authPasswordConfirm.focus();
+            return;
+          }
+        }
         els.authSubmit.disabled = true;
         try {
           if (isSignUpMode) {
@@ -1429,7 +1493,23 @@
           els.authSubmit.disabled = false;
         }
       });
-      $("addBtn").addEventListener("click", () => openModal());
+      $("addBtn").addEventListener("click", () => {
+        if (activeDeck().remote) {
+          const personalDeck = decks.find(deck => !deck.remote && deck.id !== REVISION_ID);
+          if (!personalDeck) {
+            showToast("Create a personal deck before adding a card.");
+            return;
+          }
+          activeDeckId = personalDeck.id;
+          cards = personalDeck.cards;
+          saveCards();
+          updateDeckUI();
+          shuffleDeck();
+          renderCard(false, true);
+          showToast("Your new card will be saved in your personal deck.");
+        }
+        openModal();
+      });
       $("manageBtn").addEventListener("click", () => showView("manage"));
       $("manageDecksBtn").addEventListener("click", () => showView("decks"));
       $("backBtn").addEventListener("click", () => showView("study"));
