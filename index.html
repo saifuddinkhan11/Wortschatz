@@ -16,6 +16,24 @@
       --peach: #f3d9c6;
       --accent: #b86e50;
       --accent-dark: #92513a;
+      --card-pink: #F3D6D0;
+      --card-mint: #D3E6DD;
+      --card-sand: #F1E3C8;
+      --card-lilac: #E3DDEB;
+      --card-word-color: #2A211C;
+      --card-label-color: #5E4E44;
+      --neutral-button-bg: rgba(255,255,255,0.85);
+      --neutral-button-hover: rgba(255,255,255,0.96);
+      --neutral-button-border: rgba(42,33,28,0.25);
+      --neutral-button-text: #2A211C;
+      --example-panel-bg: #FFFDF9;
+      --example-panel-border: #EADBCB;
+      --example-panel-ink: #2A211C;
+      --example-label: #9A5B42;
+      --focus-outline: #7B412B;
+      --example-panel-shadow: 0 12px 30px rgba(94,59,39,.13);
+      --example-panel-shadow-mobile: 0 -14px 44px rgba(47,30,20,.24);
+      --card-stack-shadow: 0 10px 22px rgba(94,59,39,.08);
       --line: rgba(75, 48, 34, .13);
       --shadow: 0 24px 55px rgba(94, 59, 39, .16), 0 5px 14px rgba(94, 59, 39, .08);
       --sans: "DM Sans", ui-sans-serif, system-ui, sans-serif;
@@ -78,12 +96,12 @@
     .progress-fill { height: 100%; width: 0; border-radius: inherit; background: #b77a5b; transition: width .35s ease; }
     .stage { width: min(520px, 92vw); height: 345px; position: relative; margin: 7px auto 14px; perspective: 1200px; }
     .stack-card {
-      position: absolute; inset: 12px 28px 0; border-radius: 27px; pointer-events: none;
-      box-shadow: 0 13px 28px rgba(94, 59, 39, .09);
+      position: absolute; inset: 0; border-radius: 27px; pointer-events: none;
+      box-shadow: var(--card-stack-shadow);
     }
-    .stack-one { transform: translate(10px, 9px) rotate(3.1deg); background: #e9d8c8; opacity: .78; }
-    .stack-two { transform: translate(-9px, 17px) rotate(-2.4deg); background: #e5dfc8; opacity: .72; }
-    .stack-three { transform: translate(3px, 24px) rotate(1deg); background: #d9e3d6; opacity: .65; }
+    .stack-one { transform: translate(5px, 5px); background: var(--card-lilac); opacity: .55; }
+    .stack-two { transform: translate(-5px, 7px); background: var(--card-pink); opacity: .4; }
+    .stack-three { transform: translate(2px, 9px); background: var(--card-mint); opacity: .28; }
     /* Entrance motion lives on this outer wrapper; the inner card owns only the 3D flip. */
     .card-motion { position: absolute; inset: 0; border-radius: 27px; }
     .card-motion.entering { animation: cardEnter .48s cubic-bezier(.2,.8,.2,1) both; }
@@ -100,7 +118,7 @@
       position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center;
       justify-content: center; padding: 36px 35px; border-radius: 27px;
       backface-visibility: hidden; -webkit-backface-visibility: hidden;
-      color: #171310; text-align: center;
+      color: var(--card-word-color); text-align: center;
     }
     .face::before {
       content: ""; position: absolute; width: 260px; height: 260px; border-radius: 48% 52% 64% 36%;
@@ -112,51 +130,51 @@
     }
     .back { transform: rotateY(180deg); visibility: hidden; }
     .flashcard.is-flipped .back { visibility: visible; }
-    .side-label { position: absolute; top: 27px; left: 30px; z-index: 1; font-size: 10px; text-transform: uppercase; letter-spacing: 2px; font-weight: 700; opacity: .62; }
-    .card-index { position: absolute; top: 26px; right: 29px; z-index: 1; font-size: 11px; opacity: .52; }
+    .side-label { position: absolute; top: 27px; left: 30px; z-index: 1; color:var(--card-label-color); font-size: 10px; text-transform: uppercase; letter-spacing: 2px; font-weight: 700; }
+    .card-index { position: absolute; top: 26px; right: 29px; z-index: 1; color:var(--card-label-color); font-size: 11px; }
     .word {
       position: relative; z-index: 1; font: 500 clamp(37px, 7vw, 62px)/1.12 var(--serif);
       letter-spacing: -1.6px; overflow-wrap: anywhere; max-width: 100%;
     }
     .word.long { font-size: clamp(29px, 5.5vw, 48px); }
     .hint { position: relative; z-index: 1; margin-top: 18px; color: rgba(24,18,14,.58); font-size: 12px; }
-    .example-button { position:absolute; right:70px; bottom:18px; z-index:4; display:inline-flex; align-items:center; justify-content:center; gap:6px; min-height:42px; padding:0 12px; border:1px solid var(--accent); border-radius:999px; color:var(--accent-dark); background:rgba(255,250,246,.68); font:700 12px var(--sans); transition:background .2s ease, color .2s ease, transform .2s ease; }
-    .example-button:hover { background:var(--accent); color:#fffaf6; transform:translateY(-1px); }
-    .example-button:focus-visible, .sentence-audio-btn:focus-visible, .translation-toggle:focus-visible { outline:3px solid var(--accent); outline-offset:3px; }
+    .example-button { position:absolute; right:70px; bottom:18px; z-index:4; display:inline-flex; align-items:center; justify-content:center; gap:6px; min-height:42px; padding:0 12px; border:1px solid var(--neutral-button-border); border-radius:999px; color:var(--neutral-button-text); background:var(--neutral-button-bg); font:700 12px var(--sans); transition:background .2s ease, color .2s ease, transform .2s ease; }
+    .example-button:hover { background:var(--neutral-button-hover); color:var(--neutral-button-text); transform:translateY(-1px); }
+    .example-button:focus-visible, .speak-btn:focus-visible, .sentence-audio-btn:focus-visible, .translation-toggle:focus-visible { outline:3px solid var(--focus-outline); outline-offset:3px; }
     .example-button[hidden] { display:none; }
-    .example-panel { width:min(520px,92vw); margin:0 auto 14px; padding:16px 18px; border:1px solid rgba(157,92,63,.24); border-radius:18px; background:rgba(255,250,246,.96); box-shadow:0 12px 30px rgba(94,59,39,.13); color:var(--ink); }
+    .example-panel { width:min(520px,92vw); margin:22px auto 14px; padding:16px 18px; border:1px solid var(--example-panel-border); border-radius:18px; background:var(--example-panel-bg); box-shadow:var(--example-panel-shadow); color:var(--example-panel-ink); }
     .example-panel[hidden] { display:none; }
     .example-panel-inner { display:grid; gap:12px; }
-    .example-panel-title { margin:0; color:var(--accent-dark); font-size:11px; font-weight:700; letter-spacing:1.2px; text-transform:uppercase; }
+    .example-panel-title { margin:0; color:var(--example-label); font-size:11px; font-weight:700; letter-spacing:1.2px; text-transform:uppercase; }
     .sentence-row { display:flex; align-items:center; justify-content:space-between; gap:12px; }
-    .sentence-german { margin:0; font-size:15px; line-height:1.45; font-weight:600; overflow-wrap:anywhere; }
-    .sentence-audio-btn { flex:none; min-height:38px; padding:7px 11px; display:inline-flex; align-items:center; gap:6px; border:1px solid rgba(157,92,63,.3); border-radius:999px; color:var(--accent-dark); background:rgba(243,217,198,.45); font:700 11px var(--sans); }
-    .sentence-audio-btn:hover, .translation-toggle:hover { background:rgba(184,110,80,.18); }
-    .sentence-audio-btn.speaking { background:rgba(184,110,80,.22); }
+    .sentence-german { margin:0; color:var(--example-panel-ink); font-size:15px; line-height:1.45; font-weight:600; overflow-wrap:anywhere; }
+    .sentence-audio-btn { flex:none; min-height:38px; padding:7px 11px; display:inline-flex; align-items:center; gap:6px; border:1px solid var(--neutral-button-border); border-radius:999px; color:var(--neutral-button-text); background:var(--neutral-button-bg); font:700 11px var(--sans); }
+    .sentence-audio-btn:hover, .translation-toggle:hover { background:var(--neutral-button-hover); }
+    .sentence-audio-btn.speaking { background:var(--neutral-button-hover); }
     .sentence-translation { margin:0; color:var(--muted); font-size:13px; line-height:1.45; }
-    .translation-toggle { justify-self:start; padding:8px 12px; border:1px solid var(--accent); border-radius:999px; color:var(--accent-dark); background:transparent; font:700 12px var(--sans); }
-    .stage { margin-bottom:14px; }
+    .translation-toggle { justify-self:start; padding:8px 12px; border:1px solid var(--neutral-button-border); border-radius:999px; color:var(--neutral-button-text); background:var(--neutral-button-bg); font:700 12px var(--sans); }
+    .stage { margin-bottom:22px; }
     @media (max-width:600px) {
       .example-button { right:62px; bottom:15px; min-height:38px; padding:0 10px; }
-      .example-panel { position:fixed; inset:auto 0 0; z-index:30; width:100%; margin:0; padding:20px 20px max(22px, env(safe-area-inset-bottom)); border-radius:22px 22px 0 0; border-bottom:0; box-shadow:0 -14px 44px rgba(47,30,20,.24); transform:translateY(105%); transition:transform .24s ease; }
+      .example-panel { position:fixed; inset:auto 0 0; z-index:30; width:100%; margin:0; padding:20px 20px max(22px, env(safe-area-inset-bottom)); border-radius:22px 22px 0 0; border-bottom:0; box-shadow:var(--example-panel-shadow-mobile); transform:translateY(105%); transition:transform .24s ease; }
       .example-panel.is-open { transform:translateY(0); }
       .example-panel::before { content:""; display:block; width:38px; height:4px; margin:0 auto 15px; border-radius:4px; background:rgba(105,69,51,.24); }
       .sentence-row { align-items:flex-start; }
       .sentence-audio-btn { min-height:36px; }
     }
-    @media (prefers-reduced-motion: reduce) { .example-panel { transition:none; } }    .card-bottom { position: absolute; bottom: 25px; z-index: 1; font-size: 10px; letter-spacing: 1.3px; text-transform: uppercase; opacity: .48; }
+    @media (prefers-reduced-motion: reduce) { .example-panel { transition:none; } }    .card-bottom { position: absolute; bottom: 25px; z-index: 1; color:var(--card-label-color); font-size: 10px; letter-spacing: 1.3px; text-transform: uppercase; }
     .speak-btn {
       position: absolute; right: 20px; bottom: 18px; z-index: 3;
       width: 42px; height: 42px; display: grid; place-items: center; padding: 0;
-      border-radius: 50%; border: 1px solid var(--speak-border, rgba(23, 19, 16, .2));
-      background: var(--speak-bg, rgba(23, 19, 16, .12)); color: #171310;
+      border-radius: 50%; border: 1px solid var(--neutral-button-border);
+      background: var(--neutral-button-bg); color: var(--neutral-button-text);
       box-shadow: 0 4px 12px rgba(60, 38, 26, .1);
       transition: transform .2s ease, background .2s ease, box-shadow .2s ease;
     }
     .speak-btn[hidden] { display: none; }
-    .speak-btn:hover { background: var(--speak-bg-hover, rgba(23, 19, 16, .2)); transform: scale(1.07); }
+    .speak-btn:hover { background: var(--neutral-button-hover); transform: scale(1.07); }
     .speak-btn:active { transform: scale(.95); }
-    .speak-btn.speaking { background: var(--speak-bg-hover, rgba(23, 19, 16, .2)); animation: speakPulse 1s ease-in-out infinite; }
+    .speak-btn.speaking { background: var(--neutral-button-hover); animation: speakPulse 1s ease-in-out infinite; }
     .speak-btn.speaking .wave { animation: waveFade .9s ease-in-out infinite; }
     .speak-btn.speaking .wave-2 { animation-delay: .25s; }
     .flashcard.is-flipped .front .speak-btn { pointer-events: none; }
@@ -322,7 +340,7 @@
       .intro { margin-bottom: 14px; }
       .intro p { font-size: 12px; }
       .stage { height: min(345px, 86vw); min-height: 280px; margin-top: 7px; }
-      .stack-card { inset: 11px 17px 0; }
+      .stack-card { inset: 0; }
       .face { padding: 30px 22px; }
       .side-label { left: 22px; top: 22px; }
       .card-index { right: 22px; top: 21px; }
@@ -576,14 +594,8 @@
         ["dog", "der Hund"], ["to learn", "lernen"], ["to speak", "sprechen"],
         ["goodbye", "Auf Wiedersehen"], ["how are you?", "Wie geht es dir?"]
       ];
-      // Fifty distinct, high-lightness pastel colours. Text remains dark on every card.
-      const palette = [
-        "#F6D5C8", "#F4E3A1", "#CFE8D5", "#CFE5F4", "#DDD3F1", "#F2CED8", "#DCE7C5", "#F5D7A8", "#C7E7E5", "#F4C9B8",
-        "#E7D8C8", "#D6E0F2", "#EAD4EA", "#D4E8C9", "#F1E0C7", "#C8DDE2", "#EBCFC1", "#D9D4E8", "#E8E6B9", "#D2E8DC",
-        "#F6DCCB", "#C9DFF0", "#E6CFE0", "#D8E6D0", "#F0D5A6", "#C7E0D9", "#EAD8C9", "#D5DFF0", "#EFD0C8", "#D9E8E8",
-        "#E4D7B9", "#D7E2C8", "#F2D2E5", "#C9E2EF", "#EADBCF", "#D8D2C2", "#F5E0B5", "#D2E2D4", "#E3D2F0", "#F0D1B9",
-        "#C9E7DE", "#E7D3CB", "#D1DCEB", "#E8E1C9", "#F3D5D0", "#D5E9C7", "#D9D2E4", "#F4E0D0", "#CBE3DC", "#E9D1B7"
-      ];
+      // A small pastel palette is assigned consistently from the German article.
+      const palette = ["--card-pink", "--card-mint", "--card-sand", "--card-lilac"].map(name => getComputedStyle(document.documentElement).getPropertyValue(name).trim());
       const PALETTE_STORAGE_KEY = "wortschatz-palette-cycle-v1";
 
       const $ = (id) => document.getElementById(id);
@@ -763,16 +775,17 @@
         const channel = shift => Math.round(((n >> shift) & 255) * factor).toString(16).padStart(2, "0");
         return "#" + channel(16) + channel(8) + channel(0);
       }
+      function articleCardColor(german) {
+        const article = String(german || "").trim().toLowerCase().match(/^(der|die|das)\b/)?.[1];
+        if (article === "der") return palette[3];
+        if (article === "die") return palette[0];
+        if (article === "das") return palette[1];
+        return palette[2];
+      }
       function updateCardColor(card) {
-        const color = card.color || palette[0];
+        const color = articleCardColor(card.german);
         els.frontFace.style.background = color;
         els.backFace.style.background = color;
-        // The speaker button uses a darker shade of this card's own colour.
-        [els.frontFace, els.backFace].forEach(face => {
-          face.style.setProperty("--speak-bg", shadeColor(color, 0.85));
-          face.style.setProperty("--speak-bg-hover", shadeColor(color, 0.77));
-          face.style.setProperty("--speak-border", shadeColor(color, 0.66));
-        });
         const colorIndex = Math.max(0, palette.indexOf(color));
         els.stackOne.style.background = palette[(colorIndex + 1) % palette.length];
         els.stackTwo.style.background = palette[(colorIndex + 2) % palette.length];
@@ -806,9 +819,10 @@
         currentCardId = card.id;
         isFlipped = false;
         els.flashcard.classList.remove("is-flipped");
-        if (assignFreshColor || !palette.includes(card.color)) {
-          card.color = nextPaletteColor();
-          saveCards();
+        const articleColor = articleCardColor(card.german);
+        if (card.color !== articleColor) {
+          card.color = articleColor;
+          if (!activeDeck().remote) saveCards();
         }
         updateCardColor(card);
         els.english.textContent = card.english;
