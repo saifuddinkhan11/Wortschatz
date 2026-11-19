@@ -120,7 +120,10 @@
     }
     .word.long { font-size: clamp(29px, 5.5vw, 48px); }
     .hint { position: relative; z-index: 1; margin-top: 18px; color: rgba(24,18,14,.58); font-size: 12px; }
-    .card-bottom { position: absolute; bottom: 25px; z-index: 1; font-size: 10px; letter-spacing: 1.3px; text-transform: uppercase; opacity: .48; }
+    .card-example { position:relative; z-index:1; display:grid; gap:5px; max-width:100%; margin-top:14px; padding:0 8px; }
+    .card-example[hidden] { display:none; }
+    .card-example-de { font-size:13px; line-height:1.35; font-weight:600; overflow-wrap:anywhere; }
+    .card-example-en { font-size:11px; line-height:1.35; color:rgba(24,18,14,.62); overflow-wrap:anywhere; }    .card-bottom { position: absolute; bottom: 25px; z-index: 1; font-size: 10px; letter-spacing: 1.3px; text-transform: uppercase; opacity: .48; }
     .speak-btn {
       position: absolute; right: 20px; bottom: 18px; z-index: 3;
       width: 42px; height: 42px; display: grid; place-items: center; padding: 0;
@@ -247,8 +250,12 @@
     .toast.show { opacity: 1; transform: translate(-50%, 0); }
 
     /* ===== Added: deck picker, Again button, deck manager ===== */
-    .deck-picker { position: relative; z-index: 5; display: flex; justify-content: center; margin: 0 0 6px; }
-    .deck-btn { display: inline-flex; align-items: center; gap: 9px; max-width: min(320px, 86vw); }
+    .level-picker { display: flex; justify-content: center; gap: 8px; margin: 0 auto 10px; }
+    .level-btn { min-width:58px; padding:9px 15px; border:1px solid var(--line); border-radius:999px; background:rgba(255,255,255,.62); color:#694533; font:700 12px var(--sans); transition:background .2s ease,border-color .2s ease,transform .2s ease; }
+    .level-btn:hover { background:#f0d9c8; transform:translateY(-1px); }
+    .level-btn.active { background:rgba(235,205,185,.82); border-color:rgba(125,79,53,.22); }
+    .level-btn:focus-visible { outline:2px solid var(--accent-dark); outline-offset:2px; }
+    .deck-picker { position: relative; z-index: 5; display: flex; justify-content: center; margin: 0 0 6px; }    .deck-btn { display: inline-flex; align-items: center; gap: 9px; max-width: min(320px, 86vw); }
     .deck-btn #deckBtnName { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
     .deck-btn .chev { font-size: 11px; transition: transform .2s ease; }
     .deck-btn[aria-expanded="true"] .chev { transform: rotate(180deg); }
@@ -346,8 +353,13 @@
 
     <main>
       <section class="view study-view active" id="studyView" aria-label="Vocabulary flashcards">
-        <div class="deck-picker" id="deckPicker">
-          <button class="btn btn-soft deck-btn" id="deckBtn" type="button" aria-haspopup="listbox" aria-expanded="false" title="Choose a deck">
+        <div class="level-picker" id="levelPicker" role="group" aria-label="Choose a German level">
+          <button class="level-btn active" type="button" data-level="A1" aria-pressed="true">A1</button>
+          <button class="level-btn" type="button" data-level="A2" aria-pressed="false">A2</button>
+          <button class="level-btn" type="button" data-level="B1" aria-pressed="false">B1</button>
+          <button class="level-btn" type="button" data-level="B2" aria-pressed="false">B2</button>
+        </div>
+        <div class="deck-picker" id="deckPicker">          <button class="btn btn-soft deck-btn" id="deckBtn" type="button" aria-haspopup="listbox" aria-expanded="false" title="Choose a deck">
             <span aria-hidden="true">▤</span><span id="deckBtnName">Basics</span><span class="chev" aria-hidden="true">▾</span>
           </button>
           <div class="deck-menu" id="deckMenu" role="listbox" aria-label="Your decks" hidden></div>
@@ -378,6 +390,10 @@
               <span class="side-label">Deutsch</span><span class="card-index" id="backIndex">01</span>
               <div class="word" id="germanWord">glücklich</div>
               <div class="hint">Deutsch translation revealed</div>
+              <div class="card-example" id="cardExample" hidden>
+                <span class="card-example-de" id="exampleGerman"></span>
+                <span class="card-example-en" id="exampleEnglish"></span>
+              </div>
               <div class="card-bottom">GUT GEMACHT · WELL DONE</div>
               <button class="speak-btn" id="speakGerman" type="button" aria-label="Listen to the German word" title="Listen (Deutsch)"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 5 6 9H3v6h3l5 4V5z" fill="currentColor" stroke="none"/><path class="wave wave-1" d="M15.5 9a4.5 4.5 0 0 1 0 6"/><path class="wave wave-2" d="M18.5 6.5a8.5 8.5 0 0 1 0 11"/></svg></button>
             </div>
@@ -416,7 +432,9 @@
         <div class="card-list" id="deckList"></div>
       </section>
     </main>
-    <footer>Made for curious minds · You can do it Saif ·  I Believe in You</footer>
+    <footer>Made for curious minds · You can do it Saif · I Believe in You<br>
+      Vocabulary adapted from <a href="https://germanfluent.com/attribution/" target="_blank" rel="noreferrer">German Fluent</a> · CC BY-SA 4.0
+    </footer>
   </div>
 
   <div class="modal-backdrop" id="accountModal" role="presentation">
@@ -515,7 +533,8 @@
       const supabaseClient = window.supabase && window.supabase.createClient
         ? window.supabase.createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY)
         : null;
-      const REMOTE_DECK_ID = "supabase-a1-food-drinks";
+      const REMOTE_DECK_PREFIX = "supabase-";
+      const ACTIVE_REMOTE_KEY = "wortschatz-active-remote-deck-v1";
 
       const STORAGE_KEY = "wortschatz-vocabulary-cards-v1";
       const DECKS_KEY = "wortschatz-decks-v2";
@@ -553,6 +572,7 @@
         toast: $("toast"), englishMic: $("englishMic"), germanMic: $("germanMic"),
         englishVoiceStatus: $("englishVoiceStatus"), germanVoiceStatus: $("germanVoiceStatus"), voiceNote: $("voiceNote"),
         deckPicker: $("deckPicker"), deckBtn: $("deckBtn"), deckBtnName: $("deckBtnName"), deckMenu: $("deckMenu"),
+        levelPicker: $("levelPicker"), cardExample: $("cardExample"), exampleGerman: $("exampleGerman"), exampleEnglish: $("exampleEnglish"),
         deckList: $("deckList"), decksCount: $("decksCount"),
         deckModal: $("deckModalBackdrop"), deckForm: $("deckForm"), deckNameInput: $("deckNameInput"),
         deckError: $("deckFormError"), deckModalTitle: $("deckModalTitle"), saveDeckBtn: $("saveDeckBtn"),
@@ -567,6 +587,7 @@
       let state = loadState();
       let decks = state.decks;
       let activeDeckId = state.active;
+      let selectedLevel = "A1";
       let cards = activeDeck().cards;
       let deckOrder = [];
       let deckPosition = 0;
@@ -664,6 +685,8 @@
             ? (localDecks.find(deck => deck.id !== REVISION_ID) || localDecks[0]).id
             : activeDeckId;
           localStorage.setItem(DECKS_KEY, JSON.stringify({ decks: localDecks, active: savedActive }));
+          if (activeDeck().remote) localStorage.setItem(ACTIVE_REMOTE_KEY, activeDeckId);
+          else localStorage.removeItem(ACTIVE_REMOTE_KEY);
         } catch (error) { showToast("Could not save. Browser storage may be full."); console.error(error); }
       }
       function shuffleDeck() {
@@ -712,7 +735,7 @@
           els.controls.style.display = "none";
           els.empty.style.display = "block";
           els.empty.innerHTML = activeDeck().remote
-            ? "<strong>Pilot deck is getting ready.</strong>Published A1 Food and Drinks words will appear here."
+            ? "<strong>This deck is getting ready.</strong>Published vocabulary will appear here."
             : "<strong>Your deck is empty.</strong>Add a few cards to start learning.";
           updateProgress();
           return;
@@ -731,6 +754,10 @@
         updateCardColor(card);
         els.english.textContent = card.english;
         els.german.textContent = card.german;
+        const hasExample = !!(card.exampleGerman || card.exampleEnglish);
+        els.cardExample.hidden = !hasExample;
+        els.exampleGerman.textContent = card.exampleGerman || "";
+        els.exampleEnglish.textContent = card.exampleEnglish || "";
         els.frontIndex.textContent = String(deckPosition + 1).padStart(2, "0");
         els.backIndex.textContent = String(deckPosition + 1).padStart(2, "0");
         els.english.classList.toggle("long", card.english.length > 18);
@@ -1052,9 +1079,9 @@
       }
       function renderAuthUI() {
         const signedIn = !!authUser;
-        els.authButton.textContent = signedIn ? "Sign out" : "Sign in";
-        els.authButton.title = signedIn ? `Signed in as ${authUser.email || "your account"}` : "Sign in to sync study progress";
-        if (!signedIn) els.authStatus.textContent = "Sync progress across devices";
+        els.authButton.textContent = signedIn ? "Sign out" : "Log in";
+        els.authButton.title = signedIn ? `Signed in as ${authUser.email || "your account"}` : "Log in";
+        if (!signedIn) els.authStatus.textContent = "";
       }
       function openAccountModal() {
         setEmailStep();
@@ -1087,7 +1114,7 @@
       async function recordPilotReview(card) {
         if (!card || !card.vocabularyId || !supabaseClient) return;
         if (!authUser) {
-          showToast("Sign in to save your pilot progress.");
+          showToast("Log in to save your progress.");
           return;
         }
         const reviewKey = `${authUser.id}:${card.vocabularyId}`;
@@ -1120,62 +1147,95 @@
         }
         await refreshCloudProgress();
       }
-      async function loadPilotDeck() {
+      function updateLevelButtons() {
+        els.levelPicker.querySelectorAll(".level-btn").forEach(button => {
+          const active = button.dataset.level === selectedLevel;
+          button.classList.toggle("active", active);
+          button.setAttribute("aria-pressed", active ? "true" : "false");
+        });
+      }
+      function chooseLevel(level) {
+        if (!["A1", "A2", "B1", "B2"].includes(level)) return;
+        selectedLevel = level;
+        updateLevelButtons();
+        const firstDeck = decks.find(deck => deck.remote && deck.cefrLevel === level);
+        if (firstDeck && (!activeDeck().remote || activeDeck().cefrLevel !== level)) {
+          selectDeck(firstDeck.id);
+          toggleDeckMenu(true);
+        } else if (!els.deckMenu.hidden) renderDeckMenu();
+      }
+      async function loadPublishedDecks() {
         if (!supabaseClient) {
           showToast("The database client could not load. Check your connection and refresh.");
           return;
         }
-        const { data: deck, error: deckError } = await supabaseClient
+        const { data: catalogue, error: catalogueError } = await supabaseClient
           .from("decks")
-          .select("id,name,status")
-          .eq("code", "A1-T04")
-          .maybeSingle();
-        if (deckError) {
-          console.warn("Could not load the A1 pilot deck:", deckError.message);
-          showToast("Could not connect to the A1 pilot deck.");
-          return;
-        }
-        if (!deck) return;
-        const { data: links, error: linkError } = await supabaseClient
-          .from("deck_vocabulary")
-          .select("sort_order,vocabulary(id,lemma,article,english_translation,review_status)")
-          .eq("deck_id", deck.id)
+          .select("id,code,name,cefr_level,status,sort_order")
+          .eq("deck_type", "topic")
+          .eq("status", "published")
+          .order("cefr_level")
           .order("sort_order");
-        if (linkError) {
-          console.warn("Could not load A1 pilot words:", linkError.message);
-          showToast("Could not load the A1 pilot vocabulary.");
+        if (catalogueError) {
+          console.warn("Could not load published decks:", catalogueError.message);
+          showToast("Could not connect to the vocabulary decks.");
           return;
         }
-        const pilotCards = (links || [])
-          .filter(link => link.vocabulary && deck.status === "published" && link.vocabulary.review_status === "published")
-          .map(link => {
-            const word = link.vocabulary;
+        const published = (catalogue || []).filter(deck => ["A1", "A2", "B1", "B2"].includes(deck.cefr_level));
+        const remoteDecks = [];
+        for (let i = 0; i < published.length; i += 8) {
+          const batch = await Promise.all(published.slice(i, i + 8).map(async deck => {
+            const { data: links, error } = await supabaseClient
+              .from("deck_vocabulary")
+              .select("sort_order,vocabulary(id,lemma,article,english_translation,review_status,examples(german_text,english_text,sort_order))")
+              .eq("deck_id", deck.id)
+              .order("sort_order");
+            if (error) throw error;
+            const deckCards = (links || [])
+              .filter(link => link.vocabulary && link.vocabulary.review_status === "published")
+              .map(link => {
+                const word = link.vocabulary;
+                const example = (word.examples || []).slice().sort((a, b) => a.sort_order - b.sort_order)[0];
+                return {
+                  id: `db-${word.id}`,
+                  vocabularyId: word.id,
+                  english: word.english_translation || word.lemma,
+                  german: [word.article, word.lemma].filter(Boolean).join(" "),
+                  exampleGerman: example ? example.german_text : "",
+                  exampleEnglish: example ? example.english_text : "",
+                  color: null
+                };
+              })
+              .filter(card => card.english && card.german);
             return {
-              id: `db-${word.id}`,
-              vocabularyId: word.id,
-              english: word.english_translation || word.lemma,
-              german: [word.article, word.lemma].filter(Boolean).join(" "),
-              color: null
+              id: REMOTE_DECK_PREFIX + deck.id,
+              dbDeckId: deck.id,
+              code: deck.code,
+              name: deck.name,
+              cefrLevel: deck.cefr_level,
+              sortOrder: deck.sort_order,
+              cards: deckCards,
+              remote: true
             };
-          })
-          .filter(card => card.english && card.german);
-        let pilotDeck = decks.find(item => item.id === REMOTE_DECK_ID);
-        if (!pilotDeck) {
-          pilotDeck = { id: REMOTE_DECK_ID, name: deck.name, cards: pilotCards, remote: true };
-          decks.push(pilotDeck);
-        } else {
-          pilotDeck.name = deck.name;
-          pilotDeck.cards = pilotCards;
+          }));
+          remoteDecks.push(...batch);
         }
-        if (activeDeckId === REMOTE_DECK_ID) {
-          cards = pilotDeck.cards;
+        const localDecks = decks.filter(deck => !deck.remote);
+        decks = [...localDecks, ...remoteDecks];
+        const savedRemoteId = localStorage.getItem(ACTIVE_REMOTE_KEY);
+        const preferred = remoteDecks.find(deck => deck.id === savedRemoteId)
+          || remoteDecks.find(deck => deck.id === activeDeckId)
+          || remoteDecks.find(deck => deck.cefrLevel === "A1")
+          || remoteDecks[0];
+        if (preferred) {
+          activeDeckId = preferred.id;
+          selectedLevel = preferred.cefrLevel;
+          cards = preferred.cards;
           shuffleDeck();
           renderCard(false, true);
+          updateDeckUI();
         }
-        updateDeckUI();
-        if (!pilotCards.length && !authUser) {
-          els.authStatus.textContent = "Supabase connected · A1 pilot has no published words";
-        }
+        updateLevelButtons();
       }
       async function initializeSupabase() {
         if (!supabaseClient) return;
@@ -1183,7 +1243,7 @@
           authUser = session ? session.user : null;
           renderAuthUI();
           if (authUser) void refreshCloudProgress();
-          else els.authStatus.textContent = "Sync progress across devices";
+          else els.authStatus.textContent = "";
         });
         const { data, error } = await supabaseClient.auth.getSession();
         if (error) {
@@ -1217,7 +1277,7 @@
       function renderManage() {
         els.manageCount.textContent = `${cards.length} ${cards.length === 1 ? "card" : "cards"} in “${activeDeck().name}”`;
         if (activeDeck().remote && !cards.length) {
-          els.cardList.innerHTML = '<div class="no-cards">The pilot deck has no published words yet.</div>';
+          els.cardList.innerHTML = '<div class="no-cards">This deck has no published words yet.</div>';
           return;
         }
         els.cardList.innerHTML = "";
@@ -1280,6 +1340,8 @@
 
       // ===== Added: decks, deck picker, revision deck =====
       function updateDeckUI() {
+        if (activeDeck().remote) selectedLevel = activeDeck().cefrLevel;
+        updateLevelButtons();
         els.deckBtnName.textContent = activeDeck().name;
         // Words already in Revision don't need the Again button.
         els.again.style.display = activeDeckId === REVISION_ID ? "none" : "";
@@ -1287,7 +1349,8 @@
       }
       function renderDeckMenu() {
         els.deckMenu.innerHTML = "";
-        decks.forEach(deck => {
+        const visibleDecks = decks.filter(deck => !deck.remote || deck.cefrLevel === selectedLevel);
+        visibleDecks.forEach(deck => {
           const option = document.createElement("button");
           option.type = "button";
           option.className = "deck-option" + (deck.id === activeDeckId ? " active" : "");
@@ -1313,6 +1376,12 @@
         if (id === activeDeckId || isTransitioning) return;
         stopSpeech();
         activeDeckId = id;
+        if (activeDeck().remote) {
+          selectedLevel = activeDeck().cefrLevel;
+          localStorage.setItem(ACTIVE_REMOTE_KEY, activeDeckId);
+        } else {
+          localStorage.removeItem(ACTIVE_REMOTE_KEY);
+        }
         cards = activeDeck().cards;
         saveCards();
         updateDeckUI();
@@ -1345,9 +1414,10 @@
         els.deckError.textContent = "";
       }
       function renderDecksManage() {
-        els.decksCount.textContent = `${decks.length} ${decks.length === 1 ? "deck" : "decks"} saved on this device`;
+        const localDecks = decks.filter(deck => !deck.remote);
+        els.decksCount.textContent = `${localDecks.length} ${localDecks.length === 1 ? "deck" : "decks"} saved on this device`;
         els.deckList.innerHTML = "";
-        decks.forEach(deck => {
+        localDecks.forEach(deck => {
           const row = document.createElement("article");
           row.className = "managed-card";
           const words = document.createElement("div");
@@ -1591,6 +1661,10 @@
       $("cancelDeckModal").addEventListener("click", closeDeckModal);
       els.deckModal.addEventListener("click", event => { if (event.target === els.deckModal) closeDeckModal(); });
       els.deckBtn.addEventListener("click", () => toggleDeckMenu());
+      els.levelPicker.addEventListener("click", event => {
+        const button = event.target.closest(".level-btn");
+        if (button) chooseLevel(button.dataset.level);
+      });
       els.again.addEventListener("click", addToRevision);
       document.addEventListener("click", event => {
         if (!els.deckMenu.hidden && !els.deckPicker.contains(event.target)) toggleDeckMenu(false);
@@ -1683,7 +1757,8 @@
       shuffleDeck();
       renderCard(false, true);
       void initializeSupabase();
-      void loadPilotDeck();
+      updateLevelButtons();
+      void loadPublishedDecks();
     })();
   </script>
 </body>
