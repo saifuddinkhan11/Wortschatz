@@ -76,7 +76,7 @@
     .progress-meta { display: flex; justify-content: space-between; color: #88766b; font-size: 11px; font-weight: 600; margin-bottom: 8px; }
     .progress-track { height: 5px; border-radius: 9px; background: rgba(129, 91, 69, .13); overflow: hidden; }
     .progress-fill { height: 100%; width: 0; border-radius: inherit; background: #b77a5b; transition: width .35s ease; }
-    .stage { width: min(520px, 92vw); height: 345px; position: relative; margin: 7px auto 46px; perspective: 1200px; }
+    .stage { width: min(520px, 92vw); height: 345px; position: relative; margin: 7px auto 14px; perspective: 1200px; }
     .stack-card {
       position: absolute; inset: 12px 28px 0; border-radius: 27px; pointer-events: none;
       box-shadow: 0 13px 28px rgba(94, 59, 39, .09);
@@ -120,10 +120,31 @@
     }
     .word.long { font-size: clamp(29px, 5.5vw, 48px); }
     .hint { position: relative; z-index: 1; margin-top: 18px; color: rgba(24,18,14,.58); font-size: 12px; }
-    .card-example { position:relative; z-index:1; display:grid; gap:5px; max-width:100%; margin-top:14px; padding:0 8px; }
-    .card-example[hidden] { display:none; }
-    .card-example-de { font-size:13px; line-height:1.35; font-weight:600; overflow-wrap:anywhere; }
-    .card-example-en { font-size:11px; line-height:1.35; color:rgba(24,18,14,.62); overflow-wrap:anywhere; }    .card-bottom { position: absolute; bottom: 25px; z-index: 1; font-size: 10px; letter-spacing: 1.3px; text-transform: uppercase; opacity: .48; }
+    .example-button { position:absolute; right:70px; bottom:18px; z-index:4; display:inline-flex; align-items:center; justify-content:center; gap:6px; min-height:42px; padding:0 12px; border:1px solid var(--accent); border-radius:999px; color:var(--accent-dark); background:rgba(255,250,246,.68); font:700 12px var(--sans); transition:background .2s ease, color .2s ease, transform .2s ease; }
+    .example-button:hover { background:var(--accent); color:#fffaf6; transform:translateY(-1px); }
+    .example-button:focus-visible, .sentence-audio-btn:focus-visible, .translation-toggle:focus-visible { outline:3px solid var(--accent); outline-offset:3px; }
+    .example-button[hidden] { display:none; }
+    .example-panel { width:min(520px,92vw); margin:0 auto 14px; padding:16px 18px; border:1px solid rgba(157,92,63,.24); border-radius:18px; background:rgba(255,250,246,.96); box-shadow:0 12px 30px rgba(94,59,39,.13); color:var(--ink); }
+    .example-panel[hidden] { display:none; }
+    .example-panel-inner { display:grid; gap:12px; }
+    .example-panel-title { margin:0; color:var(--accent-dark); font-size:11px; font-weight:700; letter-spacing:1.2px; text-transform:uppercase; }
+    .sentence-row { display:flex; align-items:center; justify-content:space-between; gap:12px; }
+    .sentence-german { margin:0; font-size:15px; line-height:1.45; font-weight:600; overflow-wrap:anywhere; }
+    .sentence-audio-btn { flex:none; min-height:38px; padding:7px 11px; display:inline-flex; align-items:center; gap:6px; border:1px solid rgba(157,92,63,.3); border-radius:999px; color:var(--accent-dark); background:rgba(243,217,198,.45); font:700 11px var(--sans); }
+    .sentence-audio-btn:hover, .translation-toggle:hover { background:rgba(184,110,80,.18); }
+    .sentence-audio-btn.speaking { background:rgba(184,110,80,.22); }
+    .sentence-translation { margin:0; color:var(--muted); font-size:13px; line-height:1.45; }
+    .translation-toggle { justify-self:start; padding:8px 12px; border:1px solid var(--accent); border-radius:999px; color:var(--accent-dark); background:transparent; font:700 12px var(--sans); }
+    .stage { margin-bottom:14px; }
+    @media (max-width:600px) {
+      .example-button { right:62px; bottom:15px; min-height:38px; padding:0 10px; }
+      .example-panel { position:fixed; inset:auto 0 0; z-index:30; width:100%; margin:0; padding:20px 20px max(22px, env(safe-area-inset-bottom)); border-radius:22px 22px 0 0; border-bottom:0; box-shadow:0 -14px 44px rgba(47,30,20,.24); transform:translateY(105%); transition:transform .24s ease; }
+      .example-panel.is-open { transform:translateY(0); }
+      .example-panel::before { content:""; display:block; width:38px; height:4px; margin:0 auto 15px; border-radius:4px; background:rgba(105,69,51,.24); }
+      .sentence-row { align-items:flex-start; }
+      .sentence-audio-btn { min-height:36px; }
+    }
+    @media (prefers-reduced-motion: reduce) { .example-panel { transition:none; } }    .card-bottom { position: absolute; bottom: 25px; z-index: 1; font-size: 10px; letter-spacing: 1.3px; text-transform: uppercase; opacity: .48; }
     .speak-btn {
       position: absolute; right: 20px; bottom: 18px; z-index: 3;
       width: 42px; height: 42px; display: grid; place-items: center; padding: 0;
@@ -190,7 +211,7 @@
     .modal-backdrop.open { display: flex; animation: fadeIn .18s ease; }
     @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
     .modal {
-      width: min(440px, 100%); background: #fff8f1; border: 1px solid rgba(255,255,255,.7);
+      width: min(440px, 100%); max-height:calc(100vh - 36px); overflow-y:auto; background: #fff8f1; border: 1px solid rgba(255,255,255,.7);
       border-radius: 24px; padding: 27px; box-shadow: 0 25px 70px rgba(47,30,20,.24);
       animation: modalIn .25s cubic-bezier(.2,.8,.2,1);
     }
@@ -201,8 +222,9 @@
     .close-btn { border: 0; background: transparent; color: #806858; font-size: 24px; line-height: 1; padding: 0 3px; }
     .field { margin: 15px 0; }
     .field label { display: block; color: #705848; font-size: 11px; font-weight: 700; margin-bottom: 7px; }
-    .field input { width: 100%; border: 1px solid #e5d2c4; background: #fffdf9; border-radius: 12px; padding: 13px 14px; color: var(--ink); font-size: 14px; }
-    .field input:focus { border-color: #b77a5b; outline: 3px solid rgba(183,122,91,.15); }
+    .field input, .field textarea { width: 100%; border: 1px solid #e5d2c4; background: #fffdf9; border-radius: 12px; padding: 13px 14px; color: var(--ink); font: 14px var(--sans); }
+    .field textarea { resize: vertical; min-height: 68px; line-height: 1.45; }
+    .field input:focus, .field textarea:focus { border-color: var(--accent); outline: 3px solid rgba(183,122,91,.15); }
     .field-entry { display: flex; align-items: stretch; gap: 8px; }
     .field-entry input { min-width: 0; flex: 1; }
     .mic-btn {
@@ -382,24 +404,27 @@
             <div class="face front" id="frontFace">
               <span class="side-label">English</span><span class="card-index" id="frontIndex">01</span>
               <div class="word" id="englishWord">happy</div>
-              <div class="hint">What is this in Deutsch?</div>
               <div class="card-bottom">WORTSCHATZ · VOCABULARY</div>
               <button class="speak-btn" id="speakEnglish" type="button" aria-label="Listen to the English word" title="Listen (English)"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 5 6 9H3v6h3l5 4V5z" fill="currentColor" stroke="none"/><path class="wave wave-1" d="M15.5 9a4.5 4.5 0 0 1 0 6"/><path class="wave wave-2" d="M18.5 6.5a8.5 8.5 0 0 1 0 11"/></svg></button>
             </div>
             <div class="face back" id="backFace">
               <span class="side-label">Deutsch</span><span class="card-index" id="backIndex">01</span>
               <div class="word" id="germanWord">glücklich</div>
-              <div class="hint">Deutsch translation revealed</div>
-              <div class="card-example" id="cardExample" hidden>
-                <span class="card-example-de" id="exampleGerman"></span>
-                <span class="card-example-en" id="exampleEnglish"></span>
-              </div>
               <div class="card-bottom">GUT GEMACHT · WELL DONE</div>
+              <button class="example-button" id="exampleBtn" type="button" aria-label="Show example sentence" aria-controls="examplePanel" aria-expanded="false" hidden><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 11.5a8.4 8.4 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.4 8.4 0 0 1-3.8-.9L3 21l1.9-5.7a8.4 8.4 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.4 8.4 0 0 1 3.8-.9h.5a8.5 8.5 0 0 1 8 8v.5z"/></svg><span>Beispiel</span></button>
               <button class="speak-btn" id="speakGerman" type="button" aria-label="Listen to the German word" title="Listen (Deutsch)"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 5 6 9H3v6h3l5 4V5z" fill="currentColor" stroke="none"/><path class="wave wave-1" d="M15.5 9a4.5 4.5 0 0 1 0 6"/><path class="wave wave-2" d="M18.5 6.5a8.5 8.5 0 0 1 0 11"/></svg></button>
             </div>
             </div>
           </div>
         </div>
+        <section class="example-panel" id="examplePanel" aria-label="Example sentence" aria-live="polite" hidden>
+          <div class="example-panel-inner">
+            <p class="example-panel-title">Beispielsatz</p>
+            <div class="sentence-row"><p class="sentence-german" id="sentenceGerman"></p><button class="sentence-audio-btn" id="sentenceAudioBtn" type="button" aria-label="Listen to the example sentence" title="Listen to the example sentence"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 5 6 9H3v6h3l5 4V5z" fill="currentColor" stroke="none"/><path d="M15.5 9a4.5 4.5 0 0 1 0 6"/><path d="M18.5 6.5a8.5 8.5 0 0 1 0 11"/></svg><span>Hören</span></button></div>
+            <button class="translation-toggle" id="translationToggle" type="button" aria-expanded="false">Show translation</button>
+            <p class="sentence-translation" id="sentenceEnglish" hidden></p>
+          </div>
+        </section>
         <div class="empty-state" id="emptyState"><strong>Your deck is empty.</strong>Add a few cards to start learning.</div>
         <div class="controls" id="controls">
           <button class="prev-btn" id="prevBtn" type="button" aria-label="Previous card" title="Previous card (Left Arrow)"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5"/><path d="m11 6-6 6 6 6"/></svg></button>
@@ -492,6 +517,9 @@
           <div class="field-entry"><input id="germanInput" name="german" type="text" maxlength="100" placeholder="e.g. schön" autocomplete="off" required><button class="mic-btn" id="germanMic" type="button" aria-label="Speak German word" title="Speak German word">🎙</button></div>
           <div class="voice-status" id="germanVoiceStatus" aria-live="polite"></div>
         </div>
+        <div class="field"><label for="sentenceDeInput">EXAMPLE SENTENCE · GERMAN (OPTIONAL)</label><textarea id="sentenceDeInput" name="sentence_de" maxlength="500" rows="2" placeholder="e.g. Ich gehe heute zur Schule."></textarea></div>
+        <div class="field"><label for="sentenceEnInput">EXAMPLE TRANSLATION · ENGLISH (OPTIONAL)</label><textarea id="sentenceEnInput" name="sentence_en" maxlength="500" rows="2" placeholder="e.g. I am going to school today."></textarea></div>
+        <div class="field"><label for="sentenceAudioInput">SENTENCE AUDIO URL (OPTIONAL)</label><input id="sentenceAudioInput" name="sentence_audio" type="url" maxlength="1000" placeholder="https://example.com/audio.mp3" autocomplete="off"></div>
         <p class="voice-note" id="voiceNote">Speak naturally. You can edit the recognised text before saving.</p>
         <div class="error" id="formError" role="alert" aria-live="polite"></div>
         <div class="modal-actions">
@@ -567,12 +595,12 @@
         counter: $("counter"), remaining: $("remaining"), progress: $("progressFill"),
         controls: $("controls"), checkAnswer: $("checkAnswerBtn"), next: $("nextBtn"), prev: $("prevBtn"), again: $("againBtn"), empty: $("emptyState"), helper: $("helper"),
         modal: $("modalBackdrop"), form: $("cardForm"), englishInput: $("englishInput"),
-        germanInput: $("germanInput"), error: $("formError"), modalTitle: $("modalTitle"),
+        germanInput: $("germanInput"), sentenceDeInput: $("sentenceDeInput"), sentenceEnInput: $("sentenceEnInput"), sentenceAudioInput: $("sentenceAudioInput"), error: $("formError"), modalTitle: $("modalTitle"),
         saveBtn: $("saveBtn"), cardList: $("cardList"), manageCount: $("manageCount"),
         toast: $("toast"), englishMic: $("englishMic"), germanMic: $("germanMic"),
         englishVoiceStatus: $("englishVoiceStatus"), germanVoiceStatus: $("germanVoiceStatus"), voiceNote: $("voiceNote"),
         deckPicker: $("deckPicker"), deckBtn: $("deckBtn"), deckBtnName: $("deckBtnName"), deckMenu: $("deckMenu"),
-        levelPicker: $("levelPicker"), cardExample: $("cardExample"), exampleGerman: $("exampleGerman"), exampleEnglish: $("exampleEnglish"),
+        levelPicker: $("levelPicker"), exampleBtn: $("exampleBtn"), examplePanel: $("examplePanel"), sentenceGerman: $("sentenceGerman"), sentenceEnglish: $("sentenceEnglish"), sentenceAudioBtn: $("sentenceAudioBtn"), translationToggle: $("translationToggle"),
         deckList: $("deckList"), decksCount: $("decksCount"),
         deckModal: $("deckModalBackdrop"), deckForm: $("deckForm"), deckNameInput: $("deckNameInput"),
         deckError: $("deckFormError"), deckModalTitle: $("deckModalTitle"), saveDeckBtn: $("saveDeckBtn"),
@@ -599,6 +627,9 @@
       let isTransitioning = false;
       let transitionFallback = null;
       let authUser = null;
+      let examplePanelTimer = null;
+      let sentenceAudioPlayer = null;
+      let sentenceUtterance = null;
       let authStep = "email";
       let otpExpiresAt = 0;
       let otpTimer = null;
@@ -644,8 +675,35 @@
       function makeId() {
         return "card-" + Date.now().toString(36) + "-" + Math.random().toString(36).slice(2, 8);
       }
+      function closeExamplePanel(immediate = false) {
+        clearTimeout(examplePanelTimer);
+        els.examplePanel.classList.remove("is-open");
+        els.exampleBtn.setAttribute("aria-expanded", "false");
+        els.exampleBtn.setAttribute("aria-label", "Show example sentence");
+        els.sentenceEnglish.hidden = true;
+        els.translationToggle.textContent = "Show translation";
+        els.translationToggle.setAttribute("aria-expanded", "false");
+        if (sentenceAudioPlayer) { sentenceAudioPlayer.pause(); sentenceAudioPlayer.currentTime = 0; sentenceAudioPlayer = null; }
+        if (sentenceUtterance && synth && synth.speaking) { synth.cancel(); currentUtterance = null; sentenceUtterance = null; els.sentenceAudioBtn.classList.remove("speaking"); }
+        if (immediate) els.examplePanel.hidden = true;
+        else examplePanelTimer = window.setTimeout(() => { els.examplePanel.hidden = true; }, 240);
+      }
+      function toggleExamplePanel() {
+        if (els.exampleBtn.hidden) return;
+        if (!els.examplePanel.hidden && els.examplePanel.classList.contains("is-open")) { closeExamplePanel(false); return; }
+        clearTimeout(examplePanelTimer);
+        els.examplePanel.hidden = false;
+        els.exampleBtn.setAttribute("aria-expanded", "true");
+        els.exampleBtn.setAttribute("aria-label", "Hide example sentence");
+        requestAnimationFrame(() => els.examplePanel.classList.add("is-open"));
+      }
       function cleanCards(list) {
-        return Array.isArray(list) ? list.filter(c => c && typeof c.english === "string" && typeof c.german === "string") : [];
+        return Array.isArray(list) ? list.filter(c => c && typeof c.english === "string" && typeof c.german === "string").map(c => ({
+          ...c,
+          sentence_de: typeof c.sentence_de === "string" ? c.sentence_de : (typeof c.exampleGerman === "string" ? c.exampleGerman : ""),
+          sentence_en: typeof c.sentence_en === "string" ? c.sentence_en : (typeof c.exampleEnglish === "string" ? c.exampleEnglish : ""),
+          sentence_audio: typeof c.sentence_audio === "string" ? c.sentence_audio : ""
+        })) : [];
       }
       function loadState() {
         // Current format: several decks plus the always-present Revision deck.
@@ -669,7 +727,7 @@
             if (Array.isArray(parsed)) firstCards = cleanCards(parsed);
           }
         } catch (error) { console.warn("Could not read saved vocabulary cards:", error); }
-        if (!firstCards) firstCards = starterCards.map(([english, german]) => ({ id: makeId(), english, german, color: null }));
+        if (!firstCards) firstCards = starterCards.map(([english, german]) => ({ id: makeId(), english, german, sentence_de: "", sentence_en: "", sentence_audio: "", color: null }));
         return {
           decks: [
             { id: "deck-basics", name: "Basics", cards: firstCards },
@@ -728,6 +786,7 @@
         els.progress.style.width = total ? `${(shown / total) * 100}%` : "0%";
       }
       function renderCard(animate = false, assignFreshColor = false) {
+        closeExamplePanel(true);
         const card = currentCard();
         if (!card) {
           els.stage.style.display = "none";
@@ -754,10 +813,15 @@
         updateCardColor(card);
         els.english.textContent = card.english;
         els.german.textContent = card.german;
-        const hasExample = !!(card.exampleGerman || card.exampleEnglish);
-        els.cardExample.hidden = !hasExample;
-        els.exampleGerman.textContent = card.exampleGerman || "";
-        els.exampleEnglish.textContent = card.exampleEnglish || "";
+        const sentenceDe = card.sentence_de || card.exampleGerman || "";
+        const sentenceEn = card.sentence_en || card.exampleEnglish || "";
+        els.exampleBtn.hidden = !sentenceDe;
+        els.sentenceGerman.textContent = sentenceDe;
+        els.sentenceEnglish.textContent = sentenceEn;
+        els.sentenceEnglish.hidden = true;
+        els.translationToggle.hidden = !sentenceEn;
+        els.translationToggle.textContent = "Show translation";
+        els.translationToggle.setAttribute("aria-expanded", "false");
         els.frontIndex.textContent = String(deckPosition + 1).padStart(2, "0");
         els.backIndex.textContent = String(deckPosition + 1).padStart(2, "0");
         els.english.classList.toggle("long", card.english.length > 18);
@@ -771,6 +835,41 @@
           void els.cardMotion.offsetWidth;
           els.cardMotion.classList.add("entering");
         }
+      }
+      function speakSentenceText(text) {
+        if (!ttsSupported) { showToast("Sentence audio is not available in this browser."); return; }
+        refreshVoices();
+        stopSpeech();
+        const utterance = new SpeechSynthesisUtterance(text);
+        utterance.lang = "de-DE";
+        const voice = pickVoice(utterance.lang);
+        if (voice) utterance.voice = voice;
+        utterance.rate = 0.9;
+        sentenceUtterance = utterance;
+        currentUtterance = utterance;
+        const finish = () => { if (currentUtterance === utterance) { currentUtterance = null; sentenceUtterance = null; els.sentenceAudioBtn.classList.remove("speaking"); } };
+        utterance.onstart = () => els.sentenceAudioBtn.classList.add("speaking");
+        utterance.onend = finish;
+        utterance.onerror = finish;
+        synth.speak(utterance);
+      }
+      function speakSentence() {
+        const card = currentCard();
+        const text = card && (card.sentence_de || card.exampleGerman || "");
+        if (!text) return;
+        stopSpeech();
+          const audioUrl = card.sentence_audio || "";
+        if (audioUrl && typeof Audio === "function") {
+          const player = new Audio(audioUrl);
+          sentenceAudioPlayer = player;
+          const fallback = () => { if (sentenceAudioPlayer !== player) return; sentenceAudioPlayer = null; speakSentenceText(text); };
+          player.addEventListener("ended", () => els.sentenceAudioBtn.classList.remove("speaking"), { once:true });
+          player.addEventListener("error", fallback, { once:true });
+          els.sentenceAudioBtn.classList.add("speaking");
+          player.play().catch(fallback);
+          return;
+        }
+        speakSentenceText(text);
       }
       function flipCard() {
         if (!currentCard() || isTransitioning) return;
@@ -885,9 +984,11 @@
       function stopSpeech() {
         if (speakTimer) { clearTimeout(speakTimer); speakTimer = null; }
         currentUtterance = null;
-        if (!ttsSupported) return;
-        synth.cancel();
+        if (ttsSupported) synth.cancel();
         Object.values(speakButtons).forEach(button => button.classList.remove("speaking"));
+        els.sentenceAudioBtn.classList.remove("speaking");
+        if (sentenceAudioPlayer) { sentenceAudioPlayer.pause(); sentenceAudioPlayer.currentTime = 0; sentenceAudioPlayer = null; }
+        sentenceUtterance = null;
       }
       function syncSpeakButtons() {
         // Keep keyboard focus on the button of the side that is actually showing.
@@ -1201,8 +1302,9 @@
                   vocabularyId: word.id,
                   english: word.english_translation || word.lemma,
                   german: [word.article, word.lemma].filter(Boolean).join(" "),
-                  exampleGerman: example ? example.german_text : "",
-                  exampleEnglish: example ? example.english_text : "",
+                  sentence_de: example ? example.german_text : "",
+                  sentence_en: example ? example.english_text : "",
+                  sentence_audio: "",
                   color: null
                 };
               })
@@ -1260,6 +1362,9 @@
         els.saveBtn.textContent = card ? "Save Changes" : "Save Card";
         els.englishInput.value = card ? card.english : "";
         els.germanInput.value = card ? card.german : "";
+        els.sentenceDeInput.value = card ? (card.sentence_de || card.exampleGerman || "") : "";
+        els.sentenceEnInput.value = card ? (card.sentence_en || card.exampleEnglish || "") : "";
+        els.sentenceAudioInput.value = card ? (card.sentence_audio || "") : "";
         els.error.textContent = "";
         if (activeRecognition) stopActiveRecognition();
         Object.values(voiceFields).forEach(field => setVoiceStatus(field, ""));
@@ -1695,10 +1800,23 @@
       els.next.addEventListener("click", () => nextCard(1));
       els.prev.addEventListener("click", prevCard);
       els.flashcard.addEventListener("click", flipCard);
+      els.exampleBtn.addEventListener("click", event => { event.stopPropagation(); toggleExamplePanel(); });
+      els.examplePanel.addEventListener("click", event => event.stopPropagation());
+      els.sentenceAudioBtn.addEventListener("click", event => { event.stopPropagation(); speakSentence(); });
+      els.translationToggle.addEventListener("click", event => {
+        event.stopPropagation();
+        const show = els.sentenceEnglish.hidden;
+        els.sentenceEnglish.hidden = !show;
+        els.translationToggle.textContent = show ? "Hide translation" : "Show translation";
+        els.translationToggle.setAttribute("aria-expanded", show ? "true" : "false");
+      });
       els.form.addEventListener("submit", event => {
         event.preventDefault();
         const english = els.englishInput.value.trim();
         const german = els.germanInput.value.trim();
+        const sentence_de = els.sentenceDeInput.value.trim();
+        const sentence_en = els.sentenceEnInput.value.trim();
+        const sentence_audio = els.sentenceAudioInput.value.trim();
         if (!english || !german) {
           els.error.textContent = "Please fill in both the English and German fields.";
           (!english ? els.englishInput : els.germanInput).focus();
@@ -1706,10 +1824,10 @@
         }
         if (editingId) {
           const existing = cards.find(card => card.id === editingId);
-          if (existing) { existing.english = english; existing.german = german; }
+          if (existing) { Object.assign(existing, { english, german, sentence_de, sentence_en, sentence_audio }); }
           showToast("Card updated.");
         } else {
-          cards.push({ id: makeId(), english, german, color: null });
+          cards.push({ id: makeId(), english, german, sentence_de, sentence_en, sentence_audio, color: null });
           showToast("New card added to your deck.");
         }
         saveCards();
@@ -1719,6 +1837,7 @@
         else { shuffleDeck(); renderCard(true, true); }
       });
       document.addEventListener("keydown", event => {
+        if (event.key === "Escape" && !els.examplePanel.hidden && els.examplePanel.classList.contains("is-open")) { closeExamplePanel(false); return; }
         if (event.key === "Escape" && els.accountModal.classList.contains("open")) {
           closeAccountModal(); return;
         }
