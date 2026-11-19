@@ -360,6 +360,197 @@
     @media (prefers-reduced-motion: reduce) {
       *, *::before, *::after { scroll-behavior: auto !important; animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; }
     }
+  
+    /* Reference redesign: connected, responsive learning pages */
+    :root {
+      --level-a1-bg:#D9EADD; --level-a1-ink:#315B3F;
+      --level-a2-bg:#D7E7EE; --level-a2-ink:#315A6A;
+      --level-b1-bg:#F2E5C8; --level-b1-ink:#70501F;
+      --level-b2-bg:#F1D6D1; --level-b2-ink:#793A32;
+    }
+    header { width:min(1280px,calc(100% - 56px)); min-height:78px; }
+    .site-nav { display:flex; gap:9px; align-items:center; margin-left:auto; margin-right:26px; }
+    .nav-link { border:0; background:transparent; color:var(--ink); padding:11px 15px; border-radius:999px; font:600 13px var(--sans); cursor:pointer; }
+    .nav-link:hover { background:rgba(128,82,57,.08); }
+    .nav-link[aria-current="page"] { background:#f1e5d8; color:#70452f; }
+    .login-btn { display:flex; align-items:center; gap:8px; }
+    main { width:min(1340px,100%); }
+    .view { width:min(1280px,100%); }
+    .study-view.active { width:min(1420px,100%); }
+    #homeView.view.active { display:block; }
+    #decksView.view.active,#progressView.view.active { display:block; }
+    .home-view { padding:20px 0 40px; }
+    .home-hero { min-height:390px; display:grid; grid-template-columns:1.03fr .97fr; align-items:center; gap:32px; padding:38px 6.2%; background:rgba(255,253,249,.76); border:1px solid rgba(120,81,57,.1); border-radius:32px; box-shadow:0 18px 55px rgba(83,55,37,.07); overflow:hidden; }
+    .hero-copy { max-width:570px; }
+    .eyebrow { color:#9A5B42; font-size:11px; letter-spacing:2px; font-weight:800; text-transform:uppercase; }
+    .hero-copy h1 { max-width:540px; margin:16px 0 13px; color:#2A211C; font:700 clamp(40px,5vw,65px)/1.06 var(--serif); letter-spacing:-1.5px; }
+    .hero-copy p { max-width:500px; margin:0; color:#69564a; font:15px/1.75 var(--sans); }
+    .hero-ctas { display:flex; gap:11px; flex-wrap:wrap; margin-top:24px; }
+    .hero-cta { min-height:47px; padding:0 21px; }
+    .hero-card-wrap { position:relative; min-height:300px; display:grid; place-items:center; }
+    .hero-card-stack { position:absolute; width:min(320px,80%); height:210px; border-radius:23px; transform:rotate(-9deg) translate(-12px,5px); background:#D9EADD; opacity:.7; }
+    .hero-card-stack.stack-b { transform:rotate(8deg) translate(15px,2px); background:#F1D6D1; }
+    .hero-preview-card { position:relative; width:min(350px,88%); min-height:228px; padding:24px; border-radius:24px; background:#FFFDF9; border:1px solid #EADBCB; box-shadow:0 18px 40px rgba(59,43,32,.13); display:flex; flex-direction:column; justify-content:space-between; transform:rotate(-2deg); }
+    .hero-preview-top { display:flex; justify-content:space-between; color:#6b594d; font-size:11px; letter-spacing:1.2px; }
+    .hero-preview-word { text-align:center; color:#2A211C; font:700 46px var(--serif); }
+    .hero-preview-controls { display:flex; justify-content:space-between; color:#9A5B42; font-size:13px; }
+    .home-levels { display:grid; grid-template-columns:repeat(4,1fr); gap:15px; margin:22px 0 46px; }
+    .level-card { text-align:left; min-height:174px; border:1px solid transparent; border-radius:21px; padding:20px 20px 18px; cursor:pointer; color:var(--ink); transition:transform .18s ease,box-shadow .18s ease; }
+    .level-card:hover { transform:translateY(-3px); box-shadow:0 12px 22px rgba(62,42,28,.09); }
+    .level-card[data-start-level="A1"] { background:var(--level-a1-bg); color:var(--level-a1-ink); }
+    .level-card[data-start-level="A2"] { background:var(--level-a2-bg); color:var(--level-a2-ink); }
+    .level-card[data-start-level="B1"] { background:var(--level-b1-bg); color:var(--level-b1-ink); }
+    .level-card[data-start-level="B2"] { background:var(--level-b2-bg); color:var(--level-b2-ink); }
+    .level-card .level-title { display:block; font:700 32px var(--serif); }
+    .level-card .level-name { display:block; margin:3px 0 9px; font:700 12px var(--sans); }
+    .level-card p { min-height:39px; margin:0 0 12px; color:#44362f; font:12px/1.55 var(--sans); }
+    .level-card span:last-child { font:700 11px var(--sans); }
+    .how-section { padding:18px 5% 22px; text-align:center; }
+    .how-section h2,.page-heading h1 { margin:0; color:#2A211C; font:700 clamp(30px,4vw,43px) var(--serif); }
+    .how-section > p { color:#756258; font:14px/1.7 var(--sans); }
+    .how-steps { display:grid; grid-template-columns:repeat(3,1fr); gap:16px; text-align:left; margin-top:22px; }
+    .how-step { background:rgba(255,253,249,.78); border:1px solid rgba(120,81,57,.12); border-radius:18px; padding:18px; }
+    .how-step strong { display:block; color:#70452f; font:700 13px var(--sans); margin-bottom:7px; }
+    .how-step p { margin:0; color:#6a584d; font:12px/1.6 var(--sans); }
+    .page-heading { display:flex; align-items:end; justify-content:space-between; gap:18px; margin:18px 0 24px; }
+    .page-heading p { margin:8px 0 0; color:#725f53; font:14px/1.6 var(--sans); }
+    .page-actions { display:flex; gap:9px; flex-wrap:wrap; }
+    .page-actions .btn { min-height:42px; }
+    .browse-level-picker { display:flex; justify-content:center; gap:9px; flex-wrap:wrap; margin:10px 0 24px; }
+    .catalogue-grid { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:15px; }
+    .catalogue-card { display:flex; flex-direction:column; min-height:205px; padding:19px; border-radius:20px; background:rgba(255,253,249,.88); border:1px solid #EADBCB; box-shadow:0 7px 20px rgba(71,49,34,.045); }
+    .catalogue-card-top { display:flex; align-items:center; justify-content:space-between; color:#756258; font:700 11px var(--sans); }
+    .catalogue-count { border-radius:99px; padding:5px 9px; background:#f0e5d9; color:#5d4535; }
+    .catalogue-count.level-count-a1 { background:var(--level-a1-bg); color:var(--level-a1-ink); }
+    .catalogue-count.level-count-a2 { background:var(--level-a2-bg); color:var(--level-a2-ink); }
+    .catalogue-count.level-count-b1 { background:var(--level-b1-bg); color:var(--level-b1-ink); }
+    .catalogue-count.level-count-b2 { background:var(--level-b2-bg); color:var(--level-b2-ink); }
+    .catalogue-card h2 { margin:17px 0 7px; color:#2A211C; font:700 20px var(--serif); }
+    .catalogue-card p { flex:1; margin:0 0 18px; color:#69584d; font:12px/1.55 var(--sans); }
+    .catalogue-card-bottom { display:flex; align-items:center; justify-content:space-between; gap:10px; color:#756258; font:11px var(--sans); }
+    .catalogue-study-btn { border:0; background:transparent; color:#8b523a; cursor:pointer; font:700 12px var(--sans); padding:8px 2px; }
+    .catalogue-study-btn:hover { color:#4d3023; }
+    .empty-catalogue { grid-column:1/-1; text-align:center; padding:40px 20px; border:1px dashed #d9c8b7; border-radius:18px; color:#725f53; }
+    .my-decks-section { margin-top:52px; padding-top:29px; border-top:1px solid rgba(92,65,47,.14); scroll-margin-top:22px; }
+    .my-decks-section .manage-head { margin-bottom:14px; }
+    .progress-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:15px; margin:22px 0; }
+    .progress-tile { background:rgba(255,253,249,.86); border:1px solid #EADBCB; border-radius:20px; padding:22px; }
+    .progress-tile span { display:block; color:#725f53; font:700 11px var(--sans); letter-spacing:.7px; text-transform:uppercase; }
+    .progress-tile strong { display:block; margin-top:10px; color:#2A211C; font:700 34px var(--serif); }
+    .progress-note { color:#725f53; font:13px/1.6 var(--sans); }
+    .progress-callout { margin-top:20px; padding:24px; border-radius:22px; background:#f2e5d8; display:flex; align-items:center; justify-content:space-between; gap:16px; }
+    .mobile-bottom-nav { display:none; }
+    @media (max-width:850px) {
+      .home-hero { gap:16px; padding:32px 5%; }
+      .site-nav { margin-right:10px; gap:2px; }
+      .nav-link { padding:10px 11px; }
+      .catalogue-grid { grid-template-columns:repeat(2,minmax(0,1fr)); }
+    }
+    @media (max-width:700px) {
+      header { width:calc(100% - 28px); min-height:65px; }
+      .site-nav { display:none; }
+      main { padding:18px 13px 106px; }
+      .home-view { padding-top:6px; }
+      .home-hero { grid-template-columns:1fr; padding:28px 22px 16px; gap:4px; border-radius:25px; }
+      .hero-copy h1 { font-size:clamp(39px,11vw,54px); }
+      .hero-copy p { font-size:13px; }
+      .hero-card-wrap { min-height:235px; }
+      .hero-preview-card { min-height:198px; width:min(320px,86%); }
+      .hero-preview-word { font-size:40px; }
+      .home-levels { grid-template-columns:repeat(2,1fr); gap:10px; margin:16px 0 26px; }
+      .level-card { min-height:173px; padding:15px; border-radius:17px; }
+      .level-card .level-title { font-size:28px; }
+      .level-card p { font-size:11px; min-height:45px; }
+      .how-steps { grid-template-columns:1fr; }
+      .how-section { padding:12px 2% 16px; }
+      .page-heading { display:block; margin:7px 0 20px; }
+      .page-actions { margin-top:14px; }
+      .page-actions .btn { flex:1; }
+      .catalogue-grid { grid-template-columns:1fr; gap:11px; }
+      .catalogue-card { min-height:185px; }
+      .progress-grid { grid-template-columns:1fr; gap:10px; }
+      .progress-tile { padding:17px; }
+      .progress-tile strong { font-size:29px; }
+      .progress-callout { display:block; padding:19px; }
+      .progress-callout .btn { margin-top:12px; }
+      .mobile-bottom-nav { display:grid; position:fixed; z-index:15; left:12px; right:12px; bottom:max(10px,env(safe-area-inset-bottom)); grid-template-columns:repeat(4,1fr); padding:7px; gap:4px; border:1px solid rgba(107,78,58,.15); border-radius:19px; background:rgba(255,253,249,.96); box-shadow:0 10px 35px rgba(45,32,22,.16); backdrop-filter:blur(12px); }
+      .mobile-bottom-nav .nav-link { display:flex; flex-direction:column; gap:3px; align-items:center; justify-content:center; padding:7px 3px; font-size:10px; }
+      .mobile-bottom-nav .nav-icon { font-size:17px; line-height:1; }
+      .footer { padding-bottom:95px; }
+    }
+    @media (max-width:430px) {
+      .home-levels { gap:8px; }
+      .level-card { padding:13px 12px; }
+      .hero-ctas .hero-cta { flex:1; padding:0 12px; font-size:12px; }
+      .page-actions { gap:6px; }
+      .page-actions .btn { padding:0 10px; font-size:11px; }
+    }
+
+  
+    /* Match the reference markup hierarchy */
+    .hero-actions { display:flex; gap:11px; flex-wrap:wrap; margin-top:24px; }
+    .hero-card { position:relative; width:min(350px,88%); min-height:228px; padding:24px; border-radius:24px; background:#FFFDF9; border:1px solid #EADBCB; box-shadow:0 18px 40px rgba(59,43,32,.13); display:flex; flex-direction:column; justify-content:space-between; transform:rotate(-2deg); }
+    .hero-card-label { display:flex; justify-content:space-between; color:#6b594d; font-size:11px; letter-spacing:1.2px; }
+    .hero-card-word { text-align:center; color:#2A211C; font:700 43px var(--serif); }
+    .hero-card-actions { display:flex; align-items:center; justify-content:space-between; color:#9A5B42; font-size:12px; }
+    .home-levels { display:block; margin:24px 0 46px; }
+    .home-levels > .section-heading { text-align:center; margin-bottom:16px; }
+    .section-heading h2 { margin:0; color:#2A211C; font:700 29px var(--serif); }
+    .section-heading p { margin:6px 0 0; color:#756258; font:13px var(--sans); }
+    .level-cards { display:grid; grid-template-columns:repeat(4,1fr); gap:15px; }
+    .level-card { display:flex; flex-direction:column; align-items:flex-start; text-align:left; min-height:183px; }
+    .level-card.level-a1 { background:var(--level-a1-bg); color:var(--level-a1-ink); }
+    .level-card.level-a2 { background:var(--level-a2-bg); color:var(--level-a2-ink); }
+    .level-card.level-b1 { background:var(--level-b1-bg); color:var(--level-b1-ink); }
+    .level-card.level-b2 { background:var(--level-b2-bg); color:var(--level-b2-ink); }
+    .level-card h3 { margin:3px 0 7px; font:700 12px var(--sans); }
+    .level-card p { flex:1; min-height:0; }
+    .level-card button { border:0; padding:4px 0; background:none; color:inherit; font:700 11px var(--sans); cursor:pointer; }
+    .level-card button:hover { text-decoration:underline; }
+    .how-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:15px; text-align:left; margin-top:19px; }
+    .how-grid article { padding:19px; background:rgba(255,253,249,.84); border:1px solid rgba(120,81,57,.12); border-radius:18px; }
+    .how-grid h3 { color:#513c2e; margin:8px 0 5px; font:700 14px var(--sans); }
+    .how-grid p { color:#6a584d; margin:0; font:12px/1.6 var(--sans); }
+    .how-icon { color:#9A5B42; font-size:19px; }
+    .page-heading-row { display:flex; align-items:end; justify-content:space-between; gap:18px; margin:18px 0 24px; }
+    .page-heading-row h1 { margin:0; color:#2A211C; font:700 clamp(30px,4vw,43px) var(--serif); }
+    .page-heading-row p { margin:8px 0 0; color:#725f53; font:14px/1.6 var(--sans); }
+    .my-decks-heading { display:flex; align-items:center; justify-content:space-between; gap:15px; margin-bottom:14px; }
+    .my-decks-heading h2 { color:#2A211C; margin:0; font:700 25px var(--serif); }
+    .my-decks-heading p { color:#756258; margin:5px 0 0; font:12px var(--sans); }
+    .progress-stats { display:grid; grid-template-columns:repeat(3,1fr); gap:15px; margin:22px 0; }
+    .progress-stat { background:rgba(255,253,249,.86); border:1px solid #EADBCB; border-radius:20px; padding:22px; }
+    .progress-stat span { display:block; color:#725f53; font:700 11px var(--sans); letter-spacing:.7px; text-transform:uppercase; }
+    .progress-stat strong { display:block; margin-top:10px; color:#2A211C; font:700 34px var(--serif); }
+    .progress-stat small { display:block; margin-top:5px; color:#725f53; font:11px/1.5 var(--sans); }
+    .progress-summary { margin-top:20px; padding:24px; border-radius:22px; background:#f2e5d8; display:flex; align-items:center; justify-content:space-between; gap:16px; }
+    .progress-summary h2 { margin:8px 0; font:700 24px var(--serif); color:#2A211C; }
+    .progress-summary p { color:#5f4d42; font:13px/1.6 var(--sans); }
+    .site-footer { width:min(1280px,calc(100% - 56px)); margin:0 auto; padding:20px 0 28px; display:flex; justify-content:space-between; gap:12px; color:#806e61; font:11px var(--sans); border-top:1px solid rgba(92,65,47,.12); }
+    .site-footer a { color:#80533d; }
+    .mobile-nav { display:none; }
+    @media (max-width:850px) { .level-cards { grid-template-columns:repeat(2,1fr); } }
+    @media (max-width:700px) {
+      .level-cards { gap:10px; }
+      .level-card { min-height:177px; padding:15px; }
+      .how-grid { grid-template-columns:1fr; }
+      .page-heading-row { display:block; margin:7px 0 20px; }
+      .page-actions { margin-top:14px; }
+      .page-actions .btn { flex:1; }
+      .progress-stats { grid-template-columns:1fr; gap:10px; }
+      .progress-stat { padding:17px; }
+      .progress-stat strong { font-size:29px; }
+      .progress-summary { display:block; padding:19px; }
+      .progress-summary .btn { margin-top:12px; }
+      .mobile-nav { display:grid; position:fixed; z-index:15; left:12px; right:12px; bottom:max(10px,env(safe-area-inset-bottom)); grid-template-columns:repeat(4,1fr); padding:7px; gap:4px; border:1px solid rgba(107,78,58,.15); border-radius:19px; background:rgba(255,253,249,.96); box-shadow:0 10px 35px rgba(45,32,22,.16); backdrop-filter:blur(12px); }
+      .mobile-nav button { display:flex; flex-direction:column; gap:3px; align-items:center; justify-content:center; padding:7px 3px; border:0; border-radius:12px; background:transparent; color:#654d3c; font:600 10px var(--sans); }
+      .mobile-nav button[aria-current="page"] { background:#f1e5d8; }
+      .mobile-nav span { font-size:17px; line-height:1; }
+      .mobile-nav small { font-size:10px; }
+      .site-footer { padding-bottom:95px; }
+    }
+    @media (max-width:430px) { .level-cards { gap:8px; } .level-card { padding:13px 12px; } }
+
   </style>
 </head>
 <body>
@@ -377,37 +568,79 @@
   </svg>
 
   <div class="app">
-    <header>
-      <div class="brand">
-        <div class="brand-mark" aria-hidden="true">W</div>
-        <div><div class="brand-name">Wortschatz</div><div class="brand-sub">English · Deutsch</div></div>
-      </div>
+    <header class="site-header">
+      <button class="brand brand-button" id="homeBrandBtn" type="button" aria-label="Wortschatz home">
+        <span class="brand-mark" aria-hidden="true">W</span>
+        <span class="brand-copy"><span class="brand-name">Wortschatz</span><span class="brand-sub">English · Deutsch</span></span>
+      </button>
+      <nav class="desktop-nav" aria-label="Main navigation">
+        <button class="nav-link" type="button" data-view="study">Study</button>
+        <button class="nav-link" type="button" data-view="decks">Decks</button>
+        <button class="nav-link" type="button" data-view="progress">Progress</button>
+      </nav>
       <div class="header-actions">
-        <button class="btn btn-quiet" id="authBtn" type="button">Log in</button>
+        <button class="btn btn-quiet login-btn" id="authBtn" type="button" aria-label="Log in"><svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="1.9" aria-hidden="true"><circle cx="12" cy="8" r="3.5"/><path d="M4.5 21a7.5 7.5 0 0 1 15 0"/></svg><span id="authLabel">Log in</span></button>
         <span id="authStatus" class="sr-only" aria-live="polite"></span>
-        <button class="btn btn-quiet" id="manageBtn" type="button">Manage Cards</button>
-        <button class="btn btn-quiet" id="manageDecksBtn" type="button">Manage Deck</button>
-        <button class="btn btn-primary" id="addBtn" type="button">＋ Add Card</button>
       </div>
     </header>
 
-    <main>
-      <section class="view study-view active" id="studyView" aria-label="Vocabulary flashcards">
+    <main id="mainContent">
+      <section class="view home-view active" id="homeView" aria-label="Wortschatz home">
+        <div class="home-hero">
+          <div class="hero-copy">
+            <div class="eyebrow">A little practice, every day</div>
+            <h1>Build your German vocabulary.</h1>
+            <p>Think of the translation, turn the card to check, hear the word and see it in a sentence. Decks for every level from A1 to B2.</p>
+            <div class="hero-actions">
+              <button class="btn btn-primary hero-cta" id="startA1Btn" type="button">Start with A1 <span aria-hidden="true">→</span></button>
+              <button class="btn btn-soft hero-cta" id="homeBrowseBtn" type="button">Browse decks</button>
+            </div>
+          </div>
+          <div class="hero-card-wrap" aria-label="Example vocabulary card">
+            <div class="hero-card-stack stack-a"></div><div class="hero-card-stack stack-b"></div>
+            <article class="hero-card">
+              <div class="hero-card-label"><span>Deutsch</span><span>01</span></div>
+              <div class="hero-card-word"><span>der</span> Apfel</div>
+              <p>Plural: die Äpfel</p>
+              <div class="hero-card-actions"><span>Tap the card to flip</span><button type="button" class="hero-example-btn" tabindex="-1" aria-hidden="true">◯ Beispiel</button><button type="button" class="hero-speaker" tabindex="-1" aria-hidden="true">◖))</button></div>
+            </article>
+          </div>
+        </div>
+        <section class="home-levels" aria-labelledby="levelsTitle">
+          <div class="section-heading"><h2 id="levelsTitle">Choose your level</h2><p>Each level builds on the one before it.</p></div>
+          <div class="level-cards">
+            <article class="level-card level-a1"><span class="level-title">A1</span><h3>Beginner</h3><p>Understand and use basic everyday expressions and introduce yourself.</p><button type="button" data-start-level="A1">Start A1 <span aria-hidden="true">→</span></button></article>
+            <article class="level-card level-a2"><span class="level-title">A2</span><h3>Elementary</h3><p>Communicate in familiar, routine situations.</p><button type="button" data-start-level="A2">Start A2 <span aria-hidden="true">→</span></button></article>
+            <article class="level-card level-b1"><span class="level-title">B1</span><h3>Intermediate</h3><p>Handle common situations independently and describe experiences, plans and opinions.</p><button type="button" data-start-level="B1">Start B1 <span aria-hidden="true">→</span></button></article>
+            <article class="level-card level-b2"><span class="level-title">B2</span><h3>Upper-intermediate</h3><p>Communicate with greater fluency and understand more complex material.</p><button type="button" data-start-level="B2">Start B2 <span aria-hidden="true">→</span></button></article>
+          </div>
+        </section>
+        <section class="how-section" aria-labelledby="howTitle">
+          <div class="section-heading"><h2 id="howTitle">How a card works</h2></div>
+          <div class="how-grid">
+            <article><span class="how-icon">↻</span><h3>Think first, then flip</h3><p>Try to recall the word before you turn the card. Tell the site how hard it was, and it decides when to show it again.</p></article>
+            <article><span class="how-icon">◖))</span><h3>Hear it spoken</h3><p>Tap the speaker to hear the pronunciation, as many times as you like.</p></article>
+            <article><span class="how-icon">◯</span><h3>See it in a sentence</h3><p>Open the example to see the word used in German, and reveal the translation when you are ready.</p></article>
+          </div>
+        </section>
+      </section>
+
+      <section class="view study-view" id="studyView" aria-label="Vocabulary flashcards">
+        <div class="study-heading">
+          <div><div class="eyebrow">Your learning space</div><h1>Study</h1></div>
+          <div class="study-tools"><button class="btn btn-quiet" id="manageBtn" type="button">Manage Cards</button><button class="btn btn-primary" id="addBtn" type="button">＋ Add Card</button></div>
+        </div>
+        <div class="study-top-row">
         <div class="level-picker" id="levelPicker" role="group" aria-label="Choose a German level">
           <button class="level-btn active" type="button" data-level="A1" aria-pressed="true">A1</button>
           <button class="level-btn" type="button" data-level="A2" aria-pressed="false">A2</button>
           <button class="level-btn" type="button" data-level="B1" aria-pressed="false">B1</button>
           <button class="level-btn" type="button" data-level="B2" aria-pressed="false">B2</button>
         </div>
-        <div class="deck-picker" id="deckPicker">          <button class="btn btn-soft deck-btn" id="deckBtn" type="button" aria-haspopup="listbox" aria-expanded="false" title="Choose a deck">
-            <span aria-hidden="true">▤</span><span id="deckBtnName">Basics</span><span class="chev" aria-hidden="true">▾</span>
-          </button>
-          <div class="deck-menu" id="deckMenu" role="listbox" aria-label="Your decks" hidden></div>
         </div>
-        <div class="intro">
-          <div class="eyebrow">A little practice, every day</div>
-          <h1>Build your German vocabulary.</h1>
-          <p>Think of the translation, then turn the card to check.</p>
+        <div class="deck-picker" id="deckPicker"><button class="btn btn-soft deck-btn" id="deckBtn" type="button" aria-haspopup="listbox" aria-expanded="false" title="Choose a deck">
+          <span aria-hidden="true">▤</span><span id="deckBtnName">Basics</span><span class="chev" aria-hidden="true">▾</span>
+        </button><div class="deck-menu" id="deckMenu" role="listbox" aria-label="Your decks" hidden></div></div>
         </div>
         <div class="progress-wrap" id="progressWrap">
           <div class="progress-meta"><span id="counter">Card 1 of 20</span><span id="remaining">20 to learn</span></div>
@@ -453,6 +686,34 @@
         <div class="helper" id="helper">Tip: Space flips · Left Arrow goes back · Right Arrow or Enter goes to the next card </div>
       </section>
 
+      <section class="view decks-page" id="decksView" aria-label="Vocabulary decks">
+        <div class="page-heading-row"><div><div class="eyebrow">Build your word bank</div><h1>Decks</h1><p>Pick a topic and study it card by card.</p></div>
+          <div class="page-actions"><button class="btn btn-soft" id="decksBackBtn" type="button">← Home</button><button class="btn btn-quiet" id="importBtn" type="button">↑ Import backup</button><button class="btn btn-quiet" id="exportBtn" type="button">↓ Export backup</button><input type="file" id="importFile" accept="application/json,.json" hidden><button class="btn btn-primary" id="newDeckBtn" type="button">＋ New deck</button></div>
+        </div>
+        <div class="level-picker catalogue-level-picker" id="browseLevelPicker" role="group" aria-label="Filter decks by German level">
+          <button class="level-btn active" type="button" data-level="A1" aria-pressed="true">A1</button><button class="level-btn" type="button" data-level="A2" aria-pressed="false">A2</button><button class="level-btn" type="button" data-level="B1" aria-pressed="false">B1</button><button class="level-btn" type="button" data-level="B2" aria-pressed="false">B2</button>
+        </div>
+        <div class="catalogue-grid" id="catalogueGrid" aria-live="polite"></div>
+        <section class="my-decks-section" id="myDecks">
+          <div class="my-decks-heading"><div><h2>My decks</h2><p id="decksCount">Your personal decks are saved on this device.</p></div><div class="my-decks-actions"><button class="btn btn-quiet" id="manageDecksBtn" type="button">Manage my decks</button></div></div>
+          <div class="card-list" id="deckList"></div>
+        </section>
+      </section>
+
+      <section class="view progress-page" id="progressView" aria-label="Your learning progress">
+        <div class="page-heading-row"><div><div class="eyebrow">Small steps add up</div><h1>Your progress</h1><p>Your learning activity and saved vocabulary, all in one place.</p></div></div>
+        <div class="progress-stats">
+          <article class="progress-stat"><span>Words tracked</span><strong id="progressTracked">—</strong><small id="progressTrackedNote">Log in to see saved progress.</small></article>
+          <article class="progress-stat"><span>Published decks</span><strong id="progressDeckTotal">48</strong><small>A1 through B2</small></article>
+          <article class="progress-stat"><span>Cards in your revision deck</span><strong id="progressRevisionCount">0</strong><small>Words you marked to revisit</small></article>
+        </div>
+        <section class="progress-summary">
+          <div><div class="eyebrow">Keep going</div><h2>One new word at a time.</h2><p id="progressSummaryText">Log in to save and see your learning progress across devices.</p></div>
+          <button class="btn btn-primary" id="progressLoginBtn" type="button">Log in to see progress</button>
+        </section>
+        <button class="btn btn-soft progress-study-btn" id="progressStudyBtn" type="button">Continue studying <span aria-hidden="true">→</span></button>
+      </section>
+
       <section class="view" id="manageView" aria-label="Manage vocabulary cards">
         <div class="manage-head">
           <div><h2>Your vocabulary deck</h2><p id="manageCount">20 cards saved on this device</p></div>
@@ -461,23 +722,11 @@
         <div class="card-list" id="cardList"></div>
       </section>
 
-      <section class="view" id="decksView" aria-label="Manage decks">
-        <div class="manage-head">
-          <div><h2>Your decks</h2><p id="decksCount">2 decks saved on this device</p></div>
-          <div class="header-actions">
-            <button class="btn btn-quiet" id="exportBtn" type="button">⬇ Export Backup</button>
-            <button class="btn btn-quiet" id="importBtn" type="button">⬆ Import Backup</button>
-            <input type="file" id="importFile" accept="application/json,.json" hidden>
-            <button class="btn btn-primary" id="newDeckBtn" type="button">＋ New Deck</button>
-            <button class="btn btn-soft" id="decksBackBtn" type="button">← Back to study</button>
-          </div>
-        </div>
-        <div class="card-list" id="deckList"></div>
-      </section>
     </main>
-    <footer>Made for curious minds · You can do it Saif · I Believe in You<br>
-      Vocabulary adapted from <a href="https://germanfluent.com/attribution/" target="_blank" rel="noreferrer">German Fluent</a> · CC BY-SA 4.0
-    </footer>
+    <nav class="mobile-nav" aria-label="Main navigation">
+      <button type="button" data-view="study"><span aria-hidden="true">▣</span><small>Study</small></button><button type="button" data-view="decks"><span aria-hidden="true">◈</span><small>Decks</small></button><button type="button" data-view="progress"><span aria-hidden="true">▥</span><small>Progress</small></button><button type="button" id="mobileAccountNav"><span aria-hidden="true">♙</span><small>Account</small></button>
+    </nav>
+    <footer class="site-footer"><span>Wortschatz · Made for curious minds</span><span>Vocabulary adapted from <a href="https://germanfluent.com/attribution/" target="_blank" rel="noreferrer">German Fluent</a> · CC BY-SA 4.0</span></footer>
   </div>
 
   <div class="modal-backdrop" id="accountModal" role="presentation">
@@ -600,7 +849,7 @@
 
       const $ = (id) => document.getElementById(id);
       const els = {
-        studyView: $("studyView"), manageView: $("manageView"), decksView: $("decksView"), stage: $("stage"),
+        homeView: $("homeView"), studyView: $("studyView"), manageView: $("manageView"), decksView: $("decksView"), progressView: $("progressView"), browseLevelPicker: $("browseLevelPicker"), catalogueGrid: $("catalogueGrid"), progressTracked: $("progressTracked"), progressTrackedNote: $("progressTrackedNote"), progressDeckTotal: $("progressDeckTotal"), progressRevisionCount: $("progressRevisionCount"), progressSummaryText: $("progressSummaryText"), progressLoginBtn: $("progressLoginBtn"), progressStudyBtn: $("progressStudyBtn"), authLabel: $("authLabel"), stage: $("stage"),
         flashcard: $("flashcard"), cardMotion: $("cardMotion"), frontFace: $("frontFace"), backFace: $("backFace"),
         stackOne: document.querySelector(".stack-one"), stackTwo: document.querySelector(".stack-two"), stackThree: document.querySelector(".stack-three"),
         english: $("englishWord"), german: $("germanWord"), frontIndex: $("frontIndex"), backIndex: $("backIndex"),
@@ -639,6 +888,7 @@
       let isTransitioning = false;
       let transitionFallback = null;
       let authUser = null;
+      let cloudProgressCount = null;
       let examplePanelTimer = null;
       let sentenceAudioPlayer = null;
       let sentenceUtterance = null;
@@ -1194,9 +1444,10 @@
       }
       function renderAuthUI() {
         const signedIn = !!authUser;
-        els.authButton.textContent = signedIn ? "Sign out" : "Log in";
+        els.authLabel.textContent = signedIn ? "Sign out" : "Log in";
         els.authButton.title = signedIn ? `Signed in as ${authUser.email || "your account"}` : "Log in";
-        if (!signedIn) els.authStatus.textContent = "";
+        if (!signedIn) { els.authStatus.textContent = ""; cloudProgressCount = null; }
+        updateProgressPage();
       }
       function openAccountModal() {
         setEmailStep();
@@ -1225,6 +1476,8 @@
           return;
         }
         els.authStatus.textContent = `Signed in · ${count || 0} words tracked`;
+        cloudProgressCount = count || 0;
+        updateProgressPage();
       }
       async function recordPilotReview(card) {
         if (!card || !card.vocabularyId || !supabaseClient) return;
@@ -1263,11 +1516,41 @@
         await refreshCloudProgress();
       }
       function updateLevelButtons() {
-        els.levelPicker.querySelectorAll(".level-btn").forEach(button => {
-          const active = button.dataset.level === selectedLevel;
-          button.classList.toggle("active", active);
-          button.setAttribute("aria-pressed", active ? "true" : "false");
+        [els.levelPicker, els.browseLevelPicker].forEach(picker => {
+          if (!picker) return;
+          picker.querySelectorAll(".level-btn").forEach(button => {
+            const active = button.dataset.level === selectedLevel;
+            button.classList.toggle("active", active);
+            button.setAttribute("aria-pressed", active ? "true" : "false");
+          });
         });
+      }
+      function renderCatalogueDecks() {
+        if (!els.catalogueGrid) return;
+        const visible = decks.filter(deck => deck.remote && deck.cefrLevel === selectedLevel).sort((a,b) => (a.sortOrder || 0) - (b.sortOrder || 0));
+        els.catalogueGrid.replaceChildren();
+        if (!visible.length) { const empty = document.createElement('div'); empty.className = 'empty-catalogue'; empty.textContent = 'Decks for this level are loading or not available yet.'; els.catalogueGrid.append(empty); return; }
+        visible.forEach((deck, index) => {
+          const card = document.createElement('article'); card.className = 'catalogue-card';
+          const top = document.createElement('div'); top.className = 'catalogue-card-top';
+          const code = document.createElement('span'); code.textContent = deck.code || String(index + 1).padStart(2,'0');
+          const count = document.createElement('span'); count.className = 'catalogue-count level-count-' + deck.cefrLevel.toLowerCase(); count.textContent = deck.cards.length + (deck.cards.length === 1 ? ' card' : ' cards'); top.append(code,count);
+          const title = document.createElement('h2'); title.textContent = deck.name;
+          const description = document.createElement('p'); description.textContent = deck.description || (deck.cefrLevel + ' vocabulary for ' + deck.name.toLowerCase() + '.');
+          const bottom = document.createElement('div'); bottom.className = 'catalogue-card-bottom';
+          const status = document.createElement('span'); status.textContent = deck.cards.length ? 'Ready to study' : 'Coming soon';
+          const study = document.createElement('button'); study.type = 'button'; study.className = 'catalogue-study-btn'; study.dataset.studyDeck = deck.id; study.textContent = 'Study deck →'; study.disabled = !deck.cards.length;
+          bottom.append(status,study); card.append(top,title,description,bottom); els.catalogueGrid.append(card);
+        });
+      }
+      function updateProgressPage() {
+        if (!els.progressTracked) return;
+        els.progressTracked.textContent = authUser ? String(cloudProgressCount ?? '—') : '—';
+        els.progressTrackedNote.textContent = authUser ? 'Words saved to your account' : 'Log in to sync across devices';
+        els.progressDeckTotal.textContent = String(decks.filter(deck => deck.remote).length || '—');
+        els.progressRevisionCount.textContent = String((decks.find(deck => deck.id === REVISION_ID)?.cards || []).length);
+        els.progressSummaryText.textContent = authUser ? 'Your account progress updates as you review vocabulary.' : 'Your local study decks remain on this device. Log in when you’re ready to sync progress.';
+        els.progressLoginBtn.textContent = authUser ? 'Account options' : 'Log in to sync';
       }
       function chooseLevel(level) {
         if (!["A1", "A2", "B1", "B2"].includes(level)) return;
@@ -1286,7 +1569,7 @@
         }
         const { data: catalogue, error: catalogueError } = await supabaseClient
           .from("decks")
-          .select("id,code,name,cefr_level,status,sort_order")
+          .select("id,code,name,description,cefr_level,status,sort_order")
           .eq("deck_type", "topic")
           .eq("status", "published")
           .order("cefr_level")
@@ -1328,6 +1611,7 @@
               dbDeckId: deck.id,
               code: deck.code,
               name: deck.name,
+              description: deck.description || "",
               cefrLevel: deck.cefr_level,
               sortOrder: deck.sort_order,
               cards: deckCards,
@@ -1352,6 +1636,9 @@
           updateDeckUI();
         }
         updateLevelButtons();
+        renderCatalogueDecks();
+        renderDecksManage();
+        updateProgressPage();
       }
       async function initializeSupabase() {
         if (!supabaseClient) return;
@@ -1593,21 +1880,34 @@
         showToast("Deck deleted.");
       }
 
-      function showView(view) {
-        const managing = view === "manage";
-        const managingDecks = view === "decks";
+      function showView(view, updateHash = true) {
+        const validViews = ["home","study","decks","progress","manage"];
+        if (!validViews.includes(view)) view = "home";
         toggleDeckMenu(false);
-        els.studyView.classList.toggle("active", !managing && !managingDecks);
-        els.manageView.classList.toggle("active", managing);
-        els.decksView.classList.toggle("active", managingDecks);
-        if (managing) renderManage();
-        else if (managingDecks) renderDecksManage();
-        else {
-          // Rebuild the round so additions and edits are reflected cleanly.
-          updateDeckUI();
-          shuffleDeck();
-          renderCard(false, true);
-        }
+        if (updateHash && location.hash !== "#" + view) history.pushState({view}, "", "#" + view);
+        els.homeView.classList.toggle("active", view === "home");
+        els.studyView.classList.toggle("active", view === "study");
+        els.manageView.classList.toggle("active", view === "manage");
+        els.decksView.classList.toggle("active", view === "decks");
+        els.progressView.classList.toggle("active", view === "progress");
+        document.querySelectorAll("[data-view]").forEach(button => {
+          if (button.dataset.view === view) button.setAttribute("aria-current","page");
+          else button.removeAttribute("aria-current");
+        });
+        if (view === "manage") renderManage();
+        if (view === "decks") { renderCatalogueDecks(); renderDecksManage(); }
+        if (view === "progress") updateProgressPage();
+        if (view === "study") { updateDeckUI(); shuffleDeck(); renderCard(false, true); }
+        window.scrollTo({top:0,behavior:"smooth"});
+      }
+      function launchLevel(level) {
+        if (!["A1","A2","B1","B2"].includes(level)) return;
+        selectedLevel = level;
+        updateLevelButtons();
+        const firstDeck = decks.find(deck => deck.remote && deck.cefrLevel === level && deck.cards.length);
+        if (firstDeck) { activeDeckId = firstDeck.id; cards = firstDeck.cards; localStorage.setItem(ACTIVE_REMOTE_KEY, firstDeck.id); }
+        updateDeckUI();
+        showView("study");
       }
 
       // ===== Backup: export / import decks as a file =====
@@ -1659,6 +1959,32 @@
       $("importFile").addEventListener("change", event => {
         importBackup(event.target.files[0]);
         event.target.value = ""; // lets you pick the same file again later
+      });
+      document.querySelectorAll("[data-view]").forEach(button => button.addEventListener("click", () => showView(button.dataset.view)));
+      $("homeBrandBtn").addEventListener("click", () => showView("home"));
+      $("homeBrowseBtn").addEventListener("click", () => showView("decks"));
+      $("startA1Btn").addEventListener("click", () => launchLevel("A1"));
+      document.querySelectorAll("[data-start-level]").forEach(button => button.addEventListener("click", () => launchLevel(button.dataset.startLevel)));
+      els.browseLevelPicker.addEventListener("click", event => {
+        const button = event.target.closest(".level-btn");
+        if (!button) return;
+        selectedLevel = button.dataset.level; updateLevelButtons(); renderCatalogueDecks();
+      });
+      els.catalogueGrid.addEventListener("click", event => {
+        const button = event.target.closest("[data-study-deck]");
+        if (!button) return;
+        const deck = decks.find(item => item.id === button.dataset.studyDeck);
+        if (!deck) return;
+        activeDeckId = deck.id; selectedLevel = deck.cefrLevel; cards = deck.cards; localStorage.setItem(ACTIVE_REMOTE_KEY, deck.id);
+        showView("study");
+      });
+      $("decksBackBtn").addEventListener("click", () => showView("home"));
+      $("progressStudyBtn").addEventListener("click", () => showView("study"));
+      $("progressLoginBtn").addEventListener("click", () => authUser ? els.authButton.click() : openAccountModal());
+      $("mobileAccountNav").addEventListener("click", () => els.authButton.click());
+      $("manageDecksBtn").addEventListener("click", () => {
+        showView("decks");
+        window.setTimeout(() => $("myDecks").scrollIntoView({behavior:"smooth",block:"start"}), 80);
       });
 
       els.authButton.addEventListener("click", async () => {
@@ -1772,9 +2098,7 @@
         openModal();
       });
       $("manageBtn").addEventListener("click", () => showView("manage"));
-      $("manageDecksBtn").addEventListener("click", () => showView("decks"));
       $("backBtn").addEventListener("click", () => showView("study"));
-      $("decksBackBtn").addEventListener("click", () => showView("study"));
       $("newDeckBtn").addEventListener("click", () => openDeckModal());
       $("closeDeckModal").addEventListener("click", closeDeckModal);
       $("cancelDeckModal").addEventListener("click", closeDeckModal);
@@ -1892,6 +2216,12 @@
       void initializeSupabase();
       updateLevelButtons();
       void loadPublishedDecks();
+      const initialView = location.hash.slice(1);
+      showView(["home","study","decks","progress","manage"].includes(initialView) ? initialView : "home", false);
+      window.addEventListener("popstate", () => {
+        const view = location.hash.slice(1);
+        showView(["home","study","decks","progress","manage"].includes(view) ? view : "home", false);
+      });
     })();
   </script>
 </body>
