@@ -7,571 +7,498 @@
   <title>Wortschatz — English to German</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Fraunces:opsz,wght@9..144,500;9..144,600&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&display=swap" rel="stylesheet">
   <style>
     :root {
-      --ink: #211a17;
-      --muted: #77685f;
-      --cream: #fbf3ea;
-      --peach: #f3d9c6;
-      --accent: #b86e50;
-      --accent-dark: #92513a;
+      --ink: #2A211C;
+      --muted: #6B5A50;
+      --cream: #FBF3EA;
+      --accent: #9A5B42;
+      --accent-dark: #7E4733;
+      --soft-bg: #F1DCCB;
+      --soft-bd: #E2C9B4;
+      --soft-hover: #E8CDB8;
+      --soft-active-bd: #D6B99F;
+      --nav-ink: #5B3829;
+      --panel: #FFFDF9;
+      --line: #EADBCB;
+      --focus: #7B412B;
+      /* Card colours. The script reads these four by name, in this order. */
       --card-pink: #F3D6D0;
       --card-mint: #D3E6DD;
-      --card-sand: #F1E3C8;
-      --card-lilac: #E3DDEB;
+      --card-sand: #F4E4B6;
+      --card-lilac: #D2E7FC;
       --card-word-color: #2A211C;
-      --card-label-color: #5E4E44;
-      --neutral-button-bg: rgba(255,255,255,0.85);
-      --neutral-button-hover: rgba(255,255,255,0.96);
-      --neutral-button-border: rgba(42,33,28,0.25);
-      --neutral-button-text: #2A211C;
-      --example-panel-bg: #FFFDF9;
-      --example-panel-border: #EADBCB;
-      --example-panel-ink: #2A211C;
-      --example-label: #9A5B42;
-      --focus-outline: #7B412B;
-      --example-panel-shadow: 0 12px 30px rgba(94,59,39,.13);
-      --example-panel-shadow-mobile: 0 -14px 44px rgba(47,30,20,.24);
-      --card-stack-shadow: 0 10px 22px rgba(94,59,39,.08);
-      --line: rgba(75, 48, 34, .13);
-      --shadow: 0 24px 55px rgba(94, 59, 39, .16), 0 5px 14px rgba(94, 59, 39, .08);
+      --card-label-color: #4A3D35;
+      --card-r: 32px;
+      --shadow-card: 0 18px 40px rgba(122, 78, 52, .14);
+      --shadow-soft: 0 8px 24px rgba(122, 78, 52, .08);
       --sans: "DM Sans", ui-sans-serif, system-ui, sans-serif;
       --serif: "Fraunces", Georgia, serif;
     }
     * { box-sizing: border-box; }
+    [hidden] { display: none !important; }
     html { min-height: 100%; background: var(--cream); }
     body {
-      margin: 0; min-height: 100vh; color: var(--ink); font-family: var(--sans);
-      background:
-        radial-gradient(ellipse at 9% 12%, rgba(243, 217, 198, .65), transparent 34%),
-        radial-gradient(ellipse at 92% 78%, rgba(220, 228, 202, .52), transparent 32%),
-        linear-gradient(135deg, #fbf3ea 0%, #f9eee5 48%, #f7e9df 100%);
-      overflow-x: hidden;
+      margin: 0; min-height: 100vh; position: relative; overflow-x: hidden;
+      background: var(--cream); color: var(--ink); font-family: var(--sans);
     }
-    button, input { font: inherit; }
+    button, input, textarea { font: inherit; }
     button { cursor: pointer; }
-    button:focus-visible, input:focus-visible {
-      outline: 3px solid rgba(157, 92, 63, .55); outline-offset: 3px;
-    }
-    .art {
-      position: fixed; inset: 0; width: 100%; height: 100%; pointer-events: none;
-      z-index: 0; opacity: .56;
-    }
-    .app { position: relative; z-index: 1; min-height: 100vh; display: flex; flex-direction: column; }
-    header {
-      width: min(1160px, calc(100% - 48px)); margin: 0 auto; padding: 27px 0 18px;
-      display: flex; align-items: center; justify-content: space-between; gap: 18px;
-    }
-    .brand { display: flex; align-items: center; gap: 12px; }
-    .brand-mark {
-      width: 39px; height: 39px; display: grid; place-items: center; border-radius: 13px;
-      background: #e9c5ae; color: #4d3023; font-family: var(--serif); font-size: 23px;
-      box-shadow: 0 5px 12px rgba(104, 65, 44, .12);
-    }
-    .brand-name { font-family: var(--serif); font-size: 23px; letter-spacing: -.5px; }
-    .brand-sub { color: var(--muted); font-size: 11px; letter-spacing: 1.7px; text-transform: uppercase; margin-top: 1px; }
-    .header-actions { display: flex; gap: 10px; align-items: center; }
+    a { color: inherit; }
+    :focus-visible { outline: 3px solid var(--focus); outline-offset: 3px; }
     .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0; }
+
+    /* Soft background circles */
+    .deco { position: absolute; border-radius: 50%; pointer-events: none; z-index: 0; }
+    .deco-a { top: -170px; left: -150px; width: 480px; height: 480px; background: #F5DFCF; opacity: .7; }
+    .deco-b { top: 330px; right: -140px; width: 440px; height: 440px; background: #E6E8D6; opacity: .7; }
+    .app { position: relative; z-index: 1; min-height: 100vh; display: flex; flex-direction: column; }
+
+    /* Buttons */
     .btn {
-      border: 0; border-radius: 999px; padding: 11px 18px; min-height: 43px;
-      font-weight: 700; font-size: 13px; letter-spacing: .1px;
-      transition: transform .2s ease, box-shadow .2s ease, background .2s ease, opacity .2s ease;
+      display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+      height: 44px; padding: 0 20px; border-radius: 999px; border: 1px solid transparent;
+      font: 600 15px var(--sans); text-decoration: none;
+      transition: background .2s ease, border-color .2s ease, box-shadow .2s ease, transform .2s ease;
     }
-    .btn:hover { transform: translateY(-2px); }
-    .btn:active { transform: translateY(0) scale(.97); }
-    .btn-primary { color: #fffaf6; background: #9c5d43; box-shadow: 0 7px 17px rgba(126, 70, 47, .2); }
-    .btn-primary:hover { background: #874b35; box-shadow: 0 9px 21px rgba(126, 70, 47, .25); }
-    .btn-soft { color: #694533; background: rgba(235, 205, 185, .68); }
-    .btn-soft:hover { background: #e9c5ae; }
-    .btn-quiet { color: #6e5a4e; background: rgba(255,255,255,.45); border: 1px solid var(--line); }
-    main { flex: 1; display: flex; flex-direction: column; align-items: center; padding: 25px 20px 54px; }
-    .intro { text-align: center; margin: 5px 0 20px; }
-    .eyebrow { color: #9a6a51; text-transform: uppercase; letter-spacing: 2.6px; font-size: 10px; font-weight: 700; }
-    h1 { font: 500 clamp(30px, 4vw, 43px)/1.1 var(--serif); margin: 10px 0 7px; letter-spacing: -.8px; }
-    .intro p { margin: 0; color: var(--muted); font-size: 14px; }
-    .progress-wrap { width: min(440px, 90vw); margin: 23px 0 4px; }
-    .progress-meta { display: flex; justify-content: space-between; color: #88766b; font-size: 11px; font-weight: 600; margin-bottom: 8px; }
-    .progress-track { height: 5px; border-radius: 9px; background: rgba(129, 91, 69, .13); overflow: hidden; }
-    .progress-fill { height: 100%; width: 0; border-radius: inherit; background: #b77a5b; transition: width .35s ease; }
-    .stage { width: min(520px, 92vw); height: 345px; position: relative; margin: 7px auto 14px; perspective: 1200px; }
-    .stack-card {
-      position: absolute; inset: 0; border-radius: 27px; pointer-events: none;
-      box-shadow: var(--card-stack-shadow);
+    .btn:active { transform: scale(.98); }
+    .btn:disabled { opacity: .5; cursor: default; }
+    .btn-primary { background: var(--accent); border-color: var(--accent); color: #fff; }
+    .btn-primary:hover:not(:disabled) { background: var(--accent-dark); border-color: var(--accent-dark); }
+    .btn-soft, .btn-quiet, .btn-secondary { background: var(--soft-bg); border-color: var(--soft-bd); color: var(--ink); }
+    .btn-soft:hover:not(:disabled), .btn-quiet:hover:not(:disabled), .btn-secondary:hover:not(:disabled) { background: var(--soft-hover); }
+    .text-btn {
+      display: inline-flex; align-items: center; gap: 6px; height: 44px; padding: 0 14px;
+      border: 0; border-radius: 999px; background: transparent; color: var(--nav-ink);
+      font: 600 14px var(--sans); transition: background .2s ease;
     }
-    .stack-one { transform: translate(5px, 5px); background: var(--card-lilac); opacity: .55; }
-    .stack-two { transform: translate(-5px, 7px); background: var(--card-pink); opacity: .4; }
-    .stack-three { transform: translate(2px, 9px); background: var(--card-mint); opacity: .28; }
-    /* Entrance motion lives on this outer wrapper; the inner card owns only the 3D flip. */
-    .card-motion { position: absolute; inset: 0; border-radius: 27px; }
-    .card-motion.entering { animation: cardEnter .48s cubic-bezier(.2,.8,.2,1) both; }
+    .text-btn:hover:not(:disabled) { background: rgba(232, 205, 184, .55); }
+    .text-btn:disabled { opacity: .4; cursor: default; }
+
+    /* Header */
+    .site-header {
+      width: 100%; max-width: 1200px; margin: 0 auto; padding: 20px 40px;
+      display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 16px;
+    }
+    .brand { display: flex; align-items: center; gap: 12px; padding: 0; border: 0; background: none; color: var(--ink); text-align: left; }
+    .brand-mark { width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; border-radius: 12px; background: #EFD5C5; font: 600 22px var(--serif); }
+    .brand-name { font: 600 24px var(--serif); }
+    .desktop-nav { display: flex; align-items: center; gap: 6px; margin-left: auto; }
+    .nav-link {
+      padding: 10px 16px; border-radius: 999px; border: 1px solid var(--soft-bd);
+      background: var(--soft-bg); color: var(--nav-ink); font: 500 15px var(--sans);
+      transition: background .2s ease;
+    }
+    .nav-link:hover { background: var(--soft-hover); }
+    .nav-link[aria-current="page"] { background: var(--soft-hover); border-color: var(--soft-active-bd); font-weight: 600; }
+    .header-actions { display: flex; align-items: center; margin-left: 8px; }
+    .login-btn {
+      display: inline-flex; align-items: center; justify-content: center; gap: 8px; height: 44px; padding: 0 18px;
+      border-radius: 999px; border: 1px solid var(--soft-bd); background: var(--soft-bg); color: var(--ink);
+      font: 600 15px var(--sans); transition: background .2s ease;
+    }
+    .login-btn:hover { background: var(--soft-hover); }
+
+    /* Page frame */
+    main { flex: 1; width: 100%; max-width: 1200px; margin: 0 auto; padding: 16px 40px 56px; }
+    main:has(#homeView.active) { padding-bottom: 0; }
+    .view { display: none; }
+    .view.active { display: block; }
+    .eyebrow { margin-bottom: 20px; color: var(--accent); font-size: 12px; font-weight: 600; letter-spacing: .16em; text-transform: uppercase; }
+
+    /* Home: hero */
+    .home-hero { display: flex; flex-wrap: wrap; align-items: center; gap: 56px; padding: 24px 0 72px; }
+    .hero-copy { flex: 1 1 480px; min-width: 0; }
+    .hero-copy h1 { margin: 0; font: 500 clamp(40px, 8vw, 64px)/1.05 var(--serif); letter-spacing: -.01em; }
+    .hero-copy p { max-width: 520px; margin: 24px 0 0; color: var(--muted); font-size: 19px; line-height: 1.55; }
+    .hero-actions { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 32px; }
+    .hero-cta { height: 52px; padding: 0 26px; font-size: 16px; }
+    .hero-card-col { flex: 1 1 380px; min-width: 0; }
+    .hero-card-wrap { position: relative; width: 100%; max-width: 440px; height: 390px; margin: 0 auto; }
+    .hero-card-stack { position: absolute; inset: 0; border-radius: var(--card-r); opacity: .9; }
+    .stack-a { transform: rotate(-5deg); background: #F3D6D0; }
+    .stack-b { transform: rotate(4deg); background: #D3E6DD; }
+    .hero-card {
+      position: absolute; inset: 0; display: flex; flex-direction: column; padding: 28px;
+      border: 1px solid var(--line); border-radius: var(--card-r); background: #D2E7FC;
+      box-shadow: 0 18px 40px rgba(122, 78, 52, .15);
+    }
+    .hero-card-label { display: flex; justify-content: space-between; color: var(--muted); font-size: 11px; font-weight: 600; letter-spacing: .18em; }
+    .hero-card-body { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px; }
+    .hero-card-word { display: flex; align-items: baseline; gap: 14px; }
+    .hero-article { color: #3B6EA5; font-size: 32px; font-weight: 600; }
+    .hero-noun { font: 500 80px/1 var(--serif); }
+    .hero-plural { color: var(--muted); font-size: 15px; }
+    .hero-card-actions { display: flex; align-items: center; justify-content: space-between; gap: 12px; color: var(--muted); font-size: 13px; }
+    .hero-card-buttons { display: flex; gap: 10px; }
+    .hero-pill, .hero-icon { display: inline-flex; align-items: center; justify-content: center; height: 44px; border: 1px solid var(--ink); border-radius: 999px; color: var(--ink); }
+    .hero-pill { gap: 8px; padding: 0 16px; font-size: 15px; font-weight: 600; }
+    .hero-icon { width: 44px; }
+
+    /* Home: levels */
+    .home-levels { padding: 16px 0 72px; }
+    .section-heading h2 { margin: 0 0 8px; font: 500 36px var(--serif); }
+    .section-heading p { margin: 0 0 32px; color: var(--muted); font-size: 17px; }
+    .level-cards { display: flex; flex-wrap: wrap; gap: 20px; }
+    .level-card {
+      flex: 1 1 240px; min-width: 0; display: flex; flex-direction: column; gap: 10px;
+      padding: 28px; border: 1px solid var(--line); border-radius: 24px;
+    }
+    .level-a1 { background: #D9EADD; --lc: #315B3F; }
+    .level-a2 { background: #EAF0C6; --lc: #56670D; }
+    .level-b1 { background: #FBE0C6; --lc: #9A4A12; }
+    .level-b2 { background: #F1D6D1; --lc: #B3261E; }
+    .level-title { color: var(--lc); font: 500 48px/1 var(--serif); }
+    .level-card h3 { margin: 0; font-size: 18px; font-weight: 600; }
+    .level-card p { flex: 1; margin: 0; color: var(--muted); font-size: 15px; line-height: 1.55; }
+    .level-card button {
+      align-self: flex-start; display: inline-flex; align-items: center; gap: 8px; margin-top: 8px; padding: 6px 0;
+      border: 0; background: none; color: var(--lc); font: 600 15px var(--sans);
+    }
+    .level-card button:hover { text-decoration: underline; }
+
+    /* Home: how a card works (full-width tinted band) */
+    .how-section { position: relative; padding: 72px 0; }
+    .how-section::before {
+      content: ""; position: absolute; top: 0; bottom: 0; left: 50%; width: 100vw; z-index: -1; transform: translateX(-50%);
+      background: linear-gradient(180deg, #FCEADB 0%, #FFF3E8 44%, #FCEADB 100%);
+    }
+    .how-title { margin: 0 0 40px; font: 500 36px var(--serif); }
+    .how-grid { display: flex; flex-wrap: wrap; gap: 32px; }
+    .how-grid article { flex: 1 1 280px; min-width: 0; }
+    .how-icon {
+      width: 48px; height: 48px; display: flex; align-items: center; justify-content: center; margin-bottom: 16px;
+      border: 1px solid var(--line); border-radius: 14px; background: var(--soft-bg); color: var(--nav-ink);
+    }
+    .how-grid h3 { margin: 0 0 8px; font-size: 20px; font-weight: 600; }
+    .how-grid p { margin: 0; color: var(--muted); font-size: 16px; line-height: 1.55; }
+
+    /* Study */
+    .study-view { max-width: 760px; margin: 0 auto; }
+    .study-top-row { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px; }
+    .level-picker { display: flex; flex-wrap: wrap; gap: 8px; }
+    .level-btn {
+      height: 44px; min-width: 56px; padding: 0 18px; border-radius: 999px; border: 1px solid var(--soft-bd);
+      background: var(--soft-bg); color: var(--ink); font: 600 15px var(--sans); transition: background .2s ease;
+    }
+    .level-btn:hover { background: var(--soft-hover); }
+    .level-btn.active { background: var(--accent); border-color: var(--accent); color: #fff; }
+    .deck-picker { position: relative; z-index: 5; }
+    .deck-btn {
+      display: inline-flex; align-items: center; gap: 10px; max-width: min(360px, 88vw); height: 44px; padding: 0 16px;
+      border-radius: 999px; border: 1px solid var(--soft-bd); background: var(--soft-bg); color: var(--ink);
+      font: 600 15px var(--sans); transition: background .2s ease;
+    }
+    .deck-btn:hover { background: var(--soft-hover); }
+    .deck-btn #deckBtnName { flex: 1; overflow: hidden; text-align: left; text-overflow: ellipsis; white-space: nowrap; }
+    .deck-btn .chev { display: inline-flex; transition: transform .2s ease; }
+    .deck-btn[aria-expanded="true"] .chev { transform: rotate(180deg); }
+    .deck-menu {
+      position: absolute; top: calc(100% + 8px); right: 0; width: min(320px, 88vw); max-height: 290px; overflow-y: auto; padding: 7px;
+      background: var(--panel); border: 1px solid var(--line); border-radius: 18px;
+      box-shadow: 0 20px 50px rgba(47, 30, 20, .2); animation: modalIn .2s cubic-bezier(.2, .8, .2, 1);
+    }
+    .deck-option {
+      width: 100%; display: flex; justify-content: space-between; align-items: center; gap: 12px; min-height: 44px; padding: 10px 13px;
+      border: 0; border-radius: 12px; background: transparent; color: var(--nav-ink); font-size: 14px; font-weight: 600; text-align: left;
+    }
+    .deck-option:hover { background: rgba(232, 205, 184, .55); }
+    .deck-option.active { background: var(--soft-hover); }
+    .deck-option span:first-child { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .deck-option small { flex: none; color: #8A6C5B; font-size: 12px; font-weight: 600; }
+
+    .progress-wrap { margin-top: 20px; }
+    .progress-meta { display: flex; justify-content: space-between; margin-bottom: 8px; color: var(--muted); font-size: 14px; font-weight: 500; }
+    .progress-track { height: 8px; border-radius: 999px; background: #E8D9CA; overflow: hidden; }
+    .progress-fill { height: 100%; width: 0; border-radius: inherit; background: var(--accent); transition: width .35s ease; }
+
+    .stage { position: relative; height: 340px; margin: 40px 0 44px; }
+    .stack-card { position: absolute; inset: 0; border-radius: var(--card-r); box-shadow: 0 6px 16px rgba(122, 78, 52, .10); pointer-events: none; }
+    .stack-one { z-index: 0; transform: rotate(2.8deg) translate(10px, 6px); background: #F4E4B6; }
+    .stack-two { z-index: 1; transform: rotate(-3.4deg) translate(-8px, 4px); background: #F3D6D0; }
+    .card-motion { position: absolute; inset: 0; z-index: 2; border-radius: var(--card-r); perspective: 1200px; }
+    .card-motion.entering { animation: cardEnter .48s cubic-bezier(.2, .8, .2, 1) both; }
     .card-motion.leaving { animation: cardExit .18s ease-in both; pointer-events: none; }
     @keyframes cardEnter { from { transform: translateY(22px) scale(.94) rotate(-1.5deg); } to { transform: translateY(0) scale(1) rotate(0); } }
     @keyframes cardExit { to { opacity: 0; transform: translateY(-10px) scale(.98); } }
     .flashcard {
-      position: absolute; inset: 0; border-radius: 27px; cursor: pointer;
-      transform: rotateY(0deg); transform-style: preserve-3d;
-      transition: transform .6s ease; box-shadow: var(--shadow);
+      position: absolute; inset: 0; border-radius: var(--card-r); cursor: pointer;
+      transform: rotateY(0deg); transform-style: preserve-3d; transition: transform .6s ease; box-shadow: var(--shadow-card);
     }
     .flashcard.is-flipped { transform: rotateY(180deg); }
     .face {
-      position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center;
-      justify-content: center; padding: 36px 35px; border-radius: 27px;
+      position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center;
+      padding: 28px 32px; border-radius: var(--card-r); color: var(--card-word-color); text-align: center;
       backface-visibility: hidden; -webkit-backface-visibility: hidden;
-      color: var(--card-word-color); text-align: center;
-    }
-    .face::before {
-      content: ""; position: absolute; width: 260px; height: 260px; border-radius: 48% 52% 64% 36%;
-      border: 1px solid rgba(255,255,255,.38); transform: rotate(28deg); right: -112px; top: -128px;
-    }
-    .face::after {
-      content: ""; position: absolute; width: 170px; height: 170px; border-radius: 50%;
-      border: 1px solid rgba(255,255,255,.32); left: -85px; bottom: -94px;
     }
     .back { transform: rotateY(180deg); visibility: hidden; }
     .flashcard.is-flipped .back { visibility: visible; }
-    .side-label { position: absolute; top: 27px; left: 30px; z-index: 1; color:var(--card-label-color); font-size: 10px; text-transform: uppercase; letter-spacing: 2px; font-weight: 700; }
-    .card-index { position: absolute; top: 26px; right: 29px; z-index: 1; color:var(--card-label-color); font-size: 11px; }
+    .flashcard.is-flipped .front .speak-btn { pointer-events: none; }
+    .side-label, .card-index { position: absolute; top: 28px; z-index: 1; color: var(--card-label-color); font-size: 11px; font-weight: 600; letter-spacing: .18em; text-transform: uppercase; }
+    .side-label { left: 32px; }
+    .card-index { right: 32px; }
     .word {
-      position: relative; z-index: 1; font: 500 clamp(37px, 7vw, 62px)/1.12 var(--serif);
-      letter-spacing: -1.6px; overflow-wrap: anywhere; max-width: 100%;
+      position: relative; z-index: 1; max-width: 100%; display: flex; flex-wrap: wrap; align-items: baseline; justify-content: center; gap: 0 16px;
+      font: 500 clamp(52px, 12vw, 88px)/1.08 var(--serif); letter-spacing: -.01em; overflow-wrap: anywhere;
     }
-    .word.long { font-size: clamp(29px, 5.5vw, 48px); }
-    .hint { position: relative; z-index: 1; margin-top: 18px; color: rgba(24,18,14,.58); font-size: 12px; }
-    .example-button { position:absolute; right:70px; bottom:18px; z-index:4; display:inline-flex; align-items:center; justify-content:center; gap:6px; min-height:42px; padding:0 12px; border:1px solid var(--neutral-button-border); border-radius:999px; color:var(--neutral-button-text); background:var(--neutral-button-bg); font:700 12px var(--sans); transition:background .2s ease, color .2s ease, transform .2s ease; }
-    .example-button:hover { background:var(--neutral-button-hover); color:var(--neutral-button-text); transform:translateY(-1px); }
-    .example-button:focus-visible, .speak-btn:focus-visible, .sentence-audio-btn:focus-visible, .translation-toggle:focus-visible { outline:3px solid var(--focus-outline); outline-offset:3px; }
-    .example-button[hidden] { display:none; }
-    .example-panel { width:min(520px,92vw); margin:22px auto 14px; padding:16px 18px; border:1px solid var(--example-panel-border); border-radius:18px; background:var(--example-panel-bg); box-shadow:var(--example-panel-shadow); color:var(--example-panel-ink); }
-    .example-panel[hidden] { display:none; }
-    .example-panel-inner { display:grid; gap:12px; }
-    .example-panel-title { margin:0; color:var(--example-label); font-size:11px; font-weight:700; letter-spacing:1.2px; text-transform:uppercase; }
-    .sentence-row { display:flex; align-items:center; justify-content:space-between; gap:12px; }
-    .sentence-german { margin:0; color:var(--example-panel-ink); font-size:15px; line-height:1.45; font-weight:600; overflow-wrap:anywhere; }
-    .sentence-audio-btn { flex:none; min-height:38px; padding:7px 11px; display:inline-flex; align-items:center; gap:6px; border:1px solid var(--neutral-button-border); border-radius:999px; color:var(--neutral-button-text); background:var(--neutral-button-bg); font:700 11px var(--sans); }
-    .sentence-audio-btn:hover, .translation-toggle:hover { background:var(--neutral-button-hover); }
-    .sentence-audio-btn.speaking { background:var(--neutral-button-hover); }
-    .sentence-translation { margin:0; color:var(--muted); font-size:13px; line-height:1.45; }
-    .translation-toggle { justify-self:start; padding:8px 12px; border:1px solid var(--neutral-button-border); border-radius:999px; color:var(--neutral-button-text); background:var(--neutral-button-bg); font:700 12px var(--sans); }
-    .stage { margin-bottom:22px; }
-    @media (max-width:600px) {
-      .example-button { right:62px; bottom:15px; min-height:38px; padding:0 10px; }
-      .example-panel { position:fixed; inset:auto 0 0; z-index:30; width:100%; margin:0; padding:20px 20px max(22px, env(safe-area-inset-bottom)); border-radius:22px 22px 0 0; border-bottom:0; box-shadow:var(--example-panel-shadow-mobile); transform:translateY(105%); transition:transform .24s ease; }
-      .example-panel.is-open { transform:translateY(0); }
-      .example-panel::before { content:""; display:block; width:38px; height:4px; margin:0 auto 15px; border-radius:4px; background:rgba(105,69,51,.24); }
-      .sentence-row { align-items:flex-start; }
-      .sentence-audio-btn { min-height:36px; }
-    }
-    @media (prefers-reduced-motion: reduce) { .example-panel { transition:none; } }    .card-bottom { position: absolute; bottom: 25px; z-index: 1; color:var(--card-label-color); font-size: 10px; letter-spacing: 1.3px; text-transform: uppercase; }
+    .word.long { font-size: clamp(34px, 7vw, 56px); }
+    .word .article { font: 600 40px/1 var(--sans); letter-spacing: 0; }
+    .word.long .article { font-size: 28px; }
+    .art-der { color: #3B6EA5; }
+    .art-die { color: #9C3A30; }
+    .art-das { color: #2E6B3E; }
+    .card-bottom { position: absolute; left: 32px; bottom: 42px; z-index: 1; color: var(--card-label-color); font-size: 13px; }
     .speak-btn {
-      position: absolute; right: 20px; bottom: 18px; z-index: 3;
-      width: 42px; height: 42px; display: grid; place-items: center; padding: 0;
-      border-radius: 50%; border: 1px solid var(--neutral-button-border);
-      background: var(--neutral-button-bg); color: var(--neutral-button-text);
-      box-shadow: 0 4px 12px rgba(60, 38, 26, .1);
-      transition: transform .2s ease, background .2s ease, box-shadow .2s ease;
+      position: absolute; right: 32px; bottom: 28px; z-index: 3; width: 44px; height: 44px; display: grid; place-items: center; padding: 0;
+      border-radius: 50%; border: 1px solid var(--ink); background: transparent; color: var(--ink);
+      transition: background .2s ease, transform .2s ease;
     }
-    .speak-btn[hidden] { display: none; }
-    .speak-btn:hover { background: var(--neutral-button-hover); transform: scale(1.07); }
+    .speak-btn:hover { background: rgba(255, 255, 255, .55); }
     .speak-btn:active { transform: scale(.95); }
-    .speak-btn.speaking { background: var(--neutral-button-hover); animation: speakPulse 1s ease-in-out infinite; }
+    .speak-btn.speaking { background: rgba(255, 255, 255, .7); animation: speakPulse 1s ease-in-out infinite; }
     .speak-btn.speaking .wave { animation: waveFade .9s ease-in-out infinite; }
     .speak-btn.speaking .wave-2 { animation-delay: .25s; }
-    .flashcard.is-flipped .front .speak-btn { pointer-events: none; }
-    @keyframes speakPulse { 50% { box-shadow: 0 0 0 6px rgba(23, 19, 16, .08); } }
+    @keyframes speakPulse { 50% { box-shadow: 0 0 0 6px rgba(42, 33, 28, .08); } }
     @keyframes waveFade { 0%, 100% { opacity: .25; } 50% { opacity: 1; } }
-    .controls { position: relative; display: flex; justify-content: center; align-items: center; gap: 12px; min-height: 52px; }
-    .prev-btn {
-      flex: 0 0 46px; width: 46px; height: 46px; padding: 0; display: grid; place-items: center;
-      border-radius: 50%; color: #694533; background: rgba(235, 205, 185, .82);
-      border: 1px solid rgba(125, 79, 53, .12); box-shadow: 0 5px 13px rgba(126, 70, 47, .08);
-      transition: transform .2s ease, background .2s ease, opacity .2s ease;
+    .example-button {
+      position: absolute; right: 86px; bottom: 28px; z-index: 4; display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+      height: 44px; padding: 0 18px; border: 1px solid var(--ink); border-radius: 999px; background: transparent; color: var(--ink);
+      font: 600 15px var(--sans); transition: background .2s ease;
     }
-    .prev-btn:hover:not(:disabled) { background: #e9c5ae; transform: translateY(-2px); }
-    .prev-btn:active:not(:disabled) { transform: scale(.95); }
-    .prev-btn:disabled { opacity: .38; cursor: default; }
-    @media (min-width: 601px) {
-      /* Sits just to the left of the two main buttons so Check Answer and Next stay centred. */
-      .prev-btn { position: absolute; right: calc(100% + 12px); top: 50%; margin-top: -23px; }
+    .example-button:hover { background: rgba(255, 255, 255, .55); }
+
+    .example-panel {
+      margin: 0 0 24px; padding: 22px 24px; border: 1px solid var(--line); border-radius: 24px; background: var(--panel);
+      box-shadow: var(--shadow-soft); opacity: 0; transform: translateY(-6px); transition: opacity .24s ease, transform .24s ease;
     }
-    .action-btn { min-width: 164px; padding: 14px 26px; font-size: 14px; }
-    .btn-secondary { color: #694533; background: rgba(235, 205, 185, .82); border: 1px solid rgba(125, 79, 53, .12); box-shadow: 0 5px 13px rgba(126, 70, 47, .08); }
-    .btn-secondary:hover { background: #e9c5ae; }
-    .helper { color: #9a887d; font-size: 11px; margin-top: 17px; text-align: center; }
-    .empty-state { display: none; width: min(520px, 92vw); text-align: center; padding: 70px 25px; border: 1px dashed #c9a994; border-radius: 25px; color: var(--muted); background: rgba(255,255,255,.3); }
-    .empty-state strong { display: block; font: 500 28px var(--serif); color: var(--ink); margin-bottom: 8px; }
-    .view { width: min(900px, 100%); display: none; }
-    .view.active { display: block; }
-    .study-view.active { display: flex; flex-direction: column; align-items: center; }
-    .manage-head { display: flex; justify-content: space-between; align-items: center; gap: 16px; margin: 18px 0 20px; }
-    .manage-head h2 { font: 500 31px var(--serif); margin: 0; }
-    .manage-head p { margin: 5px 0 0; color: var(--muted); font-size: 13px; }
+    .example-panel.is-open { opacity: 1; transform: none; }
+    .example-panel-inner { display: grid; gap: 14px; }
+    .example-panel-title { margin: 0; color: var(--accent); font-size: 12px; font-weight: 600; letter-spacing: .16em; text-transform: uppercase; }
+    .sentence-row { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px; }
+    .sentence-german { flex: 1 1 280px; margin: 0; font-size: 20px; line-height: 1.4; font-weight: 600; overflow-wrap: anywhere; }
+    .sentence-audio-btn, .translation-toggle {
+      display: inline-flex; align-items: center; justify-content: center; gap: 8px; height: 44px; padding: 0 18px;
+      border: 1px solid var(--soft-bd); border-radius: 999px; background: var(--soft-bg); color: var(--ink);
+      font: 600 15px var(--sans); transition: background .2s ease;
+    }
+    .sentence-audio-btn:hover, .translation-toggle:hover { background: var(--soft-hover); }
+    .sentence-audio-btn.speaking { background: var(--soft-hover); }
+    .translation-toggle { justify-self: start; }
+    .sentence-translation { margin: 0; color: var(--muted); font-size: 16px; line-height: 1.5; }
+
+    .empty-state { padding: 56px 24px; border: 1px dashed #D2BFAB; border-radius: 24px; background: rgba(255, 253, 249, .5); color: var(--muted); text-align: center; }
+    .empty-state strong { display: block; margin-bottom: 8px; color: var(--ink); font: 500 28px var(--serif); }
+    .rating-row { display: flex; flex-wrap: wrap; gap: 10px; }
+    .rate-btn { flex: 1 1 140px; height: 52px; font-size: 16px; }
+    .helper { margin: 16px 0 0; color: var(--muted); font-size: 13px; text-align: center; }
+    .helper-touch { display: none; }
+    .study-tools { display: flex; flex-wrap: wrap; justify-content: center; gap: 4px; margin-top: 16px; }
+
+    /* Decks */
+    .page-heading-row { display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 20px; margin-top: 8px; }
+    .page-heading-row h1 { margin: 0; font: 500 clamp(36px, 6vw, 48px)/1.1 var(--serif); }
+    .page-heading-row p { margin: 10px 0 0; color: var(--muted); font-size: 18px; }
+    .page-actions { display: flex; flex-wrap: wrap; gap: 10px; }
+    .catalogue-level-picker { margin-top: 32px; }
+    .catalogue-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 320px), 1fr)); gap: 20px; margin-top: 28px; }
+    .catalogue-card {
+      display: flex; flex-direction: column; gap: 8px; min-width: 0; padding: 24px;
+      border: 1px solid var(--line); border-radius: 24px; background: var(--panel); box-shadow: var(--shadow-soft);
+    }
+    .catalogue-card.is-planned { border: 1px dashed #D2BFAB; background: rgba(255, 253, 249, .5); box-shadow: none; }
+    .catalogue-card-top { display: flex; align-items: center; justify-content: space-between; color: var(--muted); font-size: 13px; font-weight: 600; letter-spacing: .12em; }
+    .catalogue-count { padding: 5px 12px; border-radius: 999px; background: #DDE8D5; color: #2E5A3A; font-size: 13px; letter-spacing: 0; }
+    .is-planned .catalogue-count { background: #F1E3D3; color: var(--muted); }
+    .catalogue-card h2 { margin: 6px 0 0; font: 500 24px var(--serif); }
+    .catalogue-card p { flex: 1; margin: 0; color: var(--muted); font-size: 15px; line-height: 1.5; }
+    .catalogue-card-bottom { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-top: 12px; color: var(--muted); font-size: 14px; }
+    .catalogue-study-btn { display: inline-flex; align-items: center; gap: 8px; min-height: 44px; padding: 0; border: 0; background: none; color: var(--accent); font: 600 15px var(--sans); }
+    .catalogue-study-btn:hover:not(:disabled) { color: var(--accent-dark); }
+    .empty-catalogue { grid-column: 1 / -1; padding: 40px 20px; border: 1px dashed #D2BFAB; border-radius: 24px; color: var(--muted); text-align: center; }
+    .my-decks-section { margin-top: 56px; scroll-margin-top: 22px; }
+    .my-decks-heading h2 { margin: 0 0 6px; font: 500 32px var(--serif); }
+    .my-decks-heading p { margin: 0 0 20px; color: var(--muted); font-size: 16px; }
     .card-list { display: grid; gap: 10px; }
+    .decks-empty {
+      display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 16px; padding: 28px;
+      border: 1px dashed #D2BFAB; border-radius: 24px; background: rgba(255, 253, 249, .6);
+    }
+    .decks-empty > div { flex: 1 1 320px; }
+    .decks-empty strong { display: block; font-size: 18px; font-weight: 600; }
+    .decks-empty span { display: block; margin-top: 6px; color: var(--muted); font-size: 15px; line-height: 1.5; }
+
+    /* Manage lists */
+    .manage-head { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 16px; margin: 8px 0 24px; }
+    .manage-head h2 { margin: 0; font: 500 36px var(--serif); }
+    .manage-head p { margin: 5px 0 0; color: var(--muted); font-size: 15px; }
     .managed-card {
-      display: grid; grid-template-columns: minmax(0,1fr) auto; align-items: center; gap: 15px;
-      background: rgba(255,255,255,.52); border: 1px solid rgba(115,78,56,.12);
-      border-radius: 16px; padding: 15px 17px; box-shadow: 0 4px 14px rgba(91,60,43,.04);
+      display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center; gap: 15px; padding: 14px 18px;
+      border: 1px solid var(--line); border-radius: 18px; background: rgba(255, 253, 249, .75);
     }
     .managed-words { min-width: 0; display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
     .managed-word { min-width: 0; }
-    .managed-word small { display: block; color: #9a7b69; font-size: 9px; text-transform: uppercase; letter-spacing: 1.4px; margin-bottom: 4px; }
-    .managed-word span { display: block; overflow-wrap: anywhere; font-size: 14px; font-weight: 600; }
-    .row-actions { display: flex; gap: 7px; }
-    .icon-btn { border: 1px solid var(--line); background: #fffaf6; color: #765440; border-radius: 10px; width: 36px; height: 36px; font-size: 15px; transition: .2s; }
-    .icon-btn:hover { background: #f0d9c8; transform: translateY(-1px); }
-    .icon-btn.delete:hover { background: #f4d4cd; color: #8d3328; }
-    .no-cards { padding: 35px; text-align: center; color: var(--muted); background: rgba(255,255,255,.4); border-radius: 16px; }
-    footer { text-align: center; padding: 18px 15px 25px; color: #a18c7e; font-size: 10px; letter-spacing: .4px; }
-    .modal-backdrop {
-      position: fixed; inset: 0; z-index: 10; background: rgba(48,32,23,.36); backdrop-filter: blur(5px);
-      display: none; align-items: center; justify-content: center; padding: 18px;
+    .managed-word small { display: block; margin-bottom: 4px; color: #8A6C5B; font-size: 10px; letter-spacing: 1.4px; text-transform: uppercase; }
+    .managed-word span { display: block; overflow-wrap: anywhere; font-size: 15px; font-weight: 600; }
+    .row-actions { display: flex; gap: 6px; }
+    .icon-btn { width: 44px; height: 44px; border: 1px solid var(--soft-bd); border-radius: 12px; background: var(--soft-bg); color: var(--nav-ink); font-size: 17px; transition: background .2s ease; }
+    .icon-btn:hover { background: var(--soft-hover); }
+    .icon-btn.delete:hover { background: #F4D4CD; color: #8D3328; }
+    .no-cards { padding: 35px; border: 1px dashed #D2BFAB; border-radius: 18px; color: var(--muted); text-align: center; }
+    .deck-tag { display: inline-block; margin-left: 8px; padding: 2px 8px; border-radius: 99px; background: var(--soft-hover); color: var(--nav-ink); font-size: 10px; font-style: normal; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; vertical-align: middle; }
+
+    /* Progress */
+    .progress-stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px; margin: 28px 0 20px; }
+    .progress-stat { padding: 24px; border: 1px solid var(--line); border-radius: 24px; background: var(--panel); box-shadow: var(--shadow-soft); }
+    .progress-stat span { display: block; color: var(--muted); font-size: 12px; font-weight: 600; letter-spacing: .12em; text-transform: uppercase; }
+    .progress-stat strong { display: block; margin-top: 10px; font: 500 40px var(--serif); }
+    .progress-stat small { display: block; margin-top: 6px; color: var(--muted); font-size: 14px; }
+    .progress-summary { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 16px; padding: 28px; border-radius: 24px; background: #F1E3D3; }
+    .progress-summary .eyebrow { margin-bottom: 8px; }
+    .progress-summary h2 { margin: 0 0 8px; font: 500 28px var(--serif); }
+    .progress-summary p { margin: 0; color: var(--muted); font-size: 15px; line-height: 1.55; }
+    .progress-study-btn { margin-top: 16px; }
+
+    /* Footer and phone navigation */
+    .site-footer {
+      width: 100%; max-width: 1200px; margin: 0 auto; padding: 24px 40px 40px;
+      display: flex; flex-wrap: wrap; justify-content: space-between; gap: 12px; color: var(--muted); font-size: 14px;
     }
+    .mobile-nav { display: none; }
+
+    /* Dialogs, forms, toast */
+    .modal-backdrop { position: fixed; inset: 0; z-index: 40; display: none; align-items: center; justify-content: center; padding: 18px; background: rgba(48, 32, 23, .36); backdrop-filter: blur(5px); }
     .modal-backdrop.open { display: flex; animation: fadeIn .18s ease; }
     @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
     .modal {
-      width: min(440px, 100%); max-height:calc(100vh - 36px); overflow-y:auto; background: #fff8f1; border: 1px solid rgba(255,255,255,.7);
-      border-radius: 24px; padding: 27px; box-shadow: 0 25px 70px rgba(47,30,20,.24);
-      animation: modalIn .25s cubic-bezier(.2,.8,.2,1);
+      width: min(440px, 100%); max-height: calc(100vh - 36px); overflow-y: auto; padding: 27px;
+      border: 1px solid var(--line); border-radius: 24px; background: var(--panel);
+      box-shadow: 0 25px 70px rgba(47, 30, 20, .24); animation: modalIn .25s cubic-bezier(.2, .8, .2, 1);
     }
     @keyframes modalIn { from { opacity: 0; transform: translateY(12px) scale(.97); } to { opacity: 1; transform: translateY(0) scale(1); } }
     .modal-top { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 20px; }
     .modal h2 { margin: 0; font: 500 29px var(--serif); }
-    .modal p { margin: 5px 0 0; color: var(--muted); font-size: 12px; }
-    .close-btn { border: 0; background: transparent; color: #806858; font-size: 24px; line-height: 1; padding: 0 3px; }
+    .modal p { margin: 5px 0 0; color: var(--muted); font-size: 13px; }
+    .close-btn { width: 44px; height: 44px; margin: -8px -10px 0 0; border: 0; background: transparent; color: #806858; font-size: 26px; line-height: 1; }
     .field { margin: 15px 0; }
-    .field label { display: block; color: #705848; font-size: 11px; font-weight: 700; margin-bottom: 7px; }
-    .field input, .field textarea { width: 100%; border: 1px solid #e5d2c4; background: #fffdf9; border-radius: 12px; padding: 13px 14px; color: var(--ink); font: 14px var(--sans); }
-    .field textarea { resize: vertical; min-height: 68px; line-height: 1.45; }
-    .field input:focus, .field textarea:focus { border-color: var(--accent); outline: 3px solid rgba(183,122,91,.15); }
+    .field label { display: block; margin-bottom: 7px; color: #705848; font-size: 11px; font-weight: 700; letter-spacing: .06em; }
+    .field input, .field textarea { width: 100%; padding: 13px 14px; border: 1px solid var(--soft-bd); border-radius: 12px; background: #fff; color: var(--ink); font: 16px var(--sans); }
+    .field textarea { min-height: 68px; resize: vertical; line-height: 1.45; }
+    .field input:focus, .field textarea:focus { border-color: var(--accent); outline: 3px solid rgba(154, 91, 66, .2); }
     .field-entry { display: flex; align-items: stretch; gap: 8px; }
     .field-entry input { min-width: 0; flex: 1; }
-    .mic-btn {
-      flex: 0 0 46px; width: 46px; min-height: 46px; border: 1px solid #e5d2c4; border-radius: 13px;
-      background: #f5e5d9; color: #79513d; font-size: 18px; display: grid; place-items: center;
-      transition: transform .2s ease, background .2s ease, box-shadow .2s ease;
-    }
-    .mic-btn:hover { transform: translateY(-2px); background: #efd6c5; box-shadow: 0 5px 12px rgba(126,70,47,.1); }
-    .mic-btn.listening { background: #f6d7d2; border-color: #d88d82; color: #a43d34; animation: micPulse 1s ease-in-out infinite; }
-    @keyframes micPulse { 50% { box-shadow: 0 0 0 5px rgba(190,83,70,.13); } }
-    .voice-status { min-height: 15px; margin: 5px 2px 0; color: #987766; font-size: 10px; }
-    .voice-status.listening { color: #a43d34; font-weight: 700; }
-    .voice-note { color: #987766; font-size: 10px; line-height: 1.45; margin: 5px 0 0; }
-    .error { min-height: 18px; color: #a33e31; font-size: 11px; margin: 3px 0 8px; }
-    .modal-actions { display: flex; justify-content: flex-end; gap: 9px; margin-top: 15px; }
+    .mic-btn { flex: 0 0 48px; width: 48px; min-height: 48px; display: grid; place-items: center; border: 1px solid var(--soft-bd); border-radius: 13px; background: var(--soft-bg); color: var(--nav-ink); font-size: 18px; transition: background .2s ease; }
+    .mic-btn:hover { background: var(--soft-hover); }
+    .mic-btn.listening { background: #F6D7D2; border-color: #D88D82; color: #A43D34; animation: micPulse 1s ease-in-out infinite; }
+    @keyframes micPulse { 50% { box-shadow: 0 0 0 5px rgba(190, 83, 70, .13); } }
+    .voice-status { min-height: 15px; margin: 5px 2px 0; color: #8A6C5B; font-size: 11px; }
+    .voice-status.listening { color: #A43D34; font-weight: 700; }
+    .voice-note { margin: 5px 0 0; color: #8A6C5B; font-size: 11px; line-height: 1.45; }
+    .error { min-height: 18px; margin: 3px 0 8px; color: #A33E31; font-size: 12px; }
+    .modal-actions { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 9px; margin-top: 15px; }
     .auth-providers { display: grid; gap: 9px; margin: 2px 0 15px; }
-    .auth-provider {
-      width: 100%; min-height: 46px; display: grid;
-      grid-template-columns: 20px auto;
-      align-items: center; justify-content: center; gap: 8px;
-    }
-     .auth-provider > .provider-logo { grid-column: 1; justify-self: end; }
-     .auth-provider > span { grid-column: 2; justify-self: start; text-align: left; }
+    .auth-provider { width: 100%; height: 48px; }
     .provider-logo { width: 20px; height: 20px; flex: 0 0 20px; display: block; }
-    #googleAuthBtn:hover {
-      color: #fffaf6; background: #4d3023; border-color: #4d3023;
-      box-shadow: 0 8px 18px rgba(55, 34, 24, .24);
-    }
-    .auth-divider { display: flex; align-items: center; gap: 10px; margin: 15px 0; color: #987d6d; font-size: 10px; }
-    .auth-divider::before, .auth-divider::after { content: ""; flex: 1; height: 1px; background: #ead8ca; }
-    .password-hint { color: #806858; font-size: 11px; line-height: 1.5; margin: -7px 0 12px; }
-    #authBtn:hover, #manageBtn:hover, #manageDecksBtn:hover {
-      color: #fffaf6; background: #4d3023; border-color: #4d3023;
-      box-shadow: 0 8px 18px rgba(55, 34, 24, .24);
-    }
-    #addBtn:hover {
-      color: #fffaf6; background: #874b35; border-color: #874b35;
-      box-shadow: 0 8px 18px rgba(126, 70, 47, .2);
-    }
+    .auth-divider { display: flex; align-items: center; gap: 10px; margin: 15px 0; color: #8A6C5B; font-size: 11px; }
+    .auth-divider::before, .auth-divider::after { content: ""; flex: 1; height: 1px; background: var(--line); }
+    .password-hint { margin: 7px 0 0; color: #806858; font-size: 12px; line-height: 1.5; }
     .toast {
-      position: fixed; z-index: 20; bottom: 24px; left: 50%; transform: translate(-50%, 15px);
-      background: #33251e; color: #fff7ef; border-radius: 99px; padding: 11px 17px; font-size: 12px;
-      box-shadow: 0 8px 25px rgba(0,0,0,.15); opacity: 0; pointer-events: none; transition: .25s;
+      position: fixed; z-index: 50; bottom: 24px; left: 50%; max-width: calc(100vw - 32px); transform: translate(-50%, 15px);
+      padding: 11px 17px; border-radius: 99px; background: #33251E; color: #FFF7EF; font-size: 13px;
+      box-shadow: 0 8px 25px rgba(0, 0, 0, .15); opacity: 0; pointer-events: none; transition: .25s;
     }
     .toast.show { opacity: 1; transform: translate(-50%, 0); }
 
-    /* ===== Added: deck picker, Again button, deck manager ===== */
-    .level-picker { display: flex; justify-content: center; gap: 8px; margin: 0 auto 10px; }
-    .level-btn { min-width:58px; padding:9px 15px; border:1px solid var(--line); border-radius:999px; background:rgba(255,255,255,.62); color:#694533; font:700 12px var(--sans); transition:background .2s ease,border-color .2s ease,transform .2s ease; }
-    .level-btn:hover { background:#f0d9c8; transform:translateY(-1px); }
-    .level-btn.active { background:rgba(235,205,185,.82); border-color:rgba(125,79,53,.22); }
-    .level-btn:focus-visible { outline:2px solid var(--accent-dark); outline-offset:2px; }
-    .deck-picker { position: relative; z-index: 5; display: flex; justify-content: center; margin: 0 0 6px; }    .deck-btn { display: inline-flex; align-items: center; gap: 9px; max-width: min(320px, 86vw); }
-    .deck-btn #deckBtnName { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-    .deck-btn .chev { font-size: 11px; transition: transform .2s ease; }
-    .deck-btn[aria-expanded="true"] .chev { transform: rotate(180deg); }
-    .deck-menu {
-      position: absolute; top: calc(100% + 8px); left: 50%; transform: translateX(-50%);
-      width: min(300px, 88vw); max-height: 290px; overflow-y: auto; padding: 7px;
-      background: #fff8f1; border: 1px solid rgba(115,78,56,.14); border-radius: 18px;
-      box-shadow: 0 20px 50px rgba(47,30,20,.2); animation: modalIn .2s cubic-bezier(.2,.8,.2,1);
+    /* Tablet */
+    @media (max-width: 850px) {
+      .site-header { padding: 16px 24px; }
+      main { padding-left: 24px; padding-right: 24px; }
+      .site-footer { padding-left: 24px; padding-right: 24px; }
+      .home-hero { gap: 40px; }
     }
-    .deck-menu[hidden] { display: none; }
-    .deck-option {
-      width: 100%; display: flex; justify-content: space-between; align-items: center; gap: 12px;
-      border: 0; background: transparent; color: #4d3023; padding: 11px 13px; border-radius: 12px;
-      font-size: 13px; font-weight: 600; text-align: left; transition: background .2s ease;
-    }
-    .deck-option:hover { background: rgba(235, 205, 185, .55); }
-    .deck-option.active { background: rgba(235, 205, 185, .82); }
-    .deck-option span:first-child { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-    .deck-option small { color: #9a7b69; font-size: 11px; font-weight: 600; flex: none; }
-    .again-btn {
-      flex: 0 0 46px; width: 46px; height: 46px; padding: 0; display: grid; place-items: center;
-      border-radius: 50%; color: #694533; background: rgba(235, 205, 185, .82);
-      border: 1px solid rgba(125, 79, 53, .12); box-shadow: 0 5px 13px rgba(126, 70, 47, .08);
-      transition: transform .2s ease, background .2s ease, opacity .2s ease;
-    }
-    .again-btn:hover:not(:disabled) { background: #e9c5ae; transform: translateY(-2px); }
-    .again-btn:active:not(:disabled) { transform: scale(.95); }
-    .again-btn:disabled { opacity: .38; cursor: default; }
-    @media (min-width: 601px) {
-      /* Mirrors the back button: sits just to the right of Next so the main buttons stay centred. */
-      .again-btn { position: absolute; left: calc(100% + 12px); top: 50%; margin-top: -23px; }
-    }
-    .deck-tag { display: inline-block; margin-left: 8px; padding: 2px 8px; border-radius: 99px; background: rgba(235,205,185,.8); color: #694533; font-size: 9px; letter-spacing: 1px; text-transform: uppercase; font-weight: 700; vertical-align: middle; }
 
-    @media (max-width: 600px) {
-      header { width: calc(100% - 30px); padding-top: 18px; }
-      .brand-name { font-size: 20px; }
-      .brand-sub { font-size: 9px; }
-      .header-actions { gap: 6px; flex-wrap: wrap; justify-content: flex-end; }
-      .header-actions .btn { padding: 10px 12px; min-height: 39px; font-size: 11px; }
-      main { padding: 26px 13px 38px; }
-      .intro { margin-bottom: 14px; }
-      .intro p { font-size: 12px; }
-      .stage { height: min(345px, 86vw); min-height: 280px; margin-top: 7px; }
-      .stack-card { inset: 0; }
-      .face { padding: 30px 22px; }
-      .side-label { left: 22px; top: 22px; }
-      .card-index { right: 22px; top: 21px; }
-      .speak-btn { width: 38px; height: 38px; right: 16px; bottom: 15px; }
-      .word { font-size: clamp(38px, 10vw, 54px); }
-      .word.long { font-size: clamp(27px, 7vw, 40px); }
-      .controls { width: min(100%, 420px); gap: 9px; }
-      .action-btn { flex: 1; min-width: 0; padding: 14px 12px; }
-      .manage-head { align-items: flex-start; }
-      .manage-head h2 { font-size: 27px; }
-      .managed-card { padding: 13px; gap: 8px; }
+    /* Phone */
+    @media (max-width: 700px) {
+      .desktop-nav { display: none; }
+      .site-header { padding: 12px 16px; }
+      .brand-mark { width: 36px; height: 36px; border-radius: 11px; font-size: 20px; }
+      .brand-name { font-size: 22px; }
+      .header-actions { margin-left: 0; }
+      .login-btn { width: 44px; padding: 0; }
+      #authLabel { display: none; }
+      main { padding: 8px 16px 104px; }
+      .site-footer { padding: 16px 16px 96px; }
+      .home-hero { gap: 32px; padding: 16px 0 48px; }
+      .hero-copy p { font-size: 17px; }
+      .hero-card-wrap { height: 340px; }
+      .hero-noun { font-size: 64px; }
+      .home-levels { padding-bottom: 48px; }
+      .how-section { padding: 48px 0; }
+      .section-heading h2, .how-title { font-size: 30px; }
+
+      .study-top-row { flex-direction: column; align-items: stretch; }
+      .level-picker { flex-wrap: nowrap; }
+      .level-btn { flex: 1; min-width: 0; padding: 0; }
+      .deck-picker { width: 100%; }
+      .deck-btn { width: 100%; max-width: none; }
+      .deck-menu { left: 0; right: 0; width: auto; }
+      .progress-wrap { margin-top: 12px; }
+      .progress-meta { font-size: 13px; margin-bottom: 6px; }
+      .progress-track { height: 6px; }
+      :root { --card-r: 28px; }
+      .stage { height: 250px; margin: 22px 0 28px; }
+      .stack-one { transform: rotate(3.2deg) translate(6px, 4px); }
+      .stack-two { transform: rotate(-3.8deg) translate(-5px, 3px); }
+      .face { padding: 20px 22px; }
+      .side-label, .card-index { top: 20px; }
+      .side-label { left: 22px; }
+      .card-index { right: 22px; }
+      .word { font-size: clamp(40px, 15vw, 62px); gap: 0 10px; }
+      .word.long { font-size: 36px; }
+      .word .article { font-size: 30px; }
+      .word.long .article { font-size: 22px; }
+      .card-bottom { display: none; }
+      .speak-btn { right: 22px; bottom: 20px; }
+      .example-button { right: 76px; bottom: 20px; padding: 0 16px; }
+      .example-panel { margin-bottom: 14px; padding: 14px 16px; border-radius: 22px; }
+      .sentence-german { flex-basis: 100%; font-size: 17px; line-height: 1.35; }
+      .sentence-row { gap: 8px; }
+      .sentence-audio-btn, .translation-toggle { font-size: 14px; }
+      .rating-row { flex-wrap: nowrap; gap: 8px; }
+      .rate-btn { flex: 1; min-width: 0; height: 48px; padding: 0; font-size: 15px; }
+      .helper-keys { display: none; }
+      .helper-touch { display: inline; }
+
+      .page-actions .btn { flex: 1 1 auto; }
       .managed-words { gap: 9px; }
-      .managed-word span { font-size: 12px; }
-      .row-actions { gap: 4px; }
-      .icon-btn { width: 32px; height: 32px; }
+      .managed-word span { font-size: 13px; }
+
+      .mobile-nav {
+        display: flex; position: fixed; z-index: 15; left: 0; right: 0; bottom: 0; min-height: 68px;
+        padding-bottom: env(safe-area-inset-bottom); border-top: 1px solid var(--line); background: var(--panel);
+      }
+      .mobile-nav button {
+        flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; min-height: 68px; padding: 0;
+        border: 0; background: transparent; color: var(--muted); font: 500 12px var(--sans);
+      }
+      .mobile-nav button[aria-current="page"] { color: var(--accent); font-weight: 600; }
+      .toast { bottom: 84px; }
     }
+
     @media (prefers-reduced-motion: reduce) {
       *, *::before, *::after { scroll-behavior: auto !important; animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; }
     }
-  
-    /* Reference redesign: connected, responsive learning pages */
-    :root {
-      --level-a1-bg:#D9EADD; --level-a1-ink:#315B3F;
-      --level-a2-bg:#D7E7EE; --level-a2-ink:#315A6A;
-      --level-b1-bg:#F2E5C8; --level-b1-ink:#70501F;
-      --level-b2-bg:#F1D6D1; --level-b2-ink:#793A32;
-    }
-    header { width:min(1280px,calc(100% - 56px)); min-height:78px; }
-    .site-nav { display:flex; gap:9px; align-items:center; margin-left:auto; margin-right:26px; }
-    .nav-link { border:0; background:transparent; color:var(--ink); padding:11px 15px; border-radius:999px; font:600 13px var(--sans); cursor:pointer; }
-    .nav-link:hover { background:rgba(128,82,57,.08); }
-    .nav-link[aria-current="page"] { background:#f1e5d8; color:#70452f; }
-    .login-btn { display:flex; align-items:center; gap:8px; }
-    main { width:min(1340px,100%); }
-    .view { width:min(1280px,100%); }
-    .study-view.active { width:min(1420px,100%); }
-    #homeView.view.active { display:block; }
-    #decksView.view.active,#progressView.view.active { display:block; }
-    .home-view { padding:20px 0 40px; }
-    .home-hero { min-height:390px; display:grid; grid-template-columns:1.03fr .97fr; align-items:center; gap:32px; padding:38px 6.2%; background:rgba(255,253,249,.76); border:1px solid rgba(120,81,57,.1); border-radius:32px; box-shadow:0 18px 55px rgba(83,55,37,.07); overflow:hidden; }
-    .hero-copy { max-width:570px; }
-    .eyebrow { color:#9A5B42; font-size:11px; letter-spacing:2px; font-weight:800; text-transform:uppercase; }
-    .hero-copy h1 { max-width:540px; margin:16px 0 13px; color:#2A211C; font:700 clamp(40px,5vw,65px)/1.06 var(--serif); letter-spacing:-1.5px; }
-    .hero-copy p { max-width:500px; margin:0; color:#69564a; font:15px/1.75 var(--sans); }
-    .hero-ctas { display:flex; gap:11px; flex-wrap:wrap; margin-top:24px; }
-    .hero-cta { min-height:47px; padding:0 21px; }
-    .hero-card-wrap { position:relative; min-height:300px; display:grid; place-items:center; }
-    .hero-card-stack { position:absolute; width:min(320px,80%); height:210px; border-radius:23px; transform:rotate(-9deg) translate(-12px,5px); background:#D9EADD; opacity:.7; }
-    .hero-card-stack.stack-b { transform:rotate(8deg) translate(15px,2px); background:#F1D6D1; }
-    .hero-preview-card { position:relative; width:min(350px,88%); min-height:228px; padding:24px; border-radius:24px; background:#FFFDF9; border:1px solid #EADBCB; box-shadow:0 18px 40px rgba(59,43,32,.13); display:flex; flex-direction:column; justify-content:space-between; transform:rotate(-2deg); }
-    .hero-preview-top { display:flex; justify-content:space-between; color:#6b594d; font-size:11px; letter-spacing:1.2px; }
-    .hero-preview-word { text-align:center; color:#2A211C; font:700 46px var(--serif); }
-    .hero-preview-controls { display:flex; justify-content:space-between; color:#9A5B42; font-size:13px; }
-    .home-levels { display:grid; grid-template-columns:repeat(4,1fr); gap:15px; margin:22px 0 46px; }
-    .level-card { text-align:left; min-height:174px; border:1px solid transparent; border-radius:21px; padding:20px 20px 18px; cursor:pointer; color:var(--ink); transition:transform .18s ease,box-shadow .18s ease; }
-    .level-card:hover { transform:translateY(-3px); box-shadow:0 12px 22px rgba(62,42,28,.09); }
-    .level-card[data-start-level="A1"] { background:var(--level-a1-bg); color:var(--level-a1-ink); }
-    .level-card[data-start-level="A2"] { background:var(--level-a2-bg); color:var(--level-a2-ink); }
-    .level-card[data-start-level="B1"] { background:var(--level-b1-bg); color:var(--level-b1-ink); }
-    .level-card[data-start-level="B2"] { background:var(--level-b2-bg); color:var(--level-b2-ink); }
-    .level-card .level-title { display:block; font:700 32px var(--serif); }
-    .level-card .level-name { display:block; margin:3px 0 9px; font:700 12px var(--sans); }
-    .level-card p { min-height:39px; margin:0 0 12px; color:#44362f; font:12px/1.55 var(--sans); }
-    .level-card span:last-child { font:700 11px var(--sans); }
-    .how-section { padding:18px 5% 22px; text-align:center; }
-    .how-section h2,.page-heading h1 { margin:0; color:#2A211C; font:700 clamp(30px,4vw,43px) var(--serif); }
-    .how-section > p { color:#756258; font:14px/1.7 var(--sans); }
-    .how-steps { display:grid; grid-template-columns:repeat(3,1fr); gap:16px; text-align:left; margin-top:22px; }
-    .how-step { background:rgba(255,253,249,.78); border:1px solid rgba(120,81,57,.12); border-radius:18px; padding:18px; }
-    .how-step strong { display:block; color:#70452f; font:700 13px var(--sans); margin-bottom:7px; }
-    .how-step p { margin:0; color:#6a584d; font:12px/1.6 var(--sans); }
-    .page-heading { display:flex; align-items:end; justify-content:space-between; gap:18px; margin:18px 0 24px; }
-    .page-heading p { margin:8px 0 0; color:#725f53; font:14px/1.6 var(--sans); }
-    .page-actions { display:flex; gap:9px; flex-wrap:wrap; }
-    .page-actions .btn { min-height:42px; }
-    .browse-level-picker { display:flex; justify-content:center; gap:9px; flex-wrap:wrap; margin:10px 0 24px; }
-    .catalogue-grid { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:15px; }
-    .catalogue-card { display:flex; flex-direction:column; min-height:205px; padding:19px; border-radius:20px; background:rgba(255,253,249,.88); border:1px solid #EADBCB; box-shadow:0 7px 20px rgba(71,49,34,.045); }
-    .catalogue-card-top { display:flex; align-items:center; justify-content:space-between; color:#756258; font:700 11px var(--sans); }
-    .catalogue-count { border-radius:99px; padding:5px 9px; background:#f0e5d9; color:#5d4535; }
-    .catalogue-count.level-count-a1 { background:var(--level-a1-bg); color:var(--level-a1-ink); }
-    .catalogue-count.level-count-a2 { background:var(--level-a2-bg); color:var(--level-a2-ink); }
-    .catalogue-count.level-count-b1 { background:var(--level-b1-bg); color:var(--level-b1-ink); }
-    .catalogue-count.level-count-b2 { background:var(--level-b2-bg); color:var(--level-b2-ink); }
-    .catalogue-card h2 { margin:17px 0 7px; color:#2A211C; font:700 20px var(--serif); }
-    .catalogue-card p { flex:1; margin:0 0 18px; color:#69584d; font:12px/1.55 var(--sans); }
-    .catalogue-card-bottom { display:flex; align-items:center; justify-content:space-between; gap:10px; color:#756258; font:11px var(--sans); }
-    .catalogue-study-btn { border:0; background:transparent; color:#8b523a; cursor:pointer; font:700 12px var(--sans); padding:8px 2px; }
-    .catalogue-study-btn:hover { color:#4d3023; }
-    .empty-catalogue { grid-column:1/-1; text-align:center; padding:40px 20px; border:1px dashed #d9c8b7; border-radius:18px; color:#725f53; }
-    .my-decks-section { margin-top:52px; padding-top:29px; border-top:1px solid rgba(92,65,47,.14); scroll-margin-top:22px; }
-    .my-decks-section .manage-head { margin-bottom:14px; }
-    .progress-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:15px; margin:22px 0; }
-    .progress-tile { background:rgba(255,253,249,.86); border:1px solid #EADBCB; border-radius:20px; padding:22px; }
-    .progress-tile span { display:block; color:#725f53; font:700 11px var(--sans); letter-spacing:.7px; text-transform:uppercase; }
-    .progress-tile strong { display:block; margin-top:10px; color:#2A211C; font:700 34px var(--serif); }
-    .progress-note { color:#725f53; font:13px/1.6 var(--sans); }
-    .progress-callout { margin-top:20px; padding:24px; border-radius:22px; background:#f2e5d8; display:flex; align-items:center; justify-content:space-between; gap:16px; }
-    .mobile-bottom-nav { display:none; }
-    @media (max-width:850px) {
-      .home-hero { gap:16px; padding:32px 5%; }
-      .site-nav { margin-right:10px; gap:2px; }
-      .nav-link { padding:10px 11px; }
-      .catalogue-grid { grid-template-columns:repeat(2,minmax(0,1fr)); }
-    }
-    @media (max-width:700px) {
-      header { width:calc(100% - 28px); min-height:65px; }
-      .site-nav { display:none; }
-      main { padding:18px 13px 106px; }
-      .home-view { padding-top:6px; }
-      .home-hero { grid-template-columns:1fr; padding:28px 22px 16px; gap:4px; border-radius:25px; }
-      .hero-copy h1 { font-size:clamp(39px,11vw,54px); }
-      .hero-copy p { font-size:13px; }
-      .hero-card-wrap { min-height:235px; }
-      .hero-preview-card { min-height:198px; width:min(320px,86%); }
-      .hero-preview-word { font-size:40px; }
-      .home-levels { grid-template-columns:repeat(2,1fr); gap:10px; margin:16px 0 26px; }
-      .level-card { min-height:173px; padding:15px; border-radius:17px; }
-      .level-card .level-title { font-size:28px; }
-      .level-card p { font-size:11px; min-height:45px; }
-      .how-steps { grid-template-columns:1fr; }
-      .how-section { padding:12px 2% 16px; }
-      .page-heading { display:block; margin:7px 0 20px; }
-      .page-actions { margin-top:14px; }
-      .page-actions .btn { flex:1; }
-      .catalogue-grid { grid-template-columns:1fr; gap:11px; }
-      .catalogue-card { min-height:185px; }
-      .progress-grid { grid-template-columns:1fr; gap:10px; }
-      .progress-tile { padding:17px; }
-      .progress-tile strong { font-size:29px; }
-      .progress-callout { display:block; padding:19px; }
-      .progress-callout .btn { margin-top:12px; }
-      .mobile-bottom-nav { display:grid; position:fixed; z-index:15; left:12px; right:12px; bottom:max(10px,env(safe-area-inset-bottom)); grid-template-columns:repeat(4,1fr); padding:7px; gap:4px; border:1px solid rgba(107,78,58,.15); border-radius:19px; background:rgba(255,253,249,.96); box-shadow:0 10px 35px rgba(45,32,22,.16); backdrop-filter:blur(12px); }
-      .mobile-bottom-nav .nav-link { display:flex; flex-direction:column; gap:3px; align-items:center; justify-content:center; padding:7px 3px; font-size:10px; }
-      .mobile-bottom-nav .nav-icon { font-size:17px; line-height:1; }
-      .footer { padding-bottom:95px; }
-    }
-    @media (max-width:430px) {
-      .home-levels { gap:8px; }
-      .level-card { padding:13px 12px; }
-      .hero-ctas .hero-cta { flex:1; padding:0 12px; font-size:12px; }
-      .page-actions { gap:6px; }
-      .page-actions .btn { padding:0 10px; font-size:11px; }
-    }
-
-  
-    /* Match the reference markup hierarchy */
-    .hero-actions { display:flex; gap:11px; flex-wrap:wrap; margin-top:24px; }
-    .hero-card { position:relative; width:min(350px,88%); min-height:228px; padding:24px; border-radius:24px; background:#FFFDF9; border:1px solid #EADBCB; box-shadow:0 18px 40px rgba(59,43,32,.13); display:flex; flex-direction:column; justify-content:space-between; transform:rotate(-2deg); }
-    .hero-card-label { display:flex; justify-content:space-between; color:#6b594d; font-size:11px; letter-spacing:1.2px; }
-    .hero-card-word { text-align:center; color:#2A211C; font:700 43px var(--serif); }
-    .hero-card-actions { display:flex; align-items:center; justify-content:space-between; color:#9A5B42; font-size:12px; }
-    .home-levels { display:block; margin:24px 0 46px; }
-    .home-levels > .section-heading { text-align:center; margin-bottom:16px; }
-    .section-heading h2 { margin:0; color:#2A211C; font:700 29px var(--serif); }
-    .section-heading p { margin:6px 0 0; color:#756258; font:13px var(--sans); }
-    .level-cards { display:grid; grid-template-columns:repeat(4,1fr); gap:15px; }
-    .level-card { display:flex; flex-direction:column; align-items:flex-start; text-align:left; min-height:183px; }
-    .level-card.level-a1 { background:var(--level-a1-bg); color:var(--level-a1-ink); }
-    .level-card.level-a2 { background:var(--level-a2-bg); color:var(--level-a2-ink); }
-    .level-card.level-b1 { background:var(--level-b1-bg); color:var(--level-b1-ink); }
-    .level-card.level-b2 { background:var(--level-b2-bg); color:var(--level-b2-ink); }
-    .level-card h3 { margin:3px 0 7px; font:700 12px var(--sans); }
-    .level-card p { flex:1; min-height:0; }
-    .level-card button { border:0; padding:4px 0; background:none; color:inherit; font:700 11px var(--sans); cursor:pointer; }
-    .level-card button:hover { text-decoration:underline; }
-    .how-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:15px; text-align:left; margin-top:19px; }
-    .how-grid article { padding:19px; background:rgba(255,253,249,.84); border:1px solid rgba(120,81,57,.12); border-radius:18px; }
-    .how-grid h3 { color:#513c2e; margin:8px 0 5px; font:700 14px var(--sans); }
-    .how-grid p { color:#6a584d; margin:0; font:12px/1.6 var(--sans); }
-    .how-icon { color:#9A5B42; font-size:19px; }
-    .page-heading-row { display:flex; align-items:end; justify-content:space-between; gap:18px; margin:18px 0 24px; }
-    .page-heading-row h1 { margin:0; color:#2A211C; font:700 clamp(30px,4vw,43px) var(--serif); }
-    .page-heading-row p { margin:8px 0 0; color:#725f53; font:14px/1.6 var(--sans); }
-    .my-decks-heading { display:flex; align-items:center; justify-content:space-between; gap:15px; margin-bottom:14px; }
-    .my-decks-heading h2 { color:#2A211C; margin:0; font:700 25px var(--serif); }
-    .my-decks-heading p { color:#756258; margin:5px 0 0; font:12px var(--sans); }
-    .progress-stats { display:grid; grid-template-columns:repeat(3,1fr); gap:15px; margin:22px 0; }
-    .progress-stat { background:rgba(255,253,249,.86); border:1px solid #EADBCB; border-radius:20px; padding:22px; }
-    .progress-stat span { display:block; color:#725f53; font:700 11px var(--sans); letter-spacing:.7px; text-transform:uppercase; }
-    .progress-stat strong { display:block; margin-top:10px; color:#2A211C; font:700 34px var(--serif); }
-    .progress-stat small { display:block; margin-top:5px; color:#725f53; font:11px/1.5 var(--sans); }
-    .progress-summary { margin-top:20px; padding:24px; border-radius:22px; background:#f2e5d8; display:flex; align-items:center; justify-content:space-between; gap:16px; }
-    .progress-summary h2 { margin:8px 0; font:700 24px var(--serif); color:#2A211C; }
-    .progress-summary p { color:#5f4d42; font:13px/1.6 var(--sans); }
-    .site-footer { width:min(1280px,calc(100% - 56px)); margin:0 auto; padding:20px 0 28px; display:flex; justify-content:space-between; gap:12px; color:#806e61; font:11px var(--sans); border-top:1px solid rgba(92,65,47,.12); }
-    .site-footer a { color:#80533d; }
-    .mobile-nav { display:none; }
-    @media (max-width:850px) { .level-cards { grid-template-columns:repeat(2,1fr); } }
-    @media (max-width:700px) {
-      .level-cards { gap:10px; }
-      .level-card { min-height:177px; padding:15px; }
-      .how-grid { grid-template-columns:1fr; }
-      .page-heading-row { display:block; margin:7px 0 20px; }
-      .page-actions { margin-top:14px; }
-      .page-actions .btn { flex:1; }
-      .progress-stats { grid-template-columns:1fr; gap:10px; }
-      .progress-stat { padding:17px; }
-      .progress-stat strong { font-size:29px; }
-      .progress-summary { display:block; padding:19px; }
-      .progress-summary .btn { margin-top:12px; }
-      .mobile-nav { display:grid; position:fixed; z-index:15; left:12px; right:12px; bottom:max(10px,env(safe-area-inset-bottom)); grid-template-columns:repeat(4,1fr); padding:7px; gap:4px; border:1px solid rgba(107,78,58,.15); border-radius:19px; background:rgba(255,253,249,.96); box-shadow:0 10px 35px rgba(45,32,22,.16); backdrop-filter:blur(12px); }
-      .mobile-nav button { display:flex; flex-direction:column; gap:3px; align-items:center; justify-content:center; padding:7px 3px; border:0; border-radius:12px; background:transparent; color:#654d3c; font:600 10px var(--sans); }
-      .mobile-nav button[aria-current="page"] { background:#f1e5d8; }
-      .mobile-nav span { font-size:17px; line-height:1; }
-      .mobile-nav small { font-size:10px; }
-      .site-footer { padding-bottom:95px; }
-    }
-    @media (max-width:430px) { .level-cards { gap:8px; } .level-card { padding:13px 12px; } }
-
   </style>
 </head>
 <body>
-  <svg class="art" viewBox="0 0 1440 900" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
-    <defs>
-      <linearGradient id="blobA" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#efc7ad"/><stop offset="1" stop-color="#f7dfcc"/></linearGradient>
-      <linearGradient id="blobB" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#dce4cf"/><stop offset="1" stop-color="#f1e7cf"/></linearGradient>
-    </defs>
-    <path d="M-130 150C-70 20 100-45 230 10s170 190 82 285S80 390-35 320-190 280-130 150Z" fill="url(#blobA)"/>
-    <path d="M1120 650c80-130 245-190 365-105s135 250 30 350-265 110-360 25-115-140-35-270Z" fill="url(#blobB)"/>
-    <path d="M1110 5c90 30 155 110 130 180s-120 95-185 45-100-145-45-205 55-50 100-20Z" fill="#f0d7c4" opacity=".6"/>
-    <path d="M120 770c160-80 300-55 380 20s35 145-75 155-260-20-330-75-85-60 25-100Z" fill="#e7d7c6" opacity=".55"/>
-    <path d="M0 440c240-90 430-70 600 0s360 70 520 0 260-70 400-15" fill="none" stroke="#d7b8a2" stroke-width="1.2" opacity=".5"/>
-    <path d="M-30 470c240-90 430-70 600 0s360 70 520 0 260-70 400-15" fill="none" stroke="#d7b8a2" stroke-width="1.2" opacity=".35"/>
-  </svg>
+  <div class="deco deco-a" aria-hidden="true"></div>
+  <div class="deco deco-b" aria-hidden="true"></div>
 
   <div class="app">
     <header class="site-header">
       <button class="brand brand-button" id="homeBrandBtn" type="button" aria-label="Wortschatz home">
         <span class="brand-mark" aria-hidden="true">W</span>
-        <span class="brand-copy"><span class="brand-name">Wortschatz</span><span class="brand-sub">English · Deutsch</span></span>
+        <span class="brand-name">Wortschatz</span>
       </button>
       <nav class="desktop-nav" aria-label="Main navigation">
         <button class="nav-link" type="button" data-view="study">Study</button>
@@ -579,7 +506,7 @@
         <button class="nav-link" type="button" data-view="progress">Progress</button>
       </nav>
       <div class="header-actions">
-        <button class="btn btn-quiet login-btn" id="authBtn" type="button" aria-label="Log in"><svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="1.9" aria-hidden="true"><circle cx="12" cy="8" r="3.5"/><path d="M4.5 21a7.5 7.5 0 0 1 15 0"/></svg><span id="authLabel">Log in</span></button>
+        <button class="login-btn" id="authBtn" type="button" aria-label="Log in"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg><span id="authLabel">Log in</span></button>
         <span id="authStatus" class="sr-only" aria-live="polite"></span>
       </div>
     </header>
@@ -592,125 +519,160 @@
             <h1>Build your German vocabulary.</h1>
             <p>Think of the translation, turn the card to check, hear the word and see it in a sentence. Decks for every level from A1 to B2.</p>
             <div class="hero-actions">
-              <button class="btn btn-primary hero-cta" id="startA1Btn" type="button">Start with A1 <span aria-hidden="true">→</span></button>
+              <button class="btn btn-primary hero-cta" id="startA1Btn" type="button">Start with A1 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/><path d="m13 6 6 6-6 6"/></svg></button>
               <button class="btn btn-soft hero-cta" id="homeBrowseBtn" type="button">Browse decks</button>
             </div>
           </div>
-          <div class="hero-card-wrap" aria-label="Example vocabulary card">
-            <div class="hero-card-stack stack-a"></div><div class="hero-card-stack stack-b"></div>
-            <article class="hero-card">
-              <div class="hero-card-label"><span>Deutsch</span><span>01</span></div>
-              <div class="hero-card-word"><span>der</span> Apfel</div>
-              <p>Plural: die Äpfel</p>
-              <div class="hero-card-actions"><span>Tap the card to flip</span><button type="button" class="hero-example-btn" tabindex="-1" aria-hidden="true">◯ Beispiel</button><button type="button" class="hero-speaker" tabindex="-1" aria-hidden="true">◖))</button></div>
-            </article>
+          <div class="hero-card-col" aria-hidden="true">
+            <div class="hero-card-wrap">
+              <div class="hero-card-stack stack-a"></div>
+              <div class="hero-card-stack stack-b"></div>
+              <div class="hero-card">
+                <div class="hero-card-label"><span>DEUTSCH</span><span>01</span></div>
+                <div class="hero-card-body">
+                  <div class="hero-card-word"><span class="hero-article">der</span><span class="hero-noun">Apfel</span></div>
+                  <div class="hero-plural">Plural: die Äpfel</div>
+                </div>
+                <div class="hero-card-actions">
+                  <span>Tap the card to flip</span>
+                  <span class="hero-card-buttons">
+                    <span class="hero-pill"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.5 8.5 0 0 1-12.6 7.4L3 20l1.2-4.6A8.5 8.5 0 1 1 21 11.5z"/></svg>&nbsp;Beispiel</span>
+                    <span class="hero-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5 6 9H2v6h4l5 4V5z"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/><path d="M19 5a10 10 0 0 1 0 14"/></svg></span>
+                  </span>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
+
         <section class="home-levels" aria-labelledby="levelsTitle">
           <div class="section-heading"><h2 id="levelsTitle">Choose your level</h2><p>Each level builds on the one before it.</p></div>
           <div class="level-cards">
-            <article class="level-card level-a1"><span class="level-title">A1</span><h3>Beginner</h3><p>Understand and use basic everyday expressions and introduce yourself.</p><button type="button" data-start-level="A1">Start A1 <span aria-hidden="true">→</span></button></article>
-            <article class="level-card level-a2"><span class="level-title">A2</span><h3>Elementary</h3><p>Communicate in familiar, routine situations.</p><button type="button" data-start-level="A2">Start A2 <span aria-hidden="true">→</span></button></article>
-            <article class="level-card level-b1"><span class="level-title">B1</span><h3>Intermediate</h3><p>Handle common situations independently and describe experiences, plans and opinions.</p><button type="button" data-start-level="B1">Start B1 <span aria-hidden="true">→</span></button></article>
-            <article class="level-card level-b2"><span class="level-title">B2</span><h3>Upper-intermediate</h3><p>Communicate with greater fluency and understand more complex material.</p><button type="button" data-start-level="B2">Start B2 <span aria-hidden="true">→</span></button></article>
+            <article class="level-card level-a1"><span class="level-title">A1</span><h3>Beginner</h3><p>Understand and use basic everyday expressions and introduce yourself.</p><button type="button" data-start-level="A1">Start A1 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/><path d="m13 6 6 6-6 6"/></svg></button></article>
+            <article class="level-card level-a2"><span class="level-title">A2</span><h3>Elementary</h3><p>Communicate in familiar, routine situations.</p><button type="button" data-start-level="A2">Start A2 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/><path d="m13 6 6 6-6 6"/></svg></button></article>
+            <article class="level-card level-b1"><span class="level-title">B1</span><h3>Intermediate</h3><p>Handle common situations independently and describe experiences, plans and opinions.</p><button type="button" data-start-level="B1">Start B1 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/><path d="m13 6 6 6-6 6"/></svg></button></article>
+            <article class="level-card level-b2"><span class="level-title">B2</span><h3>Upper-intermediate</h3><p>Communicate with greater fluency and understand more complex material.</p><button type="button" data-start-level="B2">Start B2 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/><path d="m13 6 6 6-6 6"/></svg></button></article>
           </div>
         </section>
+
         <section class="how-section" aria-labelledby="howTitle">
-          <div class="section-heading"><h2 id="howTitle">How a card works</h2></div>
+          <h2 class="how-title" id="howTitle">How a card works</h2>
           <div class="how-grid">
-            <article><span class="how-icon">↻</span><h3>Think first, then flip</h3><p>Try to recall the word before you turn the card. Tell the site how hard it was, and it decides when to show it again.</p></article>
-            <article><span class="how-icon">◖))</span><h3>Hear it spoken</h3><p>Tap the speaker to hear the pronunciation, as many times as you like.</p></article>
-            <article><span class="how-icon">◯</span><h3>See it in a sentence</h3><p>Open the example to see the word used in German, and reveal the translation when you are ready.</p></article>
+            <article><div class="how-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12a9 9 0 1 1-3-6.7"/><path d="M21 4v5h-5"/></svg></div><h3>Think first, then flip</h3><p>Try to recall the word before you turn the card. Tell the site how hard it was, and it decides when to show it again.</p></article>
+            <article><div class="how-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 5 6 9H2v6h4l5 4V5z"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/><path d="M19 5a10 10 0 0 1 0 14"/></svg></div><h3>Hear it spoken</h3><p>Tap the speaker to hear the pronunciation, as many times as you like.</p></article>
+            <article><div class="how-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 11.5a8.5 8.5 0 0 1-12.6 7.4L3 20l1.2-4.6A8.5 8.5 0 1 1 21 11.5z"/></svg></div><h3>See it in a sentence</h3><p>Open the example to see the word used in real German, and reveal the translation when you are ready.</p></article>
           </div>
         </section>
       </section>
 
       <section class="view study-view" id="studyView" aria-label="Vocabulary flashcards">
-        <div class="study-heading">
-          <div><div class="eyebrow">Your learning space</div><h1>Study</h1></div>
-          <div class="study-tools"><button class="btn btn-quiet" id="manageBtn" type="button">Manage Cards</button><button class="btn btn-primary" id="addBtn" type="button">＋ Add Card</button></div>
-        </div>
         <div class="study-top-row">
-        <div class="level-picker" id="levelPicker" role="group" aria-label="Choose a German level">
+          <div class="level-picker" id="levelPicker" role="group" aria-label="Choose a German level">
+            <button class="level-btn active" type="button" data-level="A1" aria-pressed="true">A1</button>
+            <button class="level-btn" type="button" data-level="A2" aria-pressed="false">A2</button>
+            <button class="level-btn" type="button" data-level="B1" aria-pressed="false">B1</button>
+            <button class="level-btn" type="button" data-level="B2" aria-pressed="false">B2</button>
+          </div>
+          <div class="deck-picker" id="deckPicker">
+            <button class="deck-btn" id="deckBtn" type="button" aria-haspopup="listbox" aria-expanded="false" title="Choose a deck">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m12 3 9 5-9 5-9-5 9-5z"/><path d="m3 13 9 5 9-5"/></svg>
+              <span id="deckBtnName">Basics</span>
+              <span class="chev" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg></span>
+            </button>
+            <div class="deck-menu" id="deckMenu" role="listbox" aria-label="Your decks" hidden></div>
+          </div>
+        </div>
+
+        <div class="progress-wrap" id="progressWrap">
+          <div class="progress-meta"><span id="counter">Card 1 of 20</span><span id="remaining">19 left</span></div>
+          <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
+        </div>
+
+        <div class="stage" id="stage">
+          <div class="stack-card stack-one"></div>
+          <div class="stack-card stack-two"></div>
+          <div class="card-motion" id="cardMotion">
+            <div class="flashcard" id="flashcard" role="button" tabindex="0" aria-label="Flashcard. Activate to reveal the German translation.">
+              <div class="face front" id="frontFace">
+                <span class="side-label">English</span><span class="card-index" id="frontIndex">01</span>
+                <div class="word" id="englishWord">happy</div>
+                <div class="card-bottom">Tap the card to flip</div>
+                <button class="speak-btn" id="speakEnglish" type="button" aria-label="Listen to the English word" title="Listen (English)"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 5 6 9H3v6h3l5 4V5z" fill="currentColor" stroke="none"/><path class="wave wave-1" d="M15.5 9a4.5 4.5 0 0 1 0 6"/><path class="wave wave-2" d="M18.5 6.5a8.5 8.5 0 0 1 0 11"/></svg></button>
+              </div>
+              <div class="face back" id="backFace">
+                <span class="side-label">Deutsch</span><span class="card-index" id="backIndex">01</span>
+                <div class="word" id="germanWord">glücklich</div>
+                <div class="card-bottom">Tap the card to flip</div>
+                <button class="example-button" id="exampleBtn" type="button" aria-label="Show example sentence" aria-controls="examplePanel" aria-expanded="false" hidden><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 11.5a8.5 8.5 0 0 1-12.6 7.4L3 20l1.2-4.6A8.5 8.5 0 1 1 21 11.5z"/></svg><span>Beispiel</span></button>
+                <button class="speak-btn" id="speakGerman" type="button" aria-label="Listen to the German word" title="Listen (Deutsch)"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 5 6 9H3v6h3l5 4V5z" fill="currentColor" stroke="none"/><path class="wave wave-1" d="M15.5 9a4.5 4.5 0 0 1 0 6"/><path class="wave wave-2" d="M18.5 6.5a8.5 8.5 0 0 1 0 11"/></svg></button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <section class="example-panel" id="examplePanel" aria-label="Example sentence" aria-live="polite" hidden>
+          <div class="example-panel-inner">
+            <p class="example-panel-title">Beispielsatz</p>
+            <div class="sentence-row">
+              <p class="sentence-german" id="sentenceGerman"></p>
+              <button class="sentence-audio-btn" id="sentenceAudioBtn" type="button" aria-label="Listen to the example sentence" title="Listen to the example sentence"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 5 6 9H2v6h4l5 4V5z"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/><path d="M19 5a10 10 0 0 1 0 14"/></svg><span>Hören</span></button>
+            </div>
+            <button class="translation-toggle" id="translationToggle" type="button" aria-expanded="false">Show translation</button>
+            <p class="sentence-translation" id="sentenceEnglish" hidden></p>
+          </div>
+        </section>
+
+        <div class="empty-state" id="emptyState" style="display:none"><strong>Your deck is empty.</strong>Add a few cards to start learning.</div>
+
+        <div class="rating-row" id="controls">
+          <button class="btn btn-soft rate-btn" id="againBtn" type="button" title="Difficult: adds this word to your Revision deck">Difficult</button>
+          <button class="btn btn-primary rate-btn" id="nextBtn" type="button">Good</button>
+          <button class="btn btn-soft rate-btn" id="easyBtn" type="button">Easy</button>
+        </div>
+        <p class="helper" id="helper"><span class="helper-keys">Space flips the card · Left arrow goes back · Right arrow or Enter moves on</span><span class="helper-touch">Tap the card to flip it</span></p>
+
+        <div class="study-tools">
+          <button class="text-btn" id="prevBtn" type="button" aria-label="Previous card" title="Previous card (Left Arrow)"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5"/><path d="m11 6-6 6 6 6"/></svg>Previous</button>
+          <button class="text-btn" id="addBtn" type="button">＋ Add a card</button>
+          <button class="text-btn" id="manageBtn" type="button">Manage cards</button>
+        </div>
+      </section>
+
+      <section class="view decks-page" id="decksView" aria-label="Vocabulary decks">
+        <div class="page-heading-row">
+          <div><h1>Decks</h1><p>Pick a topic and study it card by card.</p></div>
+          <div class="page-actions">
+            <button class="btn btn-quiet" id="importBtn" type="button">Import backup</button>
+            <button class="btn btn-quiet" id="exportBtn" type="button">Export backup</button>
+            <input type="file" id="importFile" accept="application/json,.json" hidden>
+            <button class="btn btn-primary" id="newDeckBtn" type="button">+ New deck</button>
+          </div>
+        </div>
+        <div class="level-picker catalogue-level-picker" id="browseLevelPicker" role="group" aria-label="Filter decks by German level">
           <button class="level-btn active" type="button" data-level="A1" aria-pressed="true">A1</button>
           <button class="level-btn" type="button" data-level="A2" aria-pressed="false">A2</button>
           <button class="level-btn" type="button" data-level="B1" aria-pressed="false">B1</button>
           <button class="level-btn" type="button" data-level="B2" aria-pressed="false">B2</button>
         </div>
-        <div class="deck-picker" id="deckPicker"><button class="btn btn-soft deck-btn" id="deckBtn" type="button" aria-haspopup="listbox" aria-expanded="false" title="Choose a deck">
-          <span aria-hidden="true">▤</span><span id="deckBtnName">Basics</span><span class="chev" aria-hidden="true">▾</span>
-        </button><div class="deck-menu" id="deckMenu" role="listbox" aria-label="Your decks" hidden></div></div>
-        </div>
-        <div class="progress-wrap" id="progressWrap">
-          <div class="progress-meta"><span id="counter">Card 1 of 20</span><span id="remaining">20 to learn</span></div>
-          <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
-        </div>
-        <div class="stage" id="stage">
-          <div class="stack-card stack-three"></div>
-          <div class="stack-card stack-two"></div>
-          <div class="stack-card stack-one"></div>
-          <div class="card-motion" id="cardMotion">
-            <div class="flashcard" id="flashcard" role="button" tabindex="0" aria-label="Flashcard. Activate to reveal the German translation.">
-            <div class="face front" id="frontFace">
-              <span class="side-label">English</span><span class="card-index" id="frontIndex">01</span>
-              <div class="word" id="englishWord">happy</div>
-              <div class="card-bottom">WORTSCHATZ · VOCABULARY</div>
-              <button class="speak-btn" id="speakEnglish" type="button" aria-label="Listen to the English word" title="Listen (English)"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 5 6 9H3v6h3l5 4V5z" fill="currentColor" stroke="none"/><path class="wave wave-1" d="M15.5 9a4.5 4.5 0 0 1 0 6"/><path class="wave wave-2" d="M18.5 6.5a8.5 8.5 0 0 1 0 11"/></svg></button>
-            </div>
-            <div class="face back" id="backFace">
-              <span class="side-label">Deutsch</span><span class="card-index" id="backIndex">01</span>
-              <div class="word" id="germanWord">glücklich</div>
-              <div class="card-bottom">GUT GEMACHT · WELL DONE</div>
-              <button class="example-button" id="exampleBtn" type="button" aria-label="Show example sentence" aria-controls="examplePanel" aria-expanded="false" hidden><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 11.5a8.4 8.4 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.4 8.4 0 0 1-3.8-.9L3 21l1.9-5.7a8.4 8.4 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.4 8.4 0 0 1 3.8-.9h.5a8.5 8.5 0 0 1 8 8v.5z"/></svg><span>Beispiel</span></button>
-              <button class="speak-btn" id="speakGerman" type="button" aria-label="Listen to the German word" title="Listen (Deutsch)"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 5 6 9H3v6h3l5 4V5z" fill="currentColor" stroke="none"/><path class="wave wave-1" d="M15.5 9a4.5 4.5 0 0 1 0 6"/><path class="wave wave-2" d="M18.5 6.5a8.5 8.5 0 0 1 0 11"/></svg></button>
-            </div>
-            </div>
-          </div>
-        </div>
-        <section class="example-panel" id="examplePanel" aria-label="Example sentence" aria-live="polite" hidden>
-          <div class="example-panel-inner">
-            <p class="example-panel-title">Beispielsatz</p>
-            <div class="sentence-row"><p class="sentence-german" id="sentenceGerman"></p><button class="sentence-audio-btn" id="sentenceAudioBtn" type="button" aria-label="Listen to the example sentence" title="Listen to the example sentence"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 5 6 9H3v6h3l5 4V5z" fill="currentColor" stroke="none"/><path d="M15.5 9a4.5 4.5 0 0 1 0 6"/><path d="M18.5 6.5a8.5 8.5 0 0 1 0 11"/></svg><span>Hören</span></button></div>
-            <button class="translation-toggle" id="translationToggle" type="button" aria-expanded="false">Show translation</button>
-            <p class="sentence-translation" id="sentenceEnglish" hidden></p>
-          </div>
-        </section>
-        <div class="empty-state" id="emptyState"><strong>Your deck is empty.</strong>Add a few cards to start learning.</div>
-        <div class="controls" id="controls">
-          <button class="prev-btn" id="prevBtn" type="button" aria-label="Previous card" title="Previous card (Left Arrow)"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5"/><path d="m11 6-6 6 6 6"/></svg></button>
-          <button class="btn btn-secondary action-btn" id="checkAnswerBtn" type="button">Check Answer</button>
-          <button class="btn btn-primary action-btn" id="nextBtn" type="button">Next</button>
-          <button class="again-btn" id="againBtn" type="button" aria-label="Again: add this word to the Revision deck" title="Again — add this word to Revision"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12a9 9 0 1 1-9-9c2.52 0 4.93 1 6.74 2.74L21 8"/><path d="M21 3v5h-5"/></svg></button>
-        </div>
-        <div class="helper" id="helper">Tip: Space flips · Left Arrow goes back · Right Arrow or Enter goes to the next card </div>
-      </section>
-
-      <section class="view decks-page" id="decksView" aria-label="Vocabulary decks">
-        <div class="page-heading-row"><div><div class="eyebrow">Build your word bank</div><h1>Decks</h1><p>Pick a topic and study it card by card.</p></div>
-          <div class="page-actions"><button class="btn btn-soft" id="decksBackBtn" type="button">← Home</button><button class="btn btn-quiet" id="importBtn" type="button">↑ Import backup</button><button class="btn btn-quiet" id="exportBtn" type="button">↓ Export backup</button><input type="file" id="importFile" accept="application/json,.json" hidden><button class="btn btn-primary" id="newDeckBtn" type="button">＋ New deck</button></div>
-        </div>
-        <div class="level-picker catalogue-level-picker" id="browseLevelPicker" role="group" aria-label="Filter decks by German level">
-          <button class="level-btn active" type="button" data-level="A1" aria-pressed="true">A1</button><button class="level-btn" type="button" data-level="A2" aria-pressed="false">A2</button><button class="level-btn" type="button" data-level="B1" aria-pressed="false">B1</button><button class="level-btn" type="button" data-level="B2" aria-pressed="false">B2</button>
-        </div>
         <div class="catalogue-grid" id="catalogueGrid" aria-live="polite"></div>
         <section class="my-decks-section" id="myDecks">
-          <div class="my-decks-heading"><div><h2>My decks</h2><p id="decksCount">Your personal decks are saved on this device.</p></div><div class="my-decks-actions"><button class="btn btn-quiet" id="manageDecksBtn" type="button">Manage my decks</button></div></div>
+          <div class="my-decks-heading"><h2>My decks</h2><p id="decksCount">Decks you create are saved on this device. Export a backup to keep them safe.</p></div>
           <div class="card-list" id="deckList"></div>
         </section>
       </section>
 
       <section class="view progress-page" id="progressView" aria-label="Your learning progress">
-        <div class="page-heading-row"><div><div class="eyebrow">Small steps add up</div><h1>Your progress</h1><p>Your learning activity and saved vocabulary, all in one place.</p></div></div>
+        <div class="page-heading-row"><div><h1>Your progress</h1><p>Your learning activity and saved vocabulary, all in one place.</p></div></div>
         <div class="progress-stats">
           <article class="progress-stat"><span>Words tracked</span><strong id="progressTracked">—</strong><small id="progressTrackedNote">Log in to see saved progress.</small></article>
           <article class="progress-stat"><span>Published decks</span><strong id="progressDeckTotal">48</strong><small>A1 through B2</small></article>
-          <article class="progress-stat"><span>Cards in your revision deck</span><strong id="progressRevisionCount">0</strong><small>Words you marked to revisit</small></article>
+          <article class="progress-stat"><span>Revision deck</span><strong id="progressRevisionCount">0</strong><small>Words you marked as difficult</small></article>
         </div>
         <section class="progress-summary">
           <div><div class="eyebrow">Keep going</div><h2>One new word at a time.</h2><p id="progressSummaryText">Log in to save and see your learning progress across devices.</p></div>
           <button class="btn btn-primary" id="progressLoginBtn" type="button">Log in to see progress</button>
         </section>
-        <button class="btn btn-soft progress-study-btn" id="progressStudyBtn" type="button">Continue studying <span aria-hidden="true">→</span></button>
+        <button class="btn btn-soft progress-study-btn" id="progressStudyBtn" type="button">Continue studying <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/><path d="m13 6 6 6-6 6"/></svg></button>
       </section>
 
       <section class="view" id="manageView" aria-label="Manage vocabulary cards">
@@ -720,11 +682,15 @@
         </div>
         <div class="card-list" id="cardList"></div>
       </section>
-
     </main>
+
     <nav class="mobile-nav" aria-label="Main navigation">
-      <button type="button" data-view="study"><span aria-hidden="true">▣</span><small>Study</small></button><button type="button" data-view="decks"><span aria-hidden="true">◈</span><small>Decks</small></button><button type="button" data-view="progress"><span aria-hidden="true">▥</span><small>Progress</small></button><button type="button" id="mobileAccountNav"><span aria-hidden="true">♙</span><small>Account</small></button>
+      <button type="button" data-view="study"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12a9 9 0 1 1-3-6.7"/><path d="M21 4v5h-5"/></svg>Study</button>
+      <button type="button" data-view="decks"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m12 3 9 5-9 5-9-5 9-5z"/><path d="m3 13 9 5 9-5"/></svg>Decks</button>
+      <button type="button" data-view="progress"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 20V10"/><path d="M10 20V4"/><path d="M16 20v-7"/><path d="M22 20H2"/></svg>Progress</button>
+      <button type="button" id="mobileAccountNav"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg>Account</button>
     </nav>
+
     <footer class="site-footer"><span>Wortschatz · Made for curious minds</span><span>Vocabulary adapted from <a href="https://germanfluent.com/attribution/" target="_blank" rel="noreferrer">German Fluent</a> · CC BY-SA 4.0</span></footer>
   </div>
 
@@ -850,10 +816,10 @@
       const els = {
         homeView: $("homeView"), studyView: $("studyView"), manageView: $("manageView"), decksView: $("decksView"), progressView: $("progressView"), browseLevelPicker: $("browseLevelPicker"), catalogueGrid: $("catalogueGrid"), progressTracked: $("progressTracked"), progressTrackedNote: $("progressTrackedNote"), progressDeckTotal: $("progressDeckTotal"), progressRevisionCount: $("progressRevisionCount"), progressSummaryText: $("progressSummaryText"), progressLoginBtn: $("progressLoginBtn"), progressStudyBtn: $("progressStudyBtn"), authLabel: $("authLabel"), stage: $("stage"),
         flashcard: $("flashcard"), cardMotion: $("cardMotion"), frontFace: $("frontFace"), backFace: $("backFace"),
-        stackOne: document.querySelector(".stack-one"), stackTwo: document.querySelector(".stack-two"), stackThree: document.querySelector(".stack-three"),
+        stackOne: document.querySelector(".stack-one"), stackTwo: document.querySelector(".stack-two"),
         english: $("englishWord"), german: $("germanWord"), frontIndex: $("frontIndex"), backIndex: $("backIndex"),
         counter: $("counter"), remaining: $("remaining"), progress: $("progressFill"),
-        controls: $("controls"), checkAnswer: $("checkAnswerBtn"), next: $("nextBtn"), prev: $("prevBtn"), again: $("againBtn"), empty: $("emptyState"), helper: $("helper"),
+        controls: $("controls"), easy: $("easyBtn"), next: $("nextBtn"), prev: $("prevBtn"), again: $("againBtn"), empty: $("emptyState"), helper: $("helper"),
         modal: $("modalBackdrop"), form: $("cardForm"), englishInput: $("englishInput"),
         germanInput: $("germanInput"), sentenceDeInput: $("sentenceDeInput"), sentenceEnInput: $("sentenceEnInput"), sentenceAudioInput: $("sentenceAudioInput"), error: $("formError"), modalTitle: $("modalTitle"),
         saveBtn: $("saveBtn"), cardList: $("cardList"), manageCount: $("manageCount"),
@@ -1037,15 +1003,26 @@
         els.backFace.style.background = color;
         const colorIndex = Math.max(0, palette.indexOf(color));
         els.stackOne.style.background = palette[(colorIndex + 1) % palette.length];
-        els.stackTwo.style.background = palette[(colorIndex + 2) % palette.length];
-        els.stackThree.style.background = palette[(colorIndex + 3) % palette.length];
+        els.stackTwo.style.background = palette[(colorIndex + 3) % palette.length];
       }
       function updateProgress() {
         const total = cards.length;
         const shown = total ? Math.min(deckPosition + 1, total) : 0;
         els.counter.textContent = total ? `Card ${shown} of ${total}` : "No cards yet";
-        els.remaining.textContent = total ? `${total - deckPosition - 1} remaining` : "0 to learn";
+        els.remaining.textContent = total ? `${total - deckPosition - 1} left` : "0 left";
         els.progress.style.width = total ? `${(shown / total) * 100}%` : "0%";
+      }
+      function setGermanWord(el, text) {
+        el.replaceChildren();
+        const match = /^(der|die|das)\s+(.+)$/i.exec(String(text).trim());
+        if (!match) { el.textContent = text; return; }
+        const article = document.createElement("span");
+        article.className = "article art-" + match[1].toLowerCase();
+        article.textContent = match[1];
+        const noun = document.createElement("span");
+        noun.className = "noun";
+        noun.textContent = match[2];
+        el.append(article, noun);
       }
       function renderCard(animate = false, assignFreshColor = false) {
         closeExamplePanel(true);
@@ -1075,7 +1052,7 @@
         }
         updateCardColor(card);
         els.english.textContent = card.english;
-        els.german.textContent = card.german;
+        setGermanWord(els.german, card.german);
         const sentenceDe = card.sentence_de || card.exampleGerman || "";
         const sentenceEn = card.sentence_en || card.exampleEnglish || "";
         els.exampleBtn.hidden = !sentenceDe;
@@ -1087,8 +1064,8 @@
         els.translationToggle.setAttribute("aria-expanded", "false");
         els.frontIndex.textContent = String(deckPosition + 1).padStart(2, "0");
         els.backIndex.textContent = String(deckPosition + 1).padStart(2, "0");
-        els.english.classList.toggle("long", card.english.length > 18);
-        els.german.classList.toggle("long", card.german.length > 18);
+        els.english.classList.toggle("long", card.english.length > 14);
+        els.german.classList.toggle("long", card.german.length > 14);
         els.flashcard.setAttribute("aria-label", `English: ${card.english}. Activate to reveal the German translation.`);
         syncSpeakButtons();
         updatePrevButton();
@@ -1142,11 +1119,9 @@
         els.flashcard.classList.toggle("is-flipped", isFlipped);
         if (isFlipped) {
           els.flashcard.setAttribute("aria-label", `German: ${currentCard().german}. Activate to flip back to English.`);
-          els.helper.textContent = "German revealed. Press Check Answer again to flip back, or Next to continue.";
           void recordPilotReview(currentCard());
         } else {
           els.flashcard.setAttribute("aria-label", `English: ${currentCard().english}. Activate to reveal the German translation.`);
-          els.helper.textContent = "English side. Press Space to reveal · Right Arrow or Enter for the next card.";
         }
       }
       function updatePrevButton() {
@@ -1161,7 +1136,7 @@
         stopSpeech();
         isTransitioning = true;
         els.next.disabled = true;
-        els.checkAnswer.disabled = true;
+        els.easy.disabled = true;
         els.prev.disabled = true;
         els.again.disabled = true;
         els.cardMotion.classList.remove("entering", "leaving");
@@ -1195,7 +1170,6 @@
           els.cardMotion.classList.remove("leaving", "entering");
           void els.cardMotion.offsetWidth;
           els.cardMotion.classList.add("entering");
-          els.helper.textContent = "Tip: Space flips · Left Arrow goes back · Right Arrow or Enter goes to the next card · Esc closes dialogs";
 
           let entered = false;
           const finishEntrance = (event) => {
@@ -1206,7 +1180,7 @@
             els.cardMotion.classList.remove("entering");
             isTransitioning = false;
             els.next.disabled = false;
-            els.checkAnswer.disabled = false;
+            els.easy.disabled = false;
             els.again.disabled = false;
             updatePrevButton();
           };
@@ -1445,6 +1419,7 @@
         const signedIn = !!authUser;
         els.authLabel.textContent = signedIn ? "Sign out" : "Log in";
         els.authButton.title = signedIn ? `Signed in as ${authUser.email || "your account"}` : "Log in";
+        els.authButton.setAttribute("aria-label", signedIn ? "Sign out" : "Log in");
         if (!signedIn) { els.authStatus.textContent = ""; cloudProgressCount = null; }
         updateProgressPage();
       }
@@ -1524,22 +1499,50 @@
           });
         });
       }
+      const ARROW_SVG = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/><path d="m13 6 6 6-6 6"/></svg>';
       function renderCatalogueDecks() {
         if (!els.catalogueGrid) return;
-        const visible = decks.filter(deck => deck.remote && deck.cefrLevel === selectedLevel).sort((a,b) => (a.sortOrder || 0) - (b.sortOrder || 0));
+        const visible = decks.filter(deck => deck.remote && deck.cefrLevel === selectedLevel).sort((a, b) => (a.sortOrder || 0) - (b.sortOrder || 0));
         els.catalogueGrid.replaceChildren();
-        if (!visible.length) { const empty = document.createElement('div'); empty.className = 'empty-catalogue'; empty.textContent = 'Decks for this level are loading or not available yet.'; els.catalogueGrid.append(empty); return; }
+        if (!visible.length) {
+          const empty = document.createElement("div");
+          empty.className = "empty-catalogue";
+          empty.textContent = "Decks for this level are loading or not available yet.";
+          els.catalogueGrid.append(empty);
+          return;
+        }
         visible.forEach((deck, index) => {
-          const card = document.createElement('article'); card.className = 'catalogue-card';
-          const top = document.createElement('div'); top.className = 'catalogue-card-top';
-          const code = document.createElement('span'); code.textContent = deck.code || String(index + 1).padStart(2,'0');
-          const count = document.createElement('span'); count.className = 'catalogue-count level-count-' + deck.cefrLevel.toLowerCase(); count.textContent = deck.cards.length + (deck.cards.length === 1 ? ' card' : ' cards'); top.append(code,count);
-          const title = document.createElement('h2'); title.textContent = deck.name;
-          const description = document.createElement('p'); description.textContent = deck.description || (deck.cefrLevel + ' vocabulary for ' + deck.name.toLowerCase() + '.');
-          const bottom = document.createElement('div'); bottom.className = 'catalogue-card-bottom';
-          const status = document.createElement('span'); status.textContent = deck.cards.length ? 'Ready to study' : 'Coming soon';
-          const study = document.createElement('button'); study.type = 'button'; study.className = 'catalogue-study-btn'; study.dataset.studyDeck = deck.id; study.textContent = 'Study deck →'; study.disabled = !deck.cards.length;
-          bottom.append(status,study); card.append(top,title,description,bottom); els.catalogueGrid.append(card);
+          const ready = deck.cards.length > 0;
+          const card = document.createElement("article");
+          card.className = "catalogue-card" + (ready ? "" : " is-planned");
+          const top = document.createElement("div");
+          top.className = "catalogue-card-top";
+          const code = document.createElement("span");
+          code.textContent = deck.code || String(index + 1).padStart(2, "0");
+          const count = document.createElement("span");
+          count.className = "catalogue-count";
+          count.textContent = ready ? deck.cards.length + (deck.cards.length === 1 ? " card" : " cards") : "Planned";
+          top.append(code, count);
+          const title = document.createElement("h2");
+          title.textContent = deck.name;
+          const description = document.createElement("p");
+          description.textContent = deck.description || (deck.cefrLevel + " vocabulary for " + deck.name.toLowerCase() + ".");
+          const bottom = document.createElement("div");
+          bottom.className = "catalogue-card-bottom";
+          const status = document.createElement("span");
+          status.textContent = ready ? "Ready to study" : "Cards in preparation";
+          bottom.append(status);
+          if (ready) {
+            const study = document.createElement("button");
+            study.type = "button";
+            study.className = "catalogue-study-btn";
+            study.dataset.studyDeck = deck.id;
+            study.append(document.createTextNode("Study deck"));
+            study.insertAdjacentHTML("beforeend", ARROW_SVG);
+            bottom.append(study);
+          }
+          card.append(top, title, description, bottom);
+          els.catalogueGrid.append(card);
         });
       }
       function updateProgressPage() {
@@ -1748,8 +1751,6 @@
         if (activeDeck().remote) selectedLevel = activeDeck().cefrLevel;
         updateLevelButtons();
         els.deckBtnName.textContent = activeDeck().name;
-        // Words already in Revision don't need the Again button.
-        els.again.style.display = activeDeckId === REVISION_ID ? "none" : "";
         $("addBtn").style.display = "";
       }
       function renderDeckMenu() {
@@ -1820,7 +1821,6 @@
       }
       function renderDecksManage() {
         const localDecks = decks.filter(deck => !deck.remote);
-        els.decksCount.textContent = `${localDecks.length} ${localDecks.length === 1 ? "deck" : "decks"} saved on this device`;
         els.deckList.innerHTML = "";
         localDecks.forEach(deck => {
           const row = document.createElement("article");
@@ -1863,6 +1863,21 @@
           row.append(words, actions);
           els.deckList.append(row);
         });
+        if (!localDecks.some(deck => deck.id !== REVISION_ID)) {
+          const empty = document.createElement("div");
+          empty.className = "decks-empty";
+          const text = document.createElement("div");
+          const title = document.createElement("strong");
+          title.textContent = "You have not made a deck yet";
+          const note = document.createElement("span");
+          note.textContent = "Add your own words and example sentences, and study them like any other deck.";
+          text.append(title, note);
+          const create = document.createElement("button");
+          create.type = "button"; create.className = "btn btn-soft"; create.textContent = "Create a deck";
+          create.addEventListener("click", () => openDeckModal());
+          empty.append(text, create);
+          els.deckList.append(empty);
+        }
       }
       function deleteDeck(id) {
         const deck = decks.find(d => d.id === id);
@@ -1977,14 +1992,9 @@
         activeDeckId = deck.id; selectedLevel = deck.cefrLevel; cards = deck.cards; localStorage.setItem(ACTIVE_REMOTE_KEY, deck.id);
         showView("study");
       });
-      $("decksBackBtn").addEventListener("click", () => showView("home"));
       $("progressStudyBtn").addEventListener("click", () => showView("study"));
       $("progressLoginBtn").addEventListener("click", () => authUser ? els.authButton.click() : openAccountModal());
       $("mobileAccountNav").addEventListener("click", () => els.authButton.click());
-      $("manageDecksBtn").addEventListener("click", () => {
-        showView("decks");
-        window.setTimeout(() => $("myDecks").scrollIntoView({behavior:"smooth",block:"start"}), 80);
-      });
 
       els.authButton.addEventListener("click", async () => {
         if (!supabaseClient) { showToast("Supabase is unavailable. Refresh and try again."); return; }
@@ -2107,7 +2117,7 @@
         const button = event.target.closest(".level-btn");
         if (button) chooseLevel(button.dataset.level);
       });
-      els.again.addEventListener("click", addToRevision);
+      els.again.addEventListener("click", () => { addToRevision(); nextCard(1); });
       document.addEventListener("click", event => {
         if (!els.deckMenu.hidden && !els.deckPicker.contains(event.target)) toggleDeckMenu(false);
       });
@@ -2133,7 +2143,7 @@
       els.modal.addEventListener("click", event => { if (event.target === els.modal) closeModal(); });
       $("closeModal").addEventListener("click", closeModal);
       $("cancelModal").addEventListener("click", closeModal);
-      els.checkAnswer.addEventListener("click", flipCard);
+      els.easy.addEventListener("click", () => nextCard(1));
       els.next.addEventListener("click", () => nextCard(1));
       els.prev.addEventListener("click", prevCard);
       els.flashcard.addEventListener("click", flipCard);
